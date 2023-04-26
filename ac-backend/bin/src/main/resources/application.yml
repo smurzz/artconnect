@@ -1,0 +1,26 @@
+server:
+   port: 8080
+spring:
+   config:
+      activate:
+         on-profile: default
+   data:
+      mongodb:
+         host: localhost
+         port: 27017
+         database: artconnect-db
+         auto-index-creation: true
+---
+spring:
+   config:
+      activate:
+         on-profile: docker
+   data:
+      mongodb:
+         host: mongo
+         port: 27018
+         database: artconnect-db
+         username: admin
+         password: password
+         authentication-database: admin
+         auto-index-creation: true
