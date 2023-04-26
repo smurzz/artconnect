@@ -1,1 +1,3 @@
-# artconnect
+# ArtConnect
+
+ArtConnect is a web-platform for artists that allows them to showcase their artwork online and receive messages with purchase inquiries or other questions from platform's users. They also receive feedback from other users. The platform includes various tools, including an intuitive user interface and a search function to find artworks by artist, genre, or medium. Additionally, there is a rating system that provides valuable feedback to the artists.
