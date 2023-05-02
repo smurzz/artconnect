@@ -26,7 +26,8 @@ import reactor.core.publisher.Mono;
 public class AuthenticationController {
 	
 	private final AuthenticationService service;
-	
+
+	@CrossOrigin(origins = "http://localhost:3001")
 	@PostMapping("/register")
 	public Mono<String> registerUser(@Valid @RequestBody RegisterRequest request){
 		return service.register(request);
