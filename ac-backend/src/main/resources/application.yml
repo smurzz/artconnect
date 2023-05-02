@@ -1,20 +1,48 @@
+application:
+   security: 
+      jwt:
+         secretKey: 763979244226452948404D6351655468576D5A7134743777217A25432A462D4A
+         validityInMs: 3600000   # an hour
+         refresh-token: 
+            validityInMs: 604800000   # 7 days
+         confirm-token: 
+            validityInMs: 900000   # 15 minutes
 server:
    port: 8080
 spring:
    config:
       activate:
          on-profile: default
+      import: env.properties
    data:
       mongodb:
          host: localhost
          port: 27017
          database: artconnect-db
          auto-index-creation: true
+   mail:
+      host: smtp.gmail.com
+      port: 587
+      username: artbymurz@gmail.com
+      password: ${GMAIL_PASSWORD}
+      properties.mail.smtp:
+         auth: true
+         starttls.enable: true
 ---
+application:
+   security: 
+      jwt:
+         secretKey: 763979244226452948404D6351655468576D5A7134743777217A25432A462D4A
+         validityInMs: 3600000   # an hour
+         refresh-token: 
+            validityInMs: 604800000   # 7 days
+         confirm-token: 
+            validityInMs: 900000   # 15 minutes
 spring:
    config:
       activate:
          on-profile: docker
+      import: env.properties
    data:
       mongodb:
          host: mongo
@@ -24,3 +52,11 @@ spring:
          password: password
          authentication-database: admin
          auto-index-creation: true
+   mail:
+      host: smtp.gmail.com
+      port: 587
+      username: artbymurz@gmail.com
+      password: ${GMAIL_PASSWORD}
+      properties.mail.smtp:
+         auth: true
+         starttls.enable: true
