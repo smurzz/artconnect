@@ -17,7 +17,7 @@ public class AcBackendApplication {
 	
 	@GetMapping("/")
     public Mono<String> getHelloWorld() {
-        return Mono.just("Hello World!");
+        return Mono.just("Hello from secured ArtConnect!");
     }
 
 }
