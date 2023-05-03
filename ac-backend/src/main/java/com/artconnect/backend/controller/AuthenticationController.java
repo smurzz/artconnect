@@ -26,8 +26,12 @@ import reactor.core.publisher.Mono;
 public class AuthenticationController {
 	
 	private final AuthenticationService service;
+	
+	@GetMapping("/")
+    public Mono<String> getHelloWorldFromAuth() {
+        return Mono.just("Hello from ArtConnect Security!");
+	}
 
-	@CrossOrigin(origins = "http://localhost:3001")
 	@PostMapping("/register")
 	public Mono<String> registerUser(@Valid @RequestBody RegisterRequest request){
 		return service.register(request);

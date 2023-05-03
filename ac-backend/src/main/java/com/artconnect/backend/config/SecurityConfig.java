@@ -38,6 +38,7 @@ public class SecurityConfig {
 				.authenticationManager(reactiveAuthenticationManager)
 				.authorizeExchange(it -> it
 						.pathMatchers(HttpMethod.POST, PATH_AUTH).permitAll()
+						.pathMatchers(HttpMethod.GET, PATH_AUTH).permitAll()
 						.pathMatchers(HttpMethod.GET, "/auth/confirm-account/**").permitAll()
 						.anyExchange().authenticated()
 						.and()
@@ -50,6 +51,7 @@ public class SecurityConfig {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
 		config.addAllowedOrigin("http://localhost:3000");
+		config.addAllowedOrigin("http://localhost:3001");
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 
