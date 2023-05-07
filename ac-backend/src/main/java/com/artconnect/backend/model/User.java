@@ -1,6 +1,7 @@
 package com.artconnect.backend.model;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -31,6 +32,8 @@ public class User implements UserDetails {
 	private String email;
 	
 	private String password;
+	
+	private Date createdAt;
 	
 	private boolean isEnabled;
 	

@@ -1,6 +1,7 @@
 package com.artconnect.backend.service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,7 @@ public class AuthenticationService {
 				.lastname(request.getLastname())
 				.email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword()))
+				.createdAt(new Date())
 				.isEnabled(false)
 				.role(Role.USER)
 				.build();
