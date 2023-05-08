@@ -56,7 +56,8 @@ public class AuthenticationService {
 					String confirmToken = jwtService.generateConfirmationToken(user);
 					String link = "http://localhost:8080/auth/confirm-account?token=" + confirmToken;
 					String messageBodyString = buildEmail(savedUser.getFirstname(), link);
-					emailService.sendEmail(user.getEmail(), messageBodyString);
+					String subject = "Complete Registration by ArtConnect!";
+					emailService.sendEmail(user.getEmail(), subject, messageBodyString);
 
 					return Mono.just("Verify email by the link sent on your email address");
 				})
@@ -77,7 +78,8 @@ public class AuthenticationService {
 								return userRepository.findByEmail(userEmail)
 				                        .flatMap(user -> {
 				                            user.setEnabled(true);
-				                            return userRepository.save(user).thenReturn(succeedConfirmEmail());
+				                            return userRepository.save(user)
+				                            		.thenReturn(succeedConfirmEmail());
 				                        });	
 							} else {
 								return Mono.just(failedConfirmEmail());

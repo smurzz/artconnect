@@ -7,6 +7,8 @@ application:
             validityInMs: 604800000   # 7 days
          confirm-token: 
             validityInMs: 900000   # 15 minutes
+frontend:
+  base-url: http://localhost:3000
 server:
    port: 8080
 spring:
@@ -38,6 +40,8 @@ application:
             validityInMs: 604800000   # 7 days
          confirm-token: 
             validityInMs: 900000   # 15 minutes
+frontend:
+  base-url: http://localhost:3000
 spring:
    config:
       activate:
