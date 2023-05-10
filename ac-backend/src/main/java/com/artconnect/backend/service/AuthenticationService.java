@@ -98,12 +98,16 @@ public class AuthenticationService {
 				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()))
 				.then(userRepository.findByEmail(request.getEmail()))
 				.flatMap(user -> {
-					String jwtToken = jwtService.generateToken(user);
-					String refreshToken = jwtService.generateRefreshToken(user);
-					return Mono.just(AuthenticationResponse.builder()
-							.accessToken(jwtToken)
-							.refreshToken(refreshToken)
-							.build());
+					if(user.isEnabled()) {
+						String jwtToken = jwtService.generateToken(user);
+						String refreshToken = jwtService.generateRefreshToken(user);
+						return Mono.just(AuthenticationResponse.builder()
+								.accessToken(jwtToken)
+								.refreshToken(refreshToken)
+								.build());
+					} else {
+						return Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account has not been confirmed. Please check your email to confirm your registration."));
+					}
 				})
 				.onErrorResume(BadCredentialsException.class,
 						err -> Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password")));
