@@ -5,9 +5,11 @@ import Registration from './Components/registration/registration';
 
 function App() {
   return (
-    <div>
-      <Login />
-    </div>
+    <Routes>
+    <Route path="/register" element={<Registration />}></Route>
+    <Route path="/login" element={<Login />} />
+    <Route path="/protected" element={<Protected/>}/>
+  </Routes>
   );
 }
 
