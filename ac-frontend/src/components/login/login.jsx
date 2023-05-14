@@ -4,13 +4,14 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import postData from "../../lib/util";
 import "./login.css";
 
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
+
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "../../api/axios";
 const LOGIN_URL = "/auth/login";
 
-const login = () => {
-  const [email, setEmail] = useState("");
+const Login = () => {
+  const [email, setEmail] = useState(" ");
   const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
 
@@ -93,4 +94,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;
