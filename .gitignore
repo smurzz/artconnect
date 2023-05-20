@@ -1,1 +1,10 @@
 /.metadata/
+
+# Ignore IDE-specific files and directories
+/.vscode/
+/.idea/
+**/*.iml
+.idea/
+
+# Ignore .DS_Store files anywhere in the project
+**/.DS_Store

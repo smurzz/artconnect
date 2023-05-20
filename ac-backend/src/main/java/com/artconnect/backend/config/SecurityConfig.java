@@ -39,7 +39,8 @@ public class SecurityConfig {
 				.authorizeExchange(it -> it
 						.pathMatchers(HttpMethod.POST, PATH_AUTH).permitAll()
 						.pathMatchers(HttpMethod.GET, PATH_AUTH).permitAll()
-						.pathMatchers(HttpMethod.GET, "/auth/confirm-account/**").permitAll()
+						.pathMatchers(HttpMethod.GET, "/forgot-password/**").permitAll()
+						.pathMatchers(HttpMethod.POST, "/reset-password/**").permitAll()
 						.anyExchange().authenticated()
 						.and()
 				)
