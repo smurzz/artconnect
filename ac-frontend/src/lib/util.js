@@ -11,5 +11,34 @@ async function postData(url, payload) {
     return result;
   }
 }
+async function saveToken(response) {
+  console.log("saveToken: " + response.data.access_token);
+  if (response.data.access_token) {
+    localStorage.setItem(
+      "accessToken",
+      JSON.stringify(response.data.access_token)
+    );
+    localStorage.setItem(
+      "refreshToken",
+      JSON.stringify(response.data.refresh_token)
+    );
+  }
 
-export default postData;
+  return response.data;
+}
+
+async function getCurrentToken() {
+  return JSON.parse(localStorage.getItem("accessToken"));
+}
+
+async function logout() {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+}
+
+export const AuthService = {
+  logout,
+  postData,
+  saveToken,
+  getCurrentToken,
+};

@@ -5,9 +5,9 @@ import { BsPerson } from "react-icons/bs";
 import "./registration.css";
 import { useState, useEffect } from "react";
 import "../../App.css";
-import postData from "../../lib/util";
-import { Link, Route, Routes } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import "./registration.css";
+import { AuthService } from "../../lib/util";
 
 const REGISTER_URL = "/auth/register";
 const Registration = () => {
@@ -30,6 +30,7 @@ const Registration = () => {
   const [matchFocus, setMatchFocus] = useState(false);
 
   const [errMsg, setErrMsg] = useState("");
+  const navigate = useNavigate();
 
   //Hook that makes sure both passwords are the same
   useEffect(() => {
@@ -45,20 +46,21 @@ const Registration = () => {
     e.preventDefault();
     try {
       console.log(firstname, lastname, email);
-      const response = await postData(REGISTER_URL, {
+      const response = await AuthService.postData(REGISTER_URL, {
         firstname: firstname,
         lastname: lastname,
         email: email,
         password: pwd,
       });
-      console.log(response.data);
-      console.log(JSON.stringify(response));
       setSuccess(true);
       setPwd("");
       setMatchPwd("");
       setEmail("");
       setFirstname("");
       setLastname("");
+      console.log("before reponseData:");
+      console.log("isnide reponseData:");
+      navigate("/protected", { state: { message: response.data } });
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
@@ -75,6 +77,9 @@ const Registration = () => {
     <div className="container">
       <div className="forms">
         <div className="form login">
+          <p className={errMsg ? "errMsg" : "offScreen"} aria-live="assertive">
+            {errMsg}
+          </p>
           <span className="title">Registration</span>
           <form onSubmit={handleSumbit}>
             <div className="input-field">

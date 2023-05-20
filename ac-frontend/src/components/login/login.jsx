@@ -1,17 +1,18 @@
 import React from "react";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
-import postData from "../../lib/util";
+import { AuthService } from "../../lib/util";
 import "./login.css";
-
 import { useRef, useState, useEffect } from "react";
+import jwt_decode from "jwt-decode";
 
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "../../api/axios";
 const LOGIN_URL = "/auth/login";
 
 const Login = () => {
-  const [email, setEmail] = useState(" ");
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
 
@@ -22,21 +23,24 @@ const Login = () => {
   const handleSumbit = async (e) => {
     try {
       e.preventDefault();
-
-      const response = await postData(LOGIN_URL, {
+      console.log("inside handle submit");
+      const response = await AuthService.postData(LOGIN_URL, {
         email: email,
         password: pwd,
       });
-      console.log(JSON.stringify(response));
-      const accessToken = response?.data.access_token;
-      const refreshToken = response?.data.refresh_token;
-      console.log("accessToken: " + accessToken);
-      console.log("refreshToken: " + refreshToken);
+      const saveToken = await AuthService.saveToken(response);
+      const savedTokenFromStorage = await AuthService.getCurrentToken();
+      console.log("see tag inside data: " + JSON.stringify(response.body));
+      const decodedToken = jwt_decode(savedTokenFromStorage);
+      console.log("decoded jwttoken: " + JSON.stringify(decodedToken));
+      navigate("/protected", { state: { message: "login message" } });
+      // navigate('/protected', { message: response.data., prop2: 'value2' });
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");
-      } else if (err.response?.status === 400) {
-        setErrMsg("Username Taken");
+      } else if (err.response?.status !== 200) {
+        setErrMsg("Login Failed");
+        console.log("Error");
       } else {
         setErrMsg("Login Failed");
       }
@@ -45,10 +49,10 @@ const Login = () => {
 
   return (
     <div className="container">
-      <p className={errMsg ? "errMsg" : "offScreen"} aria-live="assertive">
-        {errMsg}
-      </p>
       <div className="forms">
+        <p className={errMsg ? "errMsg" : "offScreen"} aria-live="assertive">
+          {errMsg}
+        </p>
         <div className="form login">
           <span className="title">Login</span>
 
