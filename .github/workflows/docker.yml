@@ -3,9 +3,8 @@ name: Build and push Docker image
 on:
    push:
       branches:
-      - '**'
-      tags:
-      - '*'
+      - 'main'
+      - 'dev'
 
 jobs:
    build-and-push:
