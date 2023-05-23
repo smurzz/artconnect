@@ -30,7 +30,7 @@ class UserRepositoryTests {
     }
 
     @Test
-    public void testFindByEmailSuccess() {
+    void testFindByEmailSuccess() {
         // Given
         String email = "test@example.com";
         User user = User.builder().email(email).build();
@@ -47,7 +47,7 @@ class UserRepositoryTests {
     }
 
     @Test
-    public void testFindByEmailError() {
+    void testFindByEmailError() {
         // Given
         String email = "nouser@example.com";
         when(userRepository.findByEmail(email)).thenReturn(Mono.empty());
@@ -62,7 +62,7 @@ class UserRepositoryTests {
                 .verify();
     }
     @Test
-    public void testFindByIsEnabled_Success() {
+    void testFindByIsEnabled_Success() {
         // Given
         boolean isEnabled = true;
         User user1 = User.builder().isEnabled(isEnabled).email("user1@example.com").build();
@@ -82,7 +82,7 @@ class UserRepositoryTests {
     }
 
     @Test
-    public void testFindByIsEnabled_NoUsersFound() {
+    void testFindByIsEnabled_NoUsersFound() {
         // Given
         boolean isEnabled = true;
 
@@ -99,7 +99,7 @@ class UserRepositoryTests {
     }
 
     @Test
-    public void testFindByIsEnabled_EmptyResult() {
+    void testFindByIsEnabled_EmptyResult() {
         // Given
         boolean isEnabled = false;
 
