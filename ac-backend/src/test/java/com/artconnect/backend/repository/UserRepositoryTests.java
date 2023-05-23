@@ -15,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
 public class UserRepositoryTests {
-
     @Autowired
     private UserRepository userRepository;
 
@@ -67,7 +66,7 @@ public class UserRepositoryTests {
 
         // Then
         StepVerifier.create(foundUsersFlux)
-                .assertNext(foundUser -> assertThat(foundUser.isEnabled()).isEqualTo(true))
+                .expectNextMatches(foundUser -> foundUser.isEnabled())
                 .expectComplete()
                 .verify();
     }
