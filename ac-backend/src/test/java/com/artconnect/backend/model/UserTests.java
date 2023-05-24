@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -74,6 +74,7 @@ class UserTests {
     @Nested
     @DisplayName("Getter methods")
     class GetterMethods {
+
         @Test
         @DisplayName("getId should return the correct ID")
         void testGetId() {
@@ -145,6 +146,27 @@ class UserTests {
             user.setRole(expectedRole);
             assertEquals(expectedRole, user.getRole());
         }
+
+        @Test
+        @DisplayName("isAccountNonExpired should always return true")
+        void testIsAccountNonExpired() {
+            User user = new User();
+            assertTrue(user.isAccountNonExpired());
+        }
+
+        @Test
+        @DisplayName("isAccountNonLocked should always return true")
+        void testIsAccountNonLocked() {
+            User user = new User();
+            assertTrue(user.isAccountNonLocked());
+        }
+
+        @Test
+        @DisplayName("isCredentialsNonExpired should always return true")
+        void testIsCredentialsNonExpired() {
+            User user = new User();
+            assertTrue(user.isCredentialsNonExpired());
+        }
     }
 
     @Nested
@@ -156,9 +178,7 @@ class UserTests {
         void testSetId() {
             User user = new User();
             String expectedId = "123";
-
             user.setId(expectedId);
-
             assertEquals(expectedId, user.getId());
         }
 
@@ -167,9 +187,7 @@ class UserTests {
         void testSetFirstname() {
             User user = new User();
             String expectedFirstname = "John";
-
             user.setFirstname(expectedFirstname);
-
             assertEquals(expectedFirstname, user.getFirstname());
         }
 
@@ -178,9 +196,7 @@ class UserTests {
         void testSetLastname() {
             User user = new User();
             String expectedLastname = "Doe";
-
             user.setLastname(expectedLastname);
-
             assertEquals(expectedLastname, user.getLastname());
         }
 
@@ -189,9 +205,7 @@ class UserTests {
         void testSetEmail() {
             User user = new User();
             String expectedEmail = "john.doe@example.com";
-
             user.setEmail(expectedEmail);
-
             assertEquals(expectedEmail, user.getEmail());
         }
 
@@ -200,9 +214,7 @@ class UserTests {
         void testSetPassword() {
             User user = new User();
             String expectedPassword = "password123";
-
             user.setPassword(expectedPassword);
-
             assertEquals(expectedPassword, user.getPassword());
         }
 
@@ -211,9 +223,7 @@ class UserTests {
         void testSetCreatedAt() {
             User user = new User();
             Date expectedCreatedAt = new Date();
-
             user.setCreatedAt(expectedCreatedAt);
-
             assertEquals(expectedCreatedAt, user.getCreatedAt());
         }
 
@@ -222,9 +232,7 @@ class UserTests {
         void testSetEnabled() {
             User user = new User();
             boolean expectedEnabled = true;
-
             user.setEnabled(expectedEnabled);
-
             assertEquals(expectedEnabled, user.isEnabled());
         }
 
@@ -233,12 +241,12 @@ class UserTests {
         void testSetRole() {
             User user = new User();
             Role expectedRole = Role.ADMIN;
-
             user.setRole(expectedRole);
-
             assertEquals(expectedRole, user.getRole());
         }
     }
+
+
 
     @Test
     void testGetPassword() {
@@ -266,22 +274,60 @@ class UserTests {
         assertEquals(expectedEmail, actualEmail);
     }
 
-    @Test
-    @DisplayName("toString should return a non-null string representation of the User object")
-    void testToString() {
-        User user = User.builder()
-                .id("123")
-                .firstname("John")
-                .lastname("Doe")
-                .email("john.doe@example.com")
-                .password("password123")
-                .createdAt(new Date())
-                .isEnabled(true)
-                .role(Role.ADMIN)
-                .build();
+    @Nested
+    @DisplayName("toString method")
+    class ToStringMethod {
 
-        String toString = user.toString();
-        assertNotNull(toString);
+        @Test
+        @DisplayName("toString should return a non-null string representation of the User object")
+        void testToStringNotNull() {
+            User user = User.builder()
+                    .id("123")
+                    .firstname("John")
+                    .lastname("Doe")
+                    .email("john.doe@example.com")
+                    .password("password123")
+                    .createdAt(new Date())
+                    .isEnabled(true)
+                    .role(Role.ADMIN)
+                    .build();
+
+            String toString = user.toString();
+            assertNotNull(toString);
+        }
+
+        @Test
+        @DisplayName("toString should include all field values")
+        void testToStringFieldValues() {
+            String id = "123";
+            String firstname = "John";
+            String lastname = "Doe";
+            String email = "john.doe@example.com";
+            String password = "password123";
+            Date createdAt = new Date();
+            boolean isEnabled = true;
+            Role role = Role.ADMIN;
+
+            User user = new User();
+            user.setId(id);
+            user.setFirstname(firstname);
+            user.setLastname(lastname);
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setCreatedAt(createdAt);
+            user.setEnabled(isEnabled);
+            user.setRole(role);
+
+            String toString = user.toString();
+            assertTrue(toString.contains(id));
+            assertTrue(toString.contains(firstname));
+            assertTrue(toString.contains(lastname));
+            assertTrue(toString.contains(email));
+            assertTrue(toString.contains(password));
+            assertTrue(toString.contains(createdAt.toString()));
+            assertTrue(toString.contains(String.valueOf(isEnabled)));
+            assertTrue(toString.contains(role.toString()));
+        }
     }
 
 
@@ -322,6 +368,15 @@ class UserTests {
         }
 
         @Test
+        @DisplayName("equals should return false for different class")
+        void testEqualsDifferentClass() {
+            User user = new User();
+            Object otherObject = new Object();
+            assertFalse(user.equals(otherObject));
+        }
+
+
+        @Test
         @DisplayName("hashCode should return the same value for equal User instances")
         void testHashCodeEqualInstances() {
             User user1 = User.builder().id("123").build();
@@ -335,6 +390,32 @@ class UserTests {
             User user1 = User.builder().id("123").build();
             User user2 = User.builder().id("456").build();
             assertNotEquals(user1.hashCode(), user2.hashCode());
+        }
+
+        @Test
+        @DisplayName("equals should return false when comparing with User instance with null ID")
+        void testEqualsWithNullId() {
+            User user1 = User.builder().id(null).build();
+            User user2 = User.builder().id("123").build();
+            assertFalse(user1.equals(user2));
+            assertFalse(user2.equals(user1));
+        }
+
+        @Test
+        @DisplayName("equals should return false when comparing with User instance with null properties")
+        void testEqualsWithNullProperties() {
+            User user1 = User.builder().id("123").build();
+            User user2 = User.builder().build();
+            assertFalse(user1.equals(user2));
+            assertFalse(user2.equals(user1));
+        }
+
+        @Test
+        @DisplayName("hashCode should return the same value for User instances with null ID")
+        void testHashCodeWithNullId() {
+            User user1 = User.builder().id(null).build();
+            User user2 = User.builder().id(null).build();
+            assertEquals(user1.hashCode(), user2.hashCode());
         }
     }
 
@@ -364,6 +445,50 @@ class UserTests {
             assertEquals(createdAt, user.getCreatedAt());
             assertEquals(isEnabled, user.isEnabled());
             assertEquals(role, user.getRole());
+        }
+
+        @Test
+        @DisplayName("Constructor should assign default values correctly")
+        void testConstructorWithDefaultValues() {
+            User user = new User();
+
+            // Verify that default values are assigned correctly
+            assertEquals(null, user.getId());
+            assertEquals(null, user.getFirstname());
+            assertEquals(null, user.getLastname());
+            assertEquals(null, user.getEmail());
+            assertEquals(null, user.getPassword());
+            assertEquals(null, user.getCreatedAt());
+            assertEquals(false, user.isEnabled());
+            assertEquals(null, user.getRole());
+        }
+
+        @Test
+        @DisplayName("Constructor should assign null values correctly")
+        void testConstructorWithNullValues() {
+            String expectedId = null;
+            String expectedFirstname = null;
+            String expectedLastname = null;
+            String expectedEmail = null;
+            String expectedPassword = null;
+            Date expectedCreatedAt = null;
+            boolean expectedIsEnabled = false;
+            Role expectedRole = null;
+
+            User user = new User(
+                    expectedId, expectedFirstname, expectedLastname, expectedEmail,
+                    expectedPassword, expectedCreatedAt, expectedIsEnabled, expectedRole
+            );
+
+            // Verify that null values are assigned correctly
+            assertEquals(expectedId, user.getId());
+            assertEquals(expectedFirstname, user.getFirstname());
+            assertEquals(expectedLastname, user.getLastname());
+            assertEquals(expectedEmail, user.getEmail());
+            assertEquals(expectedPassword, user.getPassword());
+            assertEquals(expectedCreatedAt, user.getCreatedAt());
+            assertEquals(expectedIsEnabled, user.isEnabled());
+            assertEquals(expectedRole, user.getRole());
         }
     }
 }
