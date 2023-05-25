@@ -11,6 +11,19 @@ async function postData(url, payload) {
     return result;
   }
 }
+
+async function postDataSecured(url, header) {
+  var _headers = {
+    headers: {
+      header
+    },
+  };
+  let result = await axios.get(url, _headers);
+  if (result.status === 200) {
+    return result;
+  }
+}
+
 async function saveToken(response) {
   console.log("saveToken: " + response.data.access_token);
   if (response.data.access_token) {
@@ -41,4 +54,5 @@ export const AuthService = {
   postData,
   saveToken,
   getCurrentToken,
+  postDataSecured,
 };
