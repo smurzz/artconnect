@@ -4,7 +4,6 @@ import { RiLockPasswordLine } from "react-icons/ri";
 import { BsPerson } from "react-icons/bs";
 import "./registration.css";
 import { useState, useEffect } from "react";
-import "../../App.css";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import "./registration.css";
 import { AuthService } from "../../lib/util";

@@ -2,7 +2,7 @@ import React from "react";
 import { HiOutlineMail } from "react-icons/hi";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { AuthService } from "../../lib/util";
-import "./login.css";
+import "./login.scss";
 import { useRef, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
 
@@ -28,6 +28,7 @@ const Login = () => {
         email: email,
         password: pwd,
       });
+      console.log("Stringify response: ", JSON.stringify(response));
       const saveToken = await AuthService.saveToken(response);
       const savedTokenFromStorage = await AuthService.getCurrentToken();
       console.log("see tag inside data: " + JSON.stringify(response.body));
@@ -37,11 +38,14 @@ const Login = () => {
       // navigate('/protected', { message: response.data., prop2: 'value2' });
     } catch (err) {
       if (!err?.response) {
+        console.log("Stringify response: ", JSON.stringify(err.response));
         setErrMsg("No Server Response");
       } else if (err.response?.status !== 200) {
         setErrMsg("Login Failed");
+        console.log("Stringify response: ", JSON.stringify(err.response));
         console.log("Error");
       } else {
+        console.log("Stringify response: ", JSON.stringify(err.response));
         setErrMsg("Login Failed");
       }
     }
@@ -83,7 +87,7 @@ const Login = () => {
             </div>
 
             <div className="padding-t">
-              <button className="input-field button">Sign In</button>
+              <button className="button__secondary">Sign In</button>
             </div>
           </form>
           <div className="checkbox-text">
