@@ -7,7 +7,7 @@
 }
 
 .h2_thin {
-  @include fonts($h2__font, $text__serif, 400);
+  @include fonts($h2__font, 400);
 }
 
 .h3__thin {
