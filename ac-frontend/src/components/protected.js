@@ -1,37 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { AuthService } from "../lib/util";
 import axios from "axios";
 
 function Protected() {
   const location = useLocation();
-  const saveToken = async (e) => {
+  const [securedData, setSecuredData] = useState(null);
+
+  useEffect(() => {
     console.log("inside Protected: ", AuthService.getCurrentToken());
     const token = AuthService.getCurrentToken();
-    const requestOptions = {
-      headers: {
-        Authorization:
-          "Bearer " + JSON.parse(localStorage.getItem("accessToken")),
-      },
-    };
-
-    axios
-      .get("http/localhost:8080/", requestOptions)
+    console.log(token);
+    AuthService.getDataSecured("/")
       .then((response) => {
-        console.log(
-          JSON.stringify(response),
-          "local: " + localStorage.getItem("accessToken")
-        );
+        console.log(response);
+        setSecuredData(response.data);
       })
       .catch((error) => {
-        console.log(error, "local: " + localStorage.getItem("accessToken"));
+        console.log(error);
+        setSecuredData(error.message);
       });
-  };
+  }, []);
 
   return (
     <div>
       <h1>{location.state.message}</h1>
-      <button onClick={saveToken}></button>
+      <h2>{securedData}</h2>
+      {/* <button onClick={saveToken}></button> */}
     </div>
   );
 }

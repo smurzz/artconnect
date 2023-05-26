@@ -44,21 +44,19 @@ const Registration = () => {
   const handleSumbit = async (e) => {
     e.preventDefault();
     try {
-      console.log(firstname, lastname, email);
       const response = await AuthService.postData(REGISTER_URL, {
         firstname: firstname,
         lastname: lastname,
         email: email,
         password: pwd,
       });
+
       setSuccess(true);
       setPwd("");
       setMatchPwd("");
       setEmail("");
       setFirstname("");
       setLastname("");
-      console.log("before reponseData:");
-      console.log("isnide reponseData:");
       navigate("/protected", { state: { message: response.data } });
     } catch (err) {
       if (!err?.response) {

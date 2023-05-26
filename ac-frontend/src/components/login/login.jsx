@@ -5,7 +5,6 @@ import { AuthService } from "../../lib/util";
 import "./login.scss";
 import { useRef, useState, useEffect } from "react";
 import jwt_decode from "jwt-decode";
-
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "../../api/axios";
 const LOGIN_URL = "/auth/login";
@@ -23,29 +22,21 @@ const Login = () => {
   const handleSumbit = async (e) => {
     try {
       e.preventDefault();
+
       console.log("inside handle submit");
       const response = await AuthService.postData(LOGIN_URL, {
         email: email,
         password: pwd,
       });
-      console.log("Stringify response: ", JSON.stringify(response));
       const saveToken = await AuthService.saveToken(response);
       const savedTokenFromStorage = await AuthService.getCurrentToken();
-      console.log("see tag inside data: " + JSON.stringify(response.body));
-      const decodedToken = jwt_decode(savedTokenFromStorage);
-      console.log("decoded jwttoken: " + JSON.stringify(decodedToken));
       navigate("/protected", { state: { message: "login message" } });
-      // navigate('/protected', { message: response.data., prop2: 'value2' });
     } catch (err) {
       if (!err?.response) {
-        console.log("Stringify response: ", JSON.stringify(err.response));
         setErrMsg("No Server Response");
       } else if (err.response?.status !== 200) {
         setErrMsg("Login Failed");
-        console.log("Stringify response: ", JSON.stringify(err.response));
-        console.log("Error");
       } else {
-        console.log("Stringify response: ", JSON.stringify(err.response));
         setErrMsg("Login Failed");
       }
     }
