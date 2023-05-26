@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AuthService } from "../lib/util";
 import axios from "axios";
 
 function Protected() {
+    const navigate = useNavigate();
   const location = useLocation();
   const [securedData, setSecuredData] = useState(null);
 
   useEffect(() => {
-    console.log("inside Protected: ", AuthService.getCurrentToken());
-    const token = AuthService.getCurrentToken();
-    console.log(token);
+    console.log("inside Protected: ");
     AuthService.getDataSecured("/")
       .then((response) => {
-        console.log(response);
+        console.log("response");
         setSecuredData(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        console.log("error");
         setSecuredData(error.message);
+          navigate("/login");
       });
   }, []);
 

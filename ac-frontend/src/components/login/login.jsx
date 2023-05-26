@@ -1,12 +1,10 @@
-import React from "react";
-import { HiOutlineMail } from "react-icons/hi";
-import { RiLockPasswordLine } from "react-icons/ri";
-import { AuthService } from "../../lib/util";
+import React, {useEffect, useState} from "react";
+import {HiOutlineMail} from "react-icons/hi";
+import {RiLockPasswordLine} from "react-icons/ri";
+import {AuthService} from "../../lib/util";
 import "./login.scss";
-import { useRef, useState, useEffect } from "react";
-import jwt_decode from "jwt-decode";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "../../api/axios";
+import {Link, useNavigate} from "react-router-dom";
+
 const LOGIN_URL = "/auth/login";
 
 const Login = () => {
@@ -29,7 +27,7 @@ const Login = () => {
         password: pwd,
       });
       const saveToken = await AuthService.saveToken(response);
-      const savedTokenFromStorage = await AuthService.getCurrentToken();
+      const saveEmail = await AuthService.saveUserInfo(email);
       navigate("/protected", { state: { message: "login message" } });
     } catch (err) {
       if (!err?.response) {
