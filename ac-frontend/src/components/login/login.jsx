@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {HiOutlineMail} from "react-icons/hi";
 import {RiLockPasswordLine} from "react-icons/ri";
-import {AuthService} from "../../lib/util";
+import { ApiService } from "../../lib/api";
+import { AuthService } from "../../lib/util"
 import "./login.scss";
 import {Link, useNavigate} from "react-router-dom";
 
@@ -18,25 +19,15 @@ const Login = () => {
   }, [email, pwd]);
 
   const handleSumbit = async (e) => {
-    try {
       e.preventDefault();
-
-      console.log("inside handle submit");
-      const response = await AuthService.postData(LOGIN_URL, {
+      const response = await ApiService.postLogin({
         email: email,
         password: pwd,
       });
-      const saveToken = await AuthService.saveToken(response);
-      const saveEmail = await AuthService.saveUserInfo(email);
-      navigate("/protected", { state: { message: "login message" } });
-    } catch (err) {
-      if (!err?.response) {
-        setErrMsg("No Server Response");
-      } else if (err.response?.status !== 200) {
-        setErrMsg("Login Failed");
-      } else {
-        setErrMsg("Login Failed");
-      }
+      if(response === "success"){
+        navigate("/protected", { state: { message: "login message" } });
+      }else{
+      setErrMsg(response);
     }
   };
 

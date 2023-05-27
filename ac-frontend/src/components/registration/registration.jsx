@@ -6,7 +6,7 @@ import "./registration.css";
 import { useState, useEffect } from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import "./registration.css";
-import { AuthService } from "../../lib/util";
+import { ApiService } from "../../lib/api";
 
 const REGISTER_URL = "/auth/register";
 const Registration = () => {
@@ -43,31 +43,23 @@ const Registration = () => {
 
   const handleSumbit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await AuthService.postData(REGISTER_URL, {
+      const response = await ApiService.postRegister({
         firstname: firstname,
         lastname: lastname,
         email: email,
         password: pwd,
       });
 
-      setSuccess(true);
-      setPwd("");
-      setMatchPwd("");
-      setEmail("");
-      setFirstname("");
-      setLastname("");
-      navigate("/protected", { state: { message: response.data } });
-    } catch (err) {
-      if (!err?.response) {
-        setErrMsg("No Server Response");
-      } else if (err.response?.status === 400) {
-        console.log("in errHeader");
-        setErrMsg("Email Taken");
-      } else {
-        setErrMsg("Registration Failed");
+      if(response === "success"){
+        setPwd("");
+        setMatchPwd("");
+        setEmail("");
+        setFirstname("");
+        setLastname("");
+        navigate("/login", { state: { message: response.data} });
+      }else{
+        setErrMsg(response);
       }
-    }
   };
 
   return (
