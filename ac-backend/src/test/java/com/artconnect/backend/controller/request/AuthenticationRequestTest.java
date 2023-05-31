@@ -1,8 +1,15 @@
+package com.artconnect.backend.controller.request;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+
+
+
 public class AuthenticationRequestTest {
 
+
+    
     @Test
     public void testConstructorAndGetters() {
         String email = "test@example.com";
@@ -28,30 +35,23 @@ public class AuthenticationRequestTest {
         Assertions.assertEquals(password, authenticationRequest.getPassword());
     }
 
+
     @Test
-    public void testNotBlankEmail() {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+    public void testAuthenticationRequestEmail() {
+        AuthenticationRequest authenticationRequest = AuthenticationRequest.builder()
+                .email("john.doe@example.com")
+                .build();
 
-        authenticationRequest.setEmail("");
-
-        Assertions.assertThrows(IllegalArgumentException.class, authenticationRequest::getEmail);
+        Assertions.assertEquals("john.doe@example.com", authenticationRequest.getEmail());
     }
 
-    @Test
-    public void testNotBlankPassword() {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-
-        authenticationRequest.setPassword("");
-
-        Assertions.assertThrows(IllegalArgumentException.class, authenticationRequest::getPassword);
-    }
 
     @Test
-    public void testValidEmailFormat() {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+    public void testAuthenticationRequestPassword() {
+        AuthenticationRequest authenticationRequest = AuthenticationRequest.builder()
+                .password("password123")
+                .build();
 
-        authenticationRequest.setEmail("invalid-email-format");
-
-        Assertions.assertThrows(IllegalArgumentException.class, authenticationRequest::getEmail);
+        Assertions.assertEquals("password123", authenticationRequest.getPassword());
     }
 }

@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @Validated
 public class ForgotPasswordController {
 	
-	private final ForgotPasswordService forgotPasswordService;;
+	private final ForgotPasswordService forgotPasswordService;
 	
 	@GetMapping("/forgot-password")
     public Mono<String> forgotPassword(@RequestParam("email") String email) {
