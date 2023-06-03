@@ -1,16 +1,20 @@
-import Login from "./components/login/login";
-import Registration from "./components/registration/registration";
+import Registration from "./container/Registration/Registration";
 import Protected from "./components/protected";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import ProtectedRoutes from "./components/protectedRoutes";
-import ForgotPassword from "./components/forgotPassword";
-import ResetPassword from "./components/resetPassword";
+import ForgotPassword from "./container/ForgotPassword/ForgotPassword";
+import ResetPassword from "./container/resetPassword/ResetPassword";
+import Home from "./container/Home/home";
+import Galerie from "./container/Galerie/Galerie";
+import Login from "./container/Login/Login";
 
 function App() {
   return (
     <Layout>
       <Routes>
+        <Route path="/" element={<Home />}></Route>
+        <Route path="/galerie" element={<Galerie />}></Route>
         <Route path="/register" element={<Registration />}></Route>
         <Route path="/login" element={<Login />} />
           <Route path ="/forgot" element ={<ForgotPassword/>}/>

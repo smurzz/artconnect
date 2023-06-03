@@ -54,10 +54,26 @@ async function getLocalStorage() {
     return tokens;
 }
 
+async function logout() {
+    await localStorage.removeItem("tokens");
+    console.log("logout localStorage");
+    return "success";
+}
+
+async function getRemeberMe(){
+localStorage.getItem("rememberMe")
+}
+async function setRemeberMe(rememberMe){
+    return await localStorage.setItem("rememberMe", rememberMe);
+}
+
 export const storageService = {
+    setRemeberMe,
+    getRemeberMe,
     saveToken,
     getTokenInformation,
     getRefreshToken,
     resetAccessToken,
-    resetRefreshToken
+    resetRefreshToken,
+    logout
 };

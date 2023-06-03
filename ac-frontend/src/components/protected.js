@@ -6,8 +6,7 @@ import axios from "axios";
 function Protected() {
     const navigate = useNavigate();
   const [securedData, setSecuredData] = useState(null);
-
-  useEffect(() => {
+  useEffect( () => {
     ApiService.getDataSecured("/")
       .then((response) => {
           if(response !== null){

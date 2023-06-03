@@ -5,39 +5,84 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
+import LinkMa from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { useState, useEffect } from "react";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { ApiService } from "../../lib/api";
+import Login from "../Login/Login"
 
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
+      <LinkMa color="inherit" href="https://mui.com/">
         Your Website
-      </Link>{' '}
+      </LinkMa>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
   );
 }
-
-// TODO remove, this demo shouldn't need to reset the theme.
-
 const defaultTheme = createTheme();
-
 export default function SignUp() {
-  const handleSubmit = (event) => {
+
+  const [firstname, setFirstname] = useState("");
+  const [firstnameFocus, setFirstnameFocus] = useState(false);
+
+  const [success, setSuccess] = useState(false);
+
+  const [lastname, setLastname] = useState("");
+  const [lastnameFocus, setLastnameFocus] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [emailFocus, setEmailFocus] = useState(false);
+
+  const [pwd, setPwd] = useState("");
+  const [pwdFocus, setPwdFocus] = useState(false);
+
+  const [matchPwd, setMatchPwd] = useState("");
+  const [validMatch, setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
+
+  const [errMsg, setErrMsg] = useState("");
+  const navigate = useNavigate();
+
+  //Hook that makes sure both passwords are the same
+  useEffect(() => {
+    setValidMatch(pwd === matchPwd);
+  }, [pwd, matchPwd]);
+
+  //Hook that clears Errormessages an soon as a User changes the Input inside the Formfield
+  useEffect(() => {
+    setErrMsg("");
+  }, [email, firstname, lastname, pwd, matchPwd]);
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+    console.log("first Name: "+ firstname);
+   const response = await ApiService.postRegister({
+      firstname: firstname,
+      lastname: lastname,
+      email: email,
+      password: pwd,
     });
+
+    if(response === "success"){
+      setPwd("");
+      setMatchPwd("");
+      setEmail("");
+      setFirstname("");
+      setLastname("");
+      navigate("/login", { state: { message: response.data} });
+    }else{
+      setErrMsg(response);
+    }
   };
 
   return (
@@ -68,13 +113,17 @@ export default function SignUp() {
                   fullWidth
                   id="firstName"
                   label="First Name"
+                  onChange={(e) => setFirstname(e.target.value)}
+                  placeholder="Enter your First Name"
                   autoFocus
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  required
                   fullWidth
+                  onChange={(e) => setLastname(e.target.value)}
+                  required
+                  placeholder="Enter your Last Name"
                   id="lastName"
                   label="Last Name"
                   name="lastName"
@@ -85,6 +134,8 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
                   id="email"
                   label="Email Address"
                   name="email"
@@ -95,6 +146,9 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  onChange={(e) => setPwd(e.target.value)}
+                  value={pwd}
+                  placeholder="Enter your password"
                   name="password"
                   label="Password"
                   type="password"
@@ -119,7 +173,7 @@ export default function SignUp() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link to="/Login" className="text">
                   Already have an account? Sign in
                 </Link>
               </Grid>

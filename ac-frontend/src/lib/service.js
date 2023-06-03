@@ -41,8 +41,26 @@ async function isLoggedIn(){
         return false;
     }
 }
+
+async function logout(){
+  const logout= await storageService.logout();
+    console.log("logoutfuncition: "+ logout);
+  return logout;
+}
+
+async function setRememberMe(remeberMe){
+    await storageService.setRemeberMe(remeberMe);
+}
+
+async function getRemeberMe(){
+
+    return await storageService.getRemeberMe();
+}
 export const logikService = {
     checkTokens,
-    isLoggedIn
+    isLoggedIn,
+    setRememberMe,
+    getRemeberMe,
+    logout
 }
 

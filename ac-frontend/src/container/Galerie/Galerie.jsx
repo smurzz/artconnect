@@ -4,11 +4,7 @@ import {AiOutlineArrowLeft} from 'react-icons/ai';
 import {AiOutlineArrowRight} from 'react-icons/ai';
 import {GrClose} from 'react-icons/gr';
 import { useState } from 'react';
-import './galerie.css';
-
-import { Card } from '../../Components/Card/Card';
-import { Footer } from '../../Components';
-import { Header } from '../../Components';
+import './Galerie.css';
 
 const Galerie = () => {
 
@@ -72,10 +68,6 @@ const Galerie = () => {
 
   return (
     <>
-        <header className='margin-bottom-md'>
-            <Header />
-        </header>
-
         <div className='container center-text margin-bottom-md'>
             <h1 className='heading_primary'>Galerie</h1>
             {openModal && 
@@ -101,9 +93,7 @@ const Galerie = () => {
                     })}
                 </div>
         </div>
-        <footer>
-            <Footer />
-        </footer>
     </>
   )
 }
+export default Galerie;

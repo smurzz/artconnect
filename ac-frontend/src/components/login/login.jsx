@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {HiOutlineMail} from "react-icons/hi";
 import {RiLockPasswordLine} from "react-icons/ri";
 import { ApiService } from "../../lib/api";
-import { AuthService } from "../../lib/util"
 import "./login.scss";
 import {Link, useNavigate} from "react-router-dom";
 
@@ -25,6 +24,9 @@ const Login = () => {
         password: pwd,
       });
       if(response === "success"){
+        console.log("response:"+response)
+        await window.location.reload();
+
         navigate("/protected", { state: { message: "login message" } });
       }else{
       setErrMsg(response);

@@ -15,9 +15,9 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import { ApiService } from "../../lib/api";
-import AlertDialog from "../../components/Modul/Modul"
+import axios from "../../api/axios";
 
-
+const FORGET_URL = "/forgot-password"
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -36,28 +36,23 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-export default function SignInSide() {
+export default function ForgotPassword() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
-    const [pwd, setPwd] = useState("");
-    const [errMsg, setErrMsg] = useState("");
-    useEffect(() => {
-        console.log(errMsg + "hook");
-    }, [errMsg]);
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        await ApiService.postLogin({
-            email: email,
-            password: pwd,
-        }).then((res)=>{
-            if(res === "success"){
-                navigate("/protected", { state: { message: "login message" } });
-            }else{
-                setErrMsg(res);
-                console.log(res);
-            }
-        });
+        var _headers = {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        };
+        let result = await axios.get(FORGET_URL,  {
+            params: {
+                email: email,
+            },
+        }, _headers);
     };
 
   return (
@@ -92,7 +87,7 @@ export default function SignInSide() {
               <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign in
+              Forgot Password
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
@@ -107,37 +102,21 @@ export default function SignInSide() {
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
               />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                onChange={(e) => setPwd(e.target.value)}
-                value={pwd}
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                Reset password
               </Button>
               <Grid container>
                 <Grid item xs>
-                    <Link to="/forgot" className="body2">
-                        Forgot password?
-                    </Link>
                 </Grid>
                 <Grid item>
                     <Link to="/Register" className="body2">
                         Don't have an account? Sign Up
                     </Link>
-                    {!{errMsg} && <AlertDialog/>}
                 </Grid>
               </Grid>
               <Copyright sx={{ mt: 5 }} />

@@ -8,7 +8,6 @@ import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import "./registration.css";
 import { ApiService } from "../../lib/api";
 
-const REGISTER_URL = "/auth/register";
 const Registration = () => {
   const [firstname, setFirstname] = useState("");
   const [firstnameFocus, setFirstnameFocus] = useState(false);
