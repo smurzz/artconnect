@@ -104,6 +104,7 @@ export default function SignInSide() {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
               />
@@ -111,6 +112,7 @@ export default function SignInSide() {
                 margin="normal"
                 required
                 fullWidth
+                onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                 onChange={(e) => setPwd(e.target.value)}
                 value={pwd}
                 name="password"

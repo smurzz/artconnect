@@ -40,10 +40,14 @@ async function postResetPassword(payload) {
         }
     }catch (err) {
         if (!err?.response) {
+            console.log(err?.response)
             return "No Server Response";
         } else if (err.response?.status === 400) {
+            console.log(err?.response)
+            console.log("errResponse: "+err.response)
             return "Email Taken";
         } else {
+            console.log("errResponse: "+err.response)
             return "Registration Failed, try again later";
         }
     }

@@ -12,7 +12,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef} from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { ApiService } from "../../lib/api";
 import Login from "../Login/Login"
@@ -31,11 +31,11 @@ function Copyright(props) {
 }
 const defaultTheme = createTheme();
 export default function SignUp() {
+  const [success, setSuccess] = useState(false);
+  const errRef = useRef();
 
   const [firstname, setFirstname] = useState("");
   const [firstnameFocus, setFirstnameFocus] = useState(false);
-
-  const [success, setSuccess] = useState(false);
 
   const [lastname, setLastname] = useState("");
   const [lastnameFocus, setLastnameFocus] = useState(false);
@@ -82,6 +82,7 @@ export default function SignUp() {
       navigate("/login", { state: { message: response.data} });
     }else{
       setErrMsg(response);
+      errRef.current.focus();
     }
   };
 
@@ -100,6 +101,7 @@ export default function SignUp() {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
+          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
@@ -114,6 +116,7 @@ export default function SignUp() {
                   id="firstName"
                   label="First Name"
                   onChange={(e) => setFirstname(e.target.value)}
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                   placeholder="Enter your First Name"
                   autoFocus
                 />
@@ -121,6 +124,7 @@ export default function SignUp() {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                   onChange={(e) => setLastname(e.target.value)}
                   required
                   placeholder="Enter your Last Name"
@@ -134,6 +138,7 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   id="email"
@@ -146,6 +151,7 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
+                  onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                   onChange={(e) => setPwd(e.target.value)}
                   value={pwd}
                   placeholder="Enter your password"

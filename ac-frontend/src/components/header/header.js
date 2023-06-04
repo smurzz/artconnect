@@ -27,7 +27,6 @@ function ResponsiveAppBar() {
         console.log("logout");
         if(logout =="success"){
                 window.location.reload()
-
             navigate("/", { state: { message: "login message" } });
         }
     }
@@ -47,7 +46,7 @@ function ResponsiveAppBar() {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="static" className="headerHome">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
