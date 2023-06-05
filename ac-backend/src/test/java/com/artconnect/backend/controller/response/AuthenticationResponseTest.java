@@ -2,7 +2,6 @@ package com.artconnect.backend.controller.response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.artconnect.backend.controller.response.AuthenticationResponse;
 public class AuthenticationResponseTest {
     @Test
   public void testGetSetAccessToken() {

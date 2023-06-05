@@ -2,7 +2,6 @@ package com.artconnect.backend.controller;
 import com.artconnect.backend.model.User;
 import com.artconnect.backend.repository.UserRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;

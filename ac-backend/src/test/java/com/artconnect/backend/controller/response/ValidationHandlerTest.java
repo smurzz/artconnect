@@ -24,7 +24,7 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 
 import com.artconnect.backend.controller.AuthenticationController;
 import com.artconnect.backend.controller.request.RegisterRequest;
-import com.artconnect.backend.controller.response.ValidationHandler;
+
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
