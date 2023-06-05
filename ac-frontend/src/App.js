@@ -1,5 +1,4 @@
 import Registration from "./container/Registration/Registration";
-import Protected from "./components/protected";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import ProtectedRoutes from "./components/protectedRoutes";
@@ -19,7 +18,6 @@ function App() {
           <Route path ="/forgot" element ={<ForgotPassword/>}/>
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
           <Route element={<ProtectedRoutes />}>
-        <Route path="/protected" element={<Protected />} />
             <Route path="/galerie" element={<Galerie />}></Route>
           </Route>
       </Routes>
