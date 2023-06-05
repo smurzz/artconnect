@@ -48,10 +48,7 @@ public class ApplicationConfigTests {
 
     @Test
     public void testUserDetailsService() {
-        // UserRepository userRepository = mock(UserRepository.class);
-        // ApplicationConfig applicationConfig = new ApplicationConfig(userRepository);
-
-        // Mocking the UserRepository response
+       // Mocking the UserRepository response
         com.artconnect.backend.model.User userEntity = com.artconnect.backend.model.User.builder().email("test@example.com").password("password").role(Role.USER).build();
         when(userRepository.findByEmail("test@example.com")).thenReturn(Mono.just(userEntity));
 
