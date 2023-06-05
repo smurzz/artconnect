@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.artconnect.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
-//comit von Mona
+
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
