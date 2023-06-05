@@ -15,7 +15,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import { ApiService } from "../../lib/api";
-import AlertDialog from "../../components/Modul/Modul"
+import AlertDialog from "../../components/Modul/Modul";
+import CircularProgress from '@mui/material/CircularProgress';
+import Modul from "../../components/Modul/Modul";
+
 
 
 function Copyright(props) {
@@ -38,22 +41,28 @@ const defaultTheme = createTheme();
 
 export default function SignInSide() {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [pwd, setPwd] = useState("");
-    const [errMsg, setErrMsg] = useState("");
+    const [errMsg, setErrMsg] =useState("");
+    const [msgModal, setMsgModal] = useState(false);
     useEffect(() => {
-        console.log(errMsg + "hook");
     }, [errMsg]);
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 300));
         await ApiService.postLogin({
             email: email,
             password: pwd,
         }).then((res)=>{
+            setLoading(false);
             if(res === "success"){
-                navigate("/protected", { state: { message: "login message" } });
+                navigate("/galerie", { state: { message: "login message" } });
             }else{
+                setMsgModal(true);
                 setErrMsg(res);
                 console.log(res);
             }
@@ -62,6 +71,15 @@ export default function SignInSide() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+        {
+            msgModal &&
+            <Modul data={{
+                message: errMsg,
+                success:false,
+                error:true,
+                type: "login"
+            }}/>
+        }
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -88,9 +106,9 @@ export default function SignInSide() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
+                  <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
+                      {loading ?<CircularProgress /> :<LockOutlinedIcon />}
+                  </Avatar>
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>

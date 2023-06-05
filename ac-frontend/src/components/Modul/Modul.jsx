@@ -5,23 +5,44 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import {useEffect} from "react";
+import {Link, useNavigate} from "react-router-dom";
 
-export default function AlertDialog() {
-    const [open, setOpen] = React.useState(false);
+export default function AlertDialog(props) {
+    const navigate = useNavigate();
+    const [open, setOpen] = React.useState(true);
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    const[header,setHeader] = React.useState("");
+
+    useEffect(() => {
+        if(props.data.type == "registration" && props.data.error == false){
+            setHeader("Registration successful")
+        }
+        if(props.data.error == true){
+            setHeader("Error");
+        }
+        if(props.data.type == "resetPassword"  && props.data.error == false){
+            setHeader("Reset Password successful");
+        }
+    }, [props]);
 
     const handleClose = () => {
+        if(props.data.type == "registration" && props.data.error == false){
+            navigate("/login");
+            setOpen(false);
+            window.location.reload();
+        }
+        if(props.data.type == "resetPassword" && props.data.error== false){
+            navigate("/reset-password");
+            setOpen(false);
+            window.location.reload();
+        }
         setOpen(false);
+        window.location.reload();
     };
 
     return (
         <div>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Open alert dialog
-            </Button>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -29,18 +50,16 @@ export default function AlertDialog() {
                 aria-describedby="alert-dialog-description"
             >
                 <DialogTitle id="alert-dialog-title">
-                    {"Use Google's location service?"}
+                    {header}
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Let Google help apps determine location. This means sending anonymous
-                        location data to Google, even when no apps are running.
+                        {props.data.message}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose}>Disagree</Button>
                     <Button onClick={handleClose} autoFocus>
-                        Agree
+                        Ok
                     </Button>
                 </DialogActions>
             </Dialog>

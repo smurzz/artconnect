@@ -15,8 +15,21 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useState, useEffect, useRef} from "react";
 import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { ApiService } from "../../lib/api";
-import Login from "../Login/Login"
+import Login from "../Login/Login";
+import Modul from "../../components/Modul/Modul";
+import CircularProgress from '@mui/material/CircularProgress';
 
+//redux
+import {useDispatch} from "react-redux";
+import { connect } from 'react-redux';
+import * as authenticationActions from '../../redux/authentication/AuthenticationAction';
+
+
+// gets the auth value from the entire state of the component
+const mapStateToProps = state => {
+  const { auth } = state
+  return auth;
+}
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -30,66 +43,66 @@ function Copyright(props) {
   );
 }
 const defaultTheme = createTheme();
-export default function SignUp() {
+function SignUp(props) {
+
+  //triggers Statechanges so the component reloads
+  const dispatch = useDispatch();
+  const [user, setUser] = useState(
+      {
+        firstname: "",
+        lastname: "",
+        email: "",
+        password: ""
+      });
+
   const [success, setSuccess] = useState(false);
-  const errRef = useRef();
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [firstname, setFirstname] = useState("");
-  const [firstnameFocus, setFirstnameFocus] = useState(false);
-
-  const [lastname, setLastname] = useState("");
-  const [lastnameFocus, setLastnameFocus] = useState(false);
-
-  const [email, setEmail] = useState("");
-  const [emailFocus, setEmailFocus] = useState(false);
-
-  const [pwd, setPwd] = useState("");
-  const [pwdFocus, setPwdFocus] = useState(false);
-
-  const [matchPwd, setMatchPwd] = useState("");
-  const [validMatch, setValidMatch] = useState(false);
-  const [matchFocus, setMatchFocus] = useState(false);
-
-  const [errMsg, setErrMsg] = useState("");
-  const navigate = useNavigate();
-
-  //Hook that makes sure both passwords are the same
   useEffect(() => {
-    setValidMatch(pwd === matchPwd);
-  }, [pwd, matchPwd]);
+    console.log("props Status: "+props.status)
+    setLoading(props.pending)
+  }, [props.pending]);
 
-  //Hook that clears Errormessages an soon as a User changes the Input inside the Formfield
   useEffect(() => {
-    setErrMsg("");
-  }, [email, firstname, lastname, pwd, matchPwd]);
+    console.log("success: "+ success);
+    setSuccess (props.status === 200);
+    console.log("props message: "+props.message)
+  }, [props.status, props.message, props.signupUserAction]);
+
+  useEffect(() => {
+    setError(props.errorSignup !== null);
+    console.log("props error: "+props.errorSignup)
+  }, [props.errorSignup, props.signupUserAction]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("first Name: "+ firstname);
-   const response = await ApiService.postRegister({
-      firstname: firstname,
-      lastname: lastname,
-      email: email,
-      password: pwd,
-    });
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    props.signupUserAction(user);
 
-    if(response === "success"){
-      setPwd("");
-      setMatchPwd("");
-      setEmail("");
-      setFirstname("");
-      setLastname("");
-      navigate("/login", { state: { message: response.data} });
-    }else{
-      setErrMsg(response);
-      errRef.current.focus();
-    }
-  };
-
+  }
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        {success &&
+            <Modul data={{
+              message: props.message,
+              success:true,
+              error: false,
+              type: "registration"
+            }}/>
+        }
+        {
+            error &&
+            <Modul data={{
+              message: props.errorSignup,
+              success:false,
+              error:true,
+              type:"registration"
+            }}/>
+        }
         <Box
           sx={{
             marginTop: 8,
@@ -98,10 +111,9 @@ export default function SignUp() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
+            {loading ?<CircularProgress /> :<LockOutlinedIcon />}
           </Avatar>
-          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
@@ -115,7 +127,7 @@ export default function SignUp() {
                   fullWidth
                   id="firstName"
                   label="First Name"
-                  onChange={(e) => setFirstname(e.target.value)}
+                  onChange={async (e) => { setUser({ ...user, firstname: e.target.value }) }}
                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
                   placeholder="Enter your First Name"
                   autoFocus
@@ -125,8 +137,7 @@ export default function SignUp() {
                 <TextField
                   fullWidth
                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-                  onChange={(e) => setLastname(e.target.value)}
-                  required
+                  onChange={async (e) => { setUser({ ...user, lastname: e.target.value }) }}                  required
                   placeholder="Enter your Last Name"
                   id="lastName"
                   label="Last Name"
@@ -139,8 +150,7 @@ export default function SignUp() {
                   required
                   fullWidth
                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
+                  onChange={async (e) => { setUser({ ...user, email: e.target.value }) }}
                   id="email"
                   label="Email Address"
                   name="email"
@@ -152,8 +162,8 @@ export default function SignUp() {
                   required
                   fullWidth
                   onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-                  onChange={(e) => setPwd(e.target.value)}
-                  value={pwd}
+                  onChange={async (e) => { setUser({ ...user, password: e.target.value }); }}
+                  value={user.password}
                   placeholder="Enter your password"
                   name="password"
                   label="Password"
@@ -168,12 +178,11 @@ export default function SignUp() {
                   label="I want to receive inspiration, marketing promotions and updates via email."
                 />
               </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+            </Grid><Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{mt: 3, mb: 2}}
             >
               Sign Up
             </Button>
@@ -191,3 +200,12 @@ export default function SignUp() {
     </ThemeProvider>
   );
 }
+const mapDispatchToProps = dispatch => {
+  return {
+    signupUserAction: (user) => dispatch(authenticationActions.signupUser(user))
+  }
+}
+
+//SignUp
+const ConnectedSignup = connect(mapStateToProps, mapDispatchToProps)(SignUp)
+export default ConnectedSignup;

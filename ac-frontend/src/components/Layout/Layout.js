@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
             setIsAuth(authStatus);
         };
         checkAuth();
-    }, []);
+    }, [isAuth]);
   return (
     <React.Fragment>
         {isAuth ? <Header />: <HeaderLogout/>}

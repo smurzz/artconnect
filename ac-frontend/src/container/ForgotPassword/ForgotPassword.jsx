@@ -16,6 +16,9 @@ import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
+import Modul from "../../components/Modul/Modul";
+import CircularProgress from '@mui/material/CircularProgress';
+
 
 const FORGET_URL = "/forgot-password"
 function Copyright(props) {
@@ -39,25 +42,58 @@ const defaultTheme = createTheme();
 export default function ForgotPassword() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
+    const [msg, setMsg] = useState("");
+    const [resetPassword, setResetPassword] = useState(false);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setLoading(true);
+        await new Promise((resolve) => setTimeout(resolve, 300));
         var _headers = {
             headers: {
                 "Content-Type": "application/json",
             },
         };
-        let result = await axios.get(FORGET_URL,  {
-            params: {
-                email: email,
-            },
-        }, _headers);
-    };
+        try {
+            let result = await axios.get(FORGET_URL, {
+                params: {
+                    email: email,
+                },
+            }, _headers);
 
+            setLoading(false);
+                setMsg(result.data);
+                setResetPassword(true);
+                console.log("success");
+        } catch (e) {
+            setMsg(JSON.stringify(e.response.data.message));
+            setError(true);
+            setResetPassword(false);
+        }
+
+    };
   return (
     <ThemeProvider theme={defaultTheme}>
       <Grid container component="main" sx={{ height: '100vh' }}>
+          {resetPassword &&
+              <Modul data={{
+                  message: msg,
+                  success:true,
+                  error: false,
+                  type: "resetPassword"
+              }}/>
+          }
+          {error &&
+              <Modul data={{
+                  message: msg,
+                  success:false,
+                  error:true,
+                  type: "resetPassword"
+              }}/>
+          }
         <CssBaseline />
         <Grid
           item
@@ -83,9 +119,9 @@ export default function ForgotPassword() {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
+              <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
+                  {loading ?<CircularProgress /> :<LockOutlinedIcon />}
+              </Avatar>
             <Typography component="h1" variant="h5">
               Forgot Password
             </Typography>

@@ -15,6 +15,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useEffect, useState} from "react";
 import { ApiService } from "../../lib/api";
 import {Link, useNavigate, useLocation} from "react-router-dom";
+import Modul from "../../components/Modul/Modul";
+import CircularProgress from '@mui/material/CircularProgress';
 
 const FORGET_URL = "/forgot-password"
 function Copyright(props) {
@@ -43,35 +45,62 @@ export default function ResetPassword() {
     const [pwd, setPwd] = useState("");
     const [matchPwd, setMatchPwd] = useState("");
     const [validMatch, setValidMatch] = useState(false);
-    const [errMsg, setErrMsg] = useState("");
+    const [msg, setMsg] = useState("");
+    const [resetPassword, setResetPassword] = useState(false);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     //Hook that makes sure both passwords are the same
     useEffect(() => {
         setValidMatch(pwd === matchPwd);
     }, [pwd, matchPwd]);
 
-    //Hook that clears Errormessages an soon as a User changes the Input inside the Formfield
-    useEffect(() => {
-        setErrMsg("");
-    }, [pwd, matchPwd]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setLoading(true);
+        if(pwd !== matchPwd){
+            setMsg("the password don't match. Please choose matching Passwords");
+            setError(true);
+            setResetPassword(false);
+        }else{
         const response = await ApiService.postResetPassword({
             password: pwd,
             token: token
         });
         if(response === "success"){
+            setLoading(false);
+            setMsg("your password was successfully resetted");
+            setResetPassword(true);
+            console.log("success");
             navigate("/protected", { state: { message: "login message" } });
         }else{
-            setErrMsg(response);
+            setMsg(response);
+            setError(true);
+            setResetPassword(false);
         }
-        console.log("handle submit");
+        console.log("handle submit");}
     };
 
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
+                {resetPassword &&
+                    <Modul data={{
+                        message: msg,
+                        success:true,
+                        error: false,
+                        type: "resetPassword"
+                    }}/>
+                }
+                {error &&
+                    <Modul data={{
+                        message: msg,
+                        success:false,
+                        error:true,
+                        type: "resetPassword"
+                    }}/>
+                }
                 <CssBaseline />
                 <Grid
                     item
@@ -97,8 +126,8 @@ export default function ResetPassword() {
                             alignItems: 'center',
                         }}
                     >
-                        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                            <LockOutlinedIcon />
+                        <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
+                            {loading ?<CircularProgress /> :<LockOutlinedIcon />}
                         </Avatar>
                         <Typography component="h1" variant="h5">
                             Forgot Password

@@ -44,11 +44,16 @@ async function postResetPassword(payload) {
             return "No Server Response";
         } else if (err.response?.status === 400) {
             console.log(err?.response)
-            console.log("errResponse: "+err.response)
-            return "Email Taken";
-        } else {
-            console.log("errResponse: "+err.response)
-            return "Registration Failed, try again later";
+            console.log("errResponse: "+ JSON.stringify(err.response))
+            return "the password has to contain at least 3. Please try again";
+        }else if(err.response?.status === 500){
+            console.log(err?.response)
+            console.log("errResponse: "+ JSON.stringify(err.response))
+            return JSON.stringify(err.response?.data.message);
+        }
+        else {
+            console.log("errResponse: "+ JSON.stringify(err.response))
+            return err.response.data;
         }
     }
 }
