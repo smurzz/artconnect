@@ -101,12 +101,6 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	
-   <dependency>
-     <groupId>org.openmbee.mms</groupId>
-     <artifactId>localuser</artifactId>
-     <version>4.0.17</version>
-   </dependency>
  </dependencies>
 	<build>
 		<plugins>
