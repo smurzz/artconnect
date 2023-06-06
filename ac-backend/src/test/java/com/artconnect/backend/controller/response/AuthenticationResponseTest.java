@@ -145,4 +145,93 @@ public class AuthenticationResponseTest {
         Assertions.assertEquals("refresh_token", refreshTokenJsonProperty);
     }
 
+    @Test
+    public void testEqualsAndHashCodeWithNullFields() {
+        // Arrange
+        AuthenticationResponse response1 = new AuthenticationResponse();
+        AuthenticationResponse response2 = new AuthenticationResponse();
+
+        // Assert
+        Assertions.assertEquals(response1, response2);
+        Assertions.assertEquals(response1.hashCode(), response2.hashCode());
+    }
+
+    @Test
+    public void testToStringWithNullFields() {
+        // Arrange
+        AuthenticationResponse response = new AuthenticationResponse();
+
+        // Act
+        String toStringResult = response.toString();
+
+        // Assert
+        Assertions.assertTrue(toStringResult.contains("accessToken=null"));
+        Assertions.assertTrue(toStringResult.contains("refreshToken=null"));
+    }
+
+    @Test
+    public void testToStringWithNonNullFields() {
+        // Arrange
+        String expectedAccessToken = "myAccessToken";
+        String expectedRefreshToken = "myRefreshToken";
+        AuthenticationResponse response = new AuthenticationResponse(expectedAccessToken, expectedRefreshToken);
+
+        // Act
+        String toStringResult = response.toString();
+
+        // Assert
+        Assertions.assertTrue(toStringResult.contains("accessToken=" + expectedAccessToken));
+        Assertions.assertTrue(toStringResult.contains("refreshToken=" + expectedRefreshToken));
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentObjects() {
+        // Arrange
+        AuthenticationResponse response = new AuthenticationResponse("token", "token");
+
+        // Assert
+        Assertions.assertNotEquals(response, "token");
+        Assertions.assertNotEquals(response.hashCode(), "token".hashCode());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithSelf() {
+        // Arrange
+        AuthenticationResponse response = new AuthenticationResponse("token", "token");
+
+        // Assert
+        Assertions.assertEquals(response, response);
+        Assertions.assertEquals(response.hashCode(), response.hashCode());
+    }
+
+    @Test
+    public void testToStringWithDifferentObjects() {
+        // Arrange
+        AuthenticationResponse response = new AuthenticationResponse("token", "token");
+
+        // Act
+        String toStringResult = response.toString();
+
+        // Assert
+        Assertions.assertFalse(toStringResult.contains("getClass()"));
+    }
+
+    @Test
+    public void testGetterAndSetter() {
+        // Arrange
+        String expectedAccessToken = "myAccessToken";
+        String expectedRefreshToken = "myRefreshToken";
+        AuthenticationResponse response = new AuthenticationResponse();
+
+        // Act
+        response.setAccessToken(expectedAccessToken);
+        response.setRefreshToken(expectedRefreshToken);
+        String actualAccessToken = response.getAccessToken();
+        String actualRefreshToken = response.getRefreshToken();
+
+        // Assert
+        Assertions.assertEquals(expectedAccessToken, actualAccessToken);
+        Assertions.assertEquals(expectedRefreshToken, actualRefreshToken);
+    }
+
 }
