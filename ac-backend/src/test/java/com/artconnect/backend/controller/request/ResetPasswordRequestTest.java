@@ -207,4 +207,57 @@ public class ResetPasswordRequestTest {
         Assertions.assertEquals(token, request.getToken());
     }
 
+    @Test
+    public void testEqualsAndHashCode_DifferentClass_ReturnsFalse() {
+        // Arrange
+        ResetPasswordRequest request = new ResetPasswordRequest();
+        String differentClass = "testString";
+
+        // Assert
+        Assertions.assertNotEquals(request, differentClass);
+    }
+
+    @Test
+    public void testEqualsAndHashCode_SameObject_ReturnsTrue() {
+        // Arrange
+        ResetPasswordRequest request = new ResetPasswordRequest();
+
+        // Assert
+        Assertions.assertEquals(request, request);
+    }
+
+    @Test
+    public void testEqualsAndHashCode_NullObject_ReturnsFalse() {
+        // Arrange
+        ResetPasswordRequest request = new ResetPasswordRequest();
+
+        // Assert
+        Assertions.assertNotEquals(request, null);
+    }
+
+    @Test
+    public void testSetToken_ValidToken_Success() {
+        // Arrange
+        String validToken = "testToken";
+        ResetPasswordRequest request = new ResetPasswordRequest();
+
+        // Act
+        request.setToken(validToken);
+
+        // Assert
+        Assertions.assertEquals(validToken, request.getToken());
+    }
+
+    @Test
+    public void testSetToken_NullToken_Success() {
+        // Arrange
+        ResetPasswordRequest request = new ResetPasswordRequest();
+
+        // Act
+        request.setToken(null);
+
+        // Assert
+        Assertions.assertNull(request.getToken());
+    }
+
 }
