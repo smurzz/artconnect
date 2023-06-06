@@ -2,13 +2,11 @@ package com.artconnect.backend.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.artconnect.backend.controller.request.AuthenticationRequest;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -19,11 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.authentication.ReactiveAuthenticationManager;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,19 +24,13 @@ import org.springframework.web.server.ResponseStatusException;
 import com.artconnect.backend.config.ApplicationConfig;
 import com.artconnect.backend.config.SecurityConfig;
 import com.artconnect.backend.config.jwt.JwtService;
+import com.artconnect.backend.controller.request.AuthenticationRequest;
 import com.artconnect.backend.controller.request.RegisterRequest;
 import com.artconnect.backend.controller.response.AuthenticationResponse;
-import com.artconnect.backend.model.Role;
-import com.artconnect.backend.model.User;
 import com.artconnect.backend.repository.UserRepository;
 import com.artconnect.backend.service.AuthenticationService;
-import com.artconnect.backend.service.EmailService;
 
-import io.netty.handler.codec.spdy.SpdyHttpHeaders;
 import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClientResponse;
-
-
 
 
 @WebFluxTest(controllers = AuthenticationController.class)
@@ -62,21 +49,20 @@ public class AuthenticationControllerTest {
     @MockBean
     private UserRepository userRepository;
     
+    @InjectMocks
+	private AuthenticationController authenticationController;
+    
     @BeforeEach
     void setup() {
     	MockitoAnnotations.openMocks(this);
+    	authenticationController = new AuthenticationController(authenticationService);
     }
 
 	@Test
     @WithMockUser
     public void testGetHelloWorld() {
-	 	AuthenticationController authenticationController = mock(AuthenticationController.class);
-
-		WebTestClient webTestClient = WebTestClient.bindToController(authenticationController).build();
+	 	webTestClient = WebTestClient.bindToController(authenticationController).build();
     	
-    	when(authenticationController.getHelloWorldFromAuth())
-        	.thenReturn(Mono.just("Hello from ArtConnect Security!"));
-
     	webTestClient.get()
 	        .uri("/auth/")
 	        .exchange()
@@ -87,10 +73,6 @@ public class AuthenticationControllerTest {
 
     @Test
     public void testRegisterUser() {
-    	AuthenticationController authenticationController = mock(AuthenticationController.class);
-    	AuthenticationService authenticationService = mock(AuthenticationService.class);
-    	UserRepository userRepository = mock(UserRepository.class);
-    	
         RegisterRequest registerRequest = RegisterRequest
         		.builder()
         		.firstname("Max")
@@ -99,8 +81,6 @@ public class AuthenticationControllerTest {
         		.password("123")
         		.build();
         
-        when(userRepository.save(any(User.class))).thenReturn(Mono.just(User.builder().build()));
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
         when(authenticationService.register(registerRequest)).thenReturn(Mono.just("Verify email by the link sent on your email address"));
 
     	WebTestClient webTestClient = WebTestClient.bindToController(authenticationController).build();
@@ -111,15 +91,13 @@ public class AuthenticationControllerTest {
 	        .body(Mono.just(registerRequest), RegisterRequest.class)
 	        .exchange()
 	        .expectStatus().isOk()
-	        .expectBody(String.class);
+	        .expectBody(String.class)
+	        .value(response -> assertEquals("Verify email by the link sent on your email address", response));
     }
     
     @Test
     public void testRegisterUserBadRequest() {
-    	AuthenticationController authenticationController = mock(AuthenticationController.class);
-    	AuthenticationService authenticationService = mock(AuthenticationService.class);
-    	
-        RegisterRequest registerRequest = RegisterRequest
+    	RegisterRequest registerRequest = RegisterRequest
         		.builder()
         		.firstname("Max")
         		.lastname("Mustermann")
@@ -139,17 +117,8 @@ public class AuthenticationControllerTest {
 
     @Test
     public void testRefreshTokenSuccess() {
-    	User user = User.builder().firstname("MAx").lastname("Mustermann").email("user@example.com").password("123").role(Role.USER).build();
         String refreshToken = "<refresh-token>";
         String newAccessToken = "<new-access-token>";
-
-        // Set up the JWT service behavior
-        when(jwtService.extractUsername(refreshToken)).thenReturn(user.getEmail());
-        when(jwtService.isTokenValid(refreshToken, user)).thenReturn(true);
-        when(jwtService.generateToken(user)).thenReturn(newAccessToken);
-
-        // Set up the user repository behavior
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Mono.just(user));
 
         // Set up the authentication service behavior
         AuthenticationResponse authResponse = AuthenticationResponse.builder()
@@ -166,7 +135,10 @@ public class AuthenticationControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(AuthenticationResponse.class)
-                .isEqualTo(authResponse);
+                .value(response -> {
+                	assertEquals("<new-access-token>", response.getAccessToken());
+                	assertEquals("<refresh-token>", response.getRefreshToken());
+                });
     }
     
     @Test 
@@ -197,32 +169,8 @@ public class AuthenticationControllerTest {
     
     @Test
     public void testConfirmAccount() {
-    	AuthenticationController authenticationController = mock(AuthenticationController.class);
-    	AuthenticationService authenticationService = mock(AuthenticationService.class);
-    	ReactiveUserDetailsService userDetailsService = mock(ReactiveUserDetailsService.class);
-    	
-    	UserRepository userRepository = mock(UserRepository.class);
     	String confirmToken = "<confirm-token>";
-    	
-        User user = User
-        		.builder()
-        		.firstname("Max")
-        		.lastname("Mustermann")
-        		.email("test@test.com")
-        		.password("123")
-        		.isEnabled(true)
-        		.build();
-        UserDetails userDetails = User.builder()
-        		.email("test@test.com")
-        		.password("123")
-        		.role(Role.USER)
-        		.build();
-
-        when(jwtService.extractUsername(confirmToken)).thenReturn("test@test.com");
-        when(userDetailsService.findByUsername("test@test.com")).thenReturn(Mono.just(userDetails));
-        when(jwtService.isTokenValid(confirmToken, userDetails)).thenReturn(true);
-        when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
-        when(authenticationService.confirmEmail(confirmToken)).thenReturn(Mono.just(succeedConfirmEmail()));
+   
         when(authenticationController.confirmUserAccount(confirmToken)).thenReturn(Mono.just(succeedConfirmEmail()));
 
     	WebTestClient webTestClient = WebTestClient.bindToController(authenticationController).build();
@@ -237,14 +185,8 @@ public class AuthenticationControllerTest {
     
     @Test
     public void testConfirmAccountEmptyParamRequest() {
-    	PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
-    	ReactiveAuthenticationManager authenticationManager = mock(ReactiveAuthenticationManager.class);
-    	ReactiveUserDetailsService userDetailsService = mock(ReactiveUserDetailsService.class);
-    	EmailService emailService = mock(EmailService.class);
+    	when(authenticationController.confirmUserAccount("")).thenReturn(Mono.just(failedConfirmEmail()));
     	
-    	AuthenticationService authenticationService = new AuthenticationService(userRepository, passwordEncoder, jwtService, authenticationManager, userDetailsService, emailService);
-    	AuthenticationController authenticationController = new AuthenticationController(authenticationService);
-
     	WebTestClient webTestClient = WebTestClient.bindToController(authenticationController).build();
 
         webTestClient.get()
@@ -256,25 +198,11 @@ public class AuthenticationControllerTest {
     }
     
     @Test
-    public void testConfirmAccountExpiredToken() {
-    	AuthenticationController authenticationController = mock(AuthenticationController.class);
-    	AuthenticationService authenticationService = mock(AuthenticationService.class);
-    	ReactiveUserDetailsService userDetailsService = mock(ReactiveUserDetailsService.class);
-    	
+    public void testConfirmAccountExpiredToken() {   	
     	String confirmToken = "<confirm-invalid-token>";
 
-        UserDetails userDetails = User.builder()
-        		.email("test@test.com")
-        		.password("123")
-        		.role(Role.USER)
-        		.build();
-
-        when(jwtService.extractUsername(confirmToken)).thenReturn("test@test.com");
-        when(userDetailsService.findByUsername("test@test.com")).thenReturn(Mono.just(userDetails));
-        when(jwtService.isTokenValid(confirmToken, userDetails)).thenReturn(false);
-        when(authenticationService.confirmEmail(confirmToken)).thenReturn(Mono.just(failedConfirmEmail()));
         when(authenticationController.confirmUserAccount(confirmToken)).thenReturn(Mono.just(failedConfirmEmail()));
-
+        
     	WebTestClient webTestClient = WebTestClient.bindToController(authenticationController).build();
 
         webTestClient.get()
@@ -284,8 +212,80 @@ public class AuthenticationControllerTest {
 	        .expectBody(String.class)
 	        .isEqualTo(failedConfirmEmail());
     }
+
+    @Test
+    public void testLoginSuccess() {
+        AuthenticationRequest authenticationRequest = AuthenticationRequest.builder()
+                .email("test@test.com")
+                .password("password")
+                .build();
+
+        // Set up the authentication service behavior
+        AuthenticationResponse authResponse = AuthenticationResponse.builder()
+                .accessToken("<access-token>")
+                .refreshToken("<refresh-token>")
+                .build();
+        when(authenticationService.login(authenticationRequest)).thenReturn(Mono.just(authResponse));
+
+        // Perform the login request
+        webTestClient.post()
+                .uri("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just(authenticationRequest), AuthenticationRequest.class)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(AuthenticationResponse.class)
+                .value(response -> {
+                	assertEquals("<access-token>", response.getAccessToken());
+                	assertEquals("<refresh-token>", response.getRefreshToken());
+                });
+    }
+
+    @Test
+    public void testConfirmUserAccountServerError() {
+        String confirmationToken = "valid-token";
+
+        when(authenticationService.confirmEmail(confirmationToken)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)));
+
+        webTestClient.get()
+                .uri("/auth/confirm-account?token={confirmationToken}", confirmationToken)
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void testConfirmUserAccountInvalidToken() {
+        String confirmationToken = "invalid-token";
+
+        when(authenticationService.confirmEmail(confirmationToken)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST)));
+
+        webTestClient.get()
+                .uri("/auth/confirm-account?token={confirmationToken}", confirmationToken)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    public void testConfirmUserAccountMissingToken() {
+        webTestClient.get()
+                .uri("/auth/confirm-account")
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
+
+    @Test
+    public void testConfirmUserAccountExpiredToken() {
+        String expiredToken = "expired-token";
+
+        when(authenticationService.confirmEmail(expiredToken)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST)));
+
+        webTestClient.get()
+                .uri("/auth/confirm-account?token=" + expiredToken)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
     
-	private String succeedConfirmEmail() {
+    private String succeedConfirmEmail() {
 		return "<html lang=\"en\">\r\n"
 				+ "<head>\r\n"
 				+ "	<meta charset=\"utf-8\" />\r\n"
@@ -350,83 +350,4 @@ public class AuthenticationControllerTest {
 				+ "</body>\r\n"
 				+ "</html>";
 	}
-
-    @Test
-    public void testLoginSuccess() {
-        AuthenticationRequest authenticationRequest = AuthenticationRequest.builder()
-                .email("test@test.com")
-                .password("password")
-                .build();
-
-        User user = User.builder()
-                .id("123")
-                .email("test@test.com")
-                .password("$2a$10$samplepasswordhash")
-                .isEnabled(true)
-                .build();
-
-        // Set up the user repository behavior
-        when(userRepository.findByEmail(user.getEmail())).thenReturn(Mono.just(user));
-
-        // Set up the authentication service behavior
-        AuthenticationResponse authResponse = AuthenticationResponse.builder()
-                .accessToken("<access-token>")
-                .refreshToken("<refresh-token>")
-                .build();
-        when(authenticationService.login(authenticationRequest)).thenReturn(Mono.just(authResponse));
-
-        // Perform the login request
-        webTestClient.post()
-                .uri("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just(authenticationRequest), AuthenticationRequest.class)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(AuthenticationResponse.class)
-                .isEqualTo(authResponse);
-    }
-
-    @Test
-    public void testConfirmUserAccountServerError() {
-        String confirmationToken = "valid-token";
-
-        when(authenticationService.confirmEmail(confirmationToken)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)));
-
-        webTestClient.get()
-                .uri("/auth/confirm-account?token={confirmationToken}", confirmationToken)
-                .exchange()
-                .expectStatus().isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @Test
-    public void testConfirmUserAccountInvalidToken() {
-        String confirmationToken = "invalid-token";
-
-        when(authenticationService.confirmEmail(confirmationToken)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST)));
-
-        webTestClient.get()
-                .uri("/auth/confirm-account?token={confirmationToken}", confirmationToken)
-                .exchange()
-                .expectStatus().isBadRequest();
-    }
-
-    @Test
-    public void testConfirmUserAccountMissingToken() {
-        webTestClient.get()
-                .uri("/auth/confirm-account")
-                .exchange()
-                .expectStatus().isBadRequest();
-    }
-
-    @Test
-    public void testConfirmUserAccountExpiredToken() {
-        String expiredToken = "expired-token";
-
-        when(authenticationService.confirmEmail(expiredToken)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST)));
-
-        webTestClient.get()
-                .uri("/auth/confirm-account?token=" + expiredToken)
-                .exchange()
-                .expectStatus().isBadRequest();
-    }
 }
