@@ -43,6 +43,9 @@ import io.netty.handler.codec.spdy.SpdyHttpHeaders;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClientResponse;
 
+
+
+
 @WebFluxTest(controllers = AuthenticationController.class)
 @Import({ SecurityConfig.class, ApplicationConfig.class })
 public class AuthenticationControllerTest {
@@ -407,6 +410,23 @@ public class AuthenticationControllerTest {
                 .expectStatus().isBadRequest();
     }
 
+    @Test
+    public void testConfirmUserAccountMissingToken() {
+        webTestClient.get()
+                .uri("/auth/confirm-account")
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
 
+    @Test
+    public void testConfirmUserAccountExpiredToken() {
+        String expiredToken = "expired-token";
 
+        when(authenticationService.confirmEmail(expiredToken)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST)));
+
+        webTestClient.get()
+                .uri("/auth/confirm-account?token=" + expiredToken)
+                .exchange()
+                .expectStatus().isBadRequest();
+    }
 }
