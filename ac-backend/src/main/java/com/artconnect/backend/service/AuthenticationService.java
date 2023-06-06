@@ -1,6 +1,5 @@
 package com.artconnect.backend.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import org.springframework.http.HttpHeaders;
@@ -26,7 +25,6 @@ import com.artconnect.backend.repository.UserRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -61,10 +59,8 @@ public class AuthenticationService {
 
 					return Mono.just("Verify email by the link sent on your email address");
 				})
-				.onErrorResume(MessagingException.class, 
-					    err -> Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to send email")))
-				.onErrorResume(UnsupportedEncodingException.class, 
-				    err -> Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to send email")));
+				.onErrorResume(IllegalStateException.class, 
+					    err -> Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to send email")));
 
 	}
 	
