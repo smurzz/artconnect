@@ -54,7 +54,6 @@ public class ForgotPasswordService {
 			return userRepository.findByEmail(email)
 				.flatMap(user -> {
 					String token = jwtService.generateConfirmationToken(user);
-					// String link = "http://localhost:3001/reset-password?token=" + token;
 					String link = frontendBaseUrl + "/reset-password?token=" + token;
 					String messageBodyString = buildEmail(user.getFirstname(), link);
 					String subject = "Here's the link to reset your password";
