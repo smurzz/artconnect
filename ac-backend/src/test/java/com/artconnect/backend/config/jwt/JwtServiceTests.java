@@ -1,38 +1,28 @@
 package com.artconnect.backend.config.jwt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.security.Key;
 import java.util.HashMap;
-import java.util.function.Function;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.artconnect.backend.model.Role;
-import com.artconnect.backend.model.User;
-import com.artconnect.backend.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import reactor.core.publisher.Mono;
 
 public class JwtServiceTests {
 	
@@ -40,79 +30,71 @@ public class JwtServiceTests {
 	
 	private final long tokenValidity = 60000;
 	
+	private final long refreshTokenValidity = 900000;
+	
+	private final long confirmTokenValidity = 10000;
+	
 	@InjectMocks
 	private JwtService jwtService;
-
-	@Mock
-	private UserDetails userDetails;
-	
-	@Mock
-	private UserRepository userRepository;
-	
-	@Mock
-	private Function<Claims, String> claimsResolver;
 	
 	@BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 	    ReflectionTestUtils.setField(jwtService, "secretKey", secretKey);
 	    ReflectionTestUtils.setField(jwtService, "tokenValidity", tokenValidity);
+	    ReflectionTestUtils.setField(jwtService, "refreshTokenValidity", refreshTokenValidity);
+	    ReflectionTestUtils.setField(jwtService, "confirmTokenValidity", confirmTokenValidity);
     }
-
-	/*
-	@Test @Disabled
-	void testExtractUsernameTrue() {
-		String token = "valid-token";
-		String username = "john@example.com";
-
-		when(jwtService.extractUsername(token)).thenReturn(username);
-		String name = jwtService.extractUsername(token);
-
-		assertEquals(name, username);
-	}
-	
-	@Test @Disabled
-	void testExtractUsernameFalse() {
-		String token = "invalid-token";
-
-		when(jwtService.extractUsername(token)).thenReturn(null);
-		String name = jwtService.extractUsername(token);
-
-		assertNull(name);
-	}
-	*/
 	
 	@Test
-    void testExtractClaimReturnEmail() throws Exception {
+	void testExtractUsernameWithValidToken() {
 		String expectedEmail = "test@example.com";
-	    Claims mockClaims = mock(Claims.class);
-		UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+		UserDetails userDetails = User.builder()
 				.username("test@example.com")
 				.password("1234")
 				.roles(Role.USER.name())
 				.build();
 	   
-	 	String tokenString = jwtService.generateToken(userDetails);
-	 		
-	    when(claimsResolver.apply(mockClaims)).thenReturn(expectedEmail);
-	    
-	    String email = jwtService.extractClaim(tokenString, Claims::getSubject);
+	 	String token = jwtService.generateToken(userDetails);
+		String name = jwtService.extractUsername(token);
+
+		assertEquals(name, expectedEmail);
+	}
+	
+	@Test
+	void testExtractUsernameWithInvalidToken() {
+	    String token = "invalid-token";
+
+		assertThrows(MalformedJwtException.class, () -> {
+	        jwtService.extractUsername(token);
+	    });
+	}
+	
+	@Test
+    void testExtractClaimReturnEmail() {
+		String expectedEmail = "test@example.com";
+		UserDetails userDetails = User.builder()
+				.username("test@example.com")
+				.password("1234")
+				.roles(Role.USER.name())
+				.build();
+	   
+	 	String token = jwtService.generateToken(userDetails);
+	    String email = jwtService.extractClaim(token, Claims::getSubject);
 
 	    assertEquals(expectedEmail, email);
     }
-	/*
-	@Test @Disabled
-    void testExtractClaimReturnNull() {
-		String token = "valid-token";
-		Function<Claims, String> claimsResolver = Claims::getSubject;
-		
-		when(jwtService.extractClaim(token, claimsResolver)).thenReturn(null);
-		
-		String email = jwtService.extractClaim(token, claimsResolver);
-		assertNull(email);
+	
+	@Test
+    void testExtractClaimReturnError() {
+	    String token = "invalid-token";
+
+	    assertThrows(MalformedJwtException.class, () -> {
+	        jwtService.extractClaim(token, Claims::getSubject);
+	    });
     }
 	
-	@Test @Disabled
+	@Test
 	void testGenerateTokenByUserDetailsReturnToken() {
 		UserDetails userDetails = User.builder()
 				.username("test@example.com")
@@ -120,106 +102,82 @@ public class JwtServiceTests {
 				.roles(Role.USER.name())
 				.build();
 				
-		when(jwtService.generateToken(new HashMap<>(), userDetails)).thenReturn("token");
-		when(jwtService.generateToken(userDetails)).thenReturn("token");
-		
 		String hashMapValidToken = jwtService.generateToken(new HashMap<>(), userDetails);
 		String validToken = jwtService.generateToken(userDetails);
 		
-		assertEquals(hashMapValidToken, "token");
-		assertEquals(validToken, "token");
-	}
-
-	@Test @Disabled
-	void testGenerateTokenByUserDetailsReturnNull() {
-		UserDetails userDetails = null;
-				
-		when(jwtService.generateToken(new HashMap<>(), userDetails)).thenReturn(null);
-		when(jwtService.generateToken(userDetails)).thenReturn(null);
+		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+		Key signInKeyClaims = Keys.hmacShaKeyFor(keyBytes);
 		
-		String hashMapValidToken = jwtService.generateToken(new HashMap<>(), userDetails);
-		String validToken = jwtService.generateToken(userDetails);
+	    Claims claims = Jwts.parserBuilder()
+	            .setSigningKey(signInKeyClaims)
+	            .build()
+	            .parseClaimsJws(validToken)
+	            .getBody();
 		
-		assertNull(hashMapValidToken);
-		assertNull(validToken);
+		assertNotNull(hashMapValidToken);
+		assertNotNull(validToken);
+		assertEquals("test@example.com", claims.getSubject());
+	    assertTrue(hashMapValidToken.matches("[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]+")); 
+	}	
+	
+	@Test
+	void testGenerateTokenByUserDetailsReturnError() {		
+		assertThrows(NullPointerException.class, () -> {
+			jwtService.generateToken(new HashMap<>(), null);
+	    });
 	}
 	
-	@Test @Disabled
+	@Test 
 	void testGenerateRefreshTokenByUserDetailsReturnToken() {
 		UserDetails userDetails = User.builder()
 				.username("test@example.com")
 				.password("1234")
 				.roles(Role.USER.name())
 				.build();
-				
-		when(jwtService.generateRefreshToken(userDetails)).thenReturn("refresh-token");
-		
+
 		String refreshToken = jwtService.generateRefreshToken(userDetails);
-		assertEquals(refreshToken, "refresh-token");
+		assertNotNull(refreshToken);
+	    assertTrue(refreshToken.matches("[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]+")); 
 	}
 	
-	@Test @Disabled
+	@Test
 	void testGenerateRefreshTokenByUserDetailsReturnNull() {
-		UserDetails userDetails = null;
-				
-		when(jwtService.generateRefreshToken(userDetails)).thenReturn(null);
-		
-		String refreshToken = jwtService.generateRefreshToken(userDetails);
-		assertNull(refreshToken);
+		assertThrows(NullPointerException.class, () -> {
+			jwtService.generateRefreshToken(null);
+	    });
 	}
 	
-	@Test @Disabled
+	@Test 
 	void testGenerateConfirmTokenByUserDetailsReturnToken() {
 		UserDetails userDetails = User.builder()
 				.username("test@example.com")
 				.password("1234")
 				.roles(Role.USER.name())
 				.build();
-				
-		when(jwtService.generateConfirmationToken(userDetails)).thenReturn("confirm-token");
-		
+
 		String confirmToken = jwtService.generateConfirmationToken(userDetails);
-		assertEquals(confirmToken, "confirm-token");
+		assertNotNull(confirmToken);
+	    assertTrue(confirmToken.matches("[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_=]+\\.[A-Za-z0-9-_.+/=]+")); 
 	}
 	
-	@Test @Disabled
+	@Test
 	void testGenerateConfirmTokenByUserDetailsReturnNull() {
-		UserDetails userDetails = null;
-				
-		when(jwtService.generateConfirmationToken(userDetails)).thenReturn(null);
-
-		String confirmToken = jwtService.generateConfirmationToken(userDetails);
-		assertNull(confirmToken);
+		assertThrows(NullPointerException.class, () -> {
+			jwtService.generateConfirmationToken(null);
+	    });
 	}
-
-	@Test @Disabled
+	
+	@Test
 	void isTokenValidValidTokenAndUserDetailsReturnsTrue() {
-		String token = "exampleToken";
 		UserDetails userDetails = User.builder()
 				.username("test@example.com")
 				.password("1234")
 				.roles(Role.USER.name())
 				.build();
 
-		when(jwtService.isTokenValid(token, userDetails)).thenReturn(true);
-
+		String token = jwtService.generateToken(userDetails);
+		
 		boolean isTokenValid = jwtService.isTokenValid(token, userDetails);
 		assertTrue(isTokenValid);
 	}
-	
-	@Test @Disabled
-	void isTokenValidInvalidTokenAndUserDetailsReturnsNull() {
-		String invaliToken = "invalid-token";
-		UserDetails userDetails = User.builder()
-				.username("test@example.com")
-				.password("1234")
-				.roles(Role.USER.name())
-				.build();
-
-		when(jwtService.isTokenValid(invaliToken, userDetails)).thenReturn(false);
-
-		boolean isTokenInvalid = jwtService.isTokenValid(invaliToken, userDetails);
-		assertFalse(isTokenInvalid);
-	}
-	*/
 }
