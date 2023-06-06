@@ -9,11 +9,15 @@ import static org.mockito.Mockito.*;
 import com.artconnect.backend.controller.request.ResetPasswordRequest;
 import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 import com.artconnect.backend.config.jwt.JwtService;
@@ -23,15 +27,17 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
-
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import static org.mockito.Mockito.mock;
+
+
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+
 
 class ForgotPasswordServiceTest {
 
@@ -57,6 +63,7 @@ class ForgotPasswordServiceTest {
     private static final String EMAIL = "test@example.com";
     private static final String TOKEN = "testToken";
     private static final String FRONTEND_BASE_URL = "http://example.com";
+
 
 
     @BeforeEach
@@ -102,9 +109,8 @@ class ForgotPasswordServiceTest {
         });
     }
 
-
     @Test
-    void processForgotPassword_validEmail_shouldSendEmail() {
+    void processForgotPassword_validEmail_shouldSendEmail() throws MessagingException, UnsupportedEncodingException {
         // Mock UserRepository response
         User user = new User();
         user.setEmail(EMAIL);
@@ -114,7 +120,7 @@ class ForgotPasswordServiceTest {
         when(jwtService.generateConfirmationToken(any(User.class))).thenReturn(TOKEN);
 
         // Mock EmailService response
-       // when(emailService.sendEmail(anyString(), anyString(), anyString())).thenReturn(Mono.empty());      error here
+        doNothing().when(emailService).sendEmail(anyString(), anyString(), anyString());
 
         // Call the method and verify the response
         StepVerifier.create(forgotPasswordService.processForgotPassword(EMAIL))
@@ -154,8 +160,6 @@ class ForgotPasswordServiceTest {
         // Verify no interactions occurred
         verifyNoInteractions(userRepository, jwtService, emailService);
     }
-
-
 
 
     @Test
@@ -247,6 +251,33 @@ class ForgotPasswordServiceTest {
         // Assert
         assertTrue(true); // Add your assertion here
     }
+
+
+    @Disabled
+    @Test
+    void updatePassword_InvalidTokenAndUser_ShouldThrowException() {
+        // Arrange
+        String token = "invalid-token";
+        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
+        resetPasswordRequest.setToken(token);
+        resetPasswordRequest.setPassword("new-password");
+
+        // Mock the behavior of JwtService to throw an exception when token is invalid
+        when(jwtService.extractUsername(token)).thenThrow(new RuntimeException("Invalid token"));
+
+        // Mock the behavior of UserRepository to return an empty Mono
+        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
+
+        // Act and Assert
+        assertThrows(ResponseStatusException.class, () ->
+                forgotPasswordService.updatePassword(resetPasswordRequest));
+
+        // Verify interactions
+        verify(jwtService).extractUsername(token);
+        verify(userRepository).findByEmail(anyString());
+        verifyNoMoreInteractions(jwtService, userRepository, passwordEncoder);
+    }
+
 
 }
 
