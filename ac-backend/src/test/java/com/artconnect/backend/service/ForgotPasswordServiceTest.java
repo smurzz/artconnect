@@ -1,42 +1,37 @@
 package com.artconnect.backend.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-import com.artconnect.backend.controller.request.ResetPasswordRequest;
-import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.server.ResponseStatusException;
-import com.artconnect.backend.config.jwt.JwtService;
-import com.artconnect.backend.model.User;
-import com.artconnect.backend.repository.UserRepository;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import java.io.UnsupportedEncodingException;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import static org.mockito.Mockito.mock;
-
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
+import com.artconnect.backend.config.jwt.JwtService;
+import com.artconnect.backend.controller.request.ResetPasswordRequest;
+import com.artconnect.backend.model.Role;
+import com.artconnect.backend.model.User;
+import com.artconnect.backend.repository.UserRepository;
+
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 
 class ForgotPasswordServiceTest {
@@ -59,12 +54,10 @@ class ForgotPasswordServiceTest {
     @InjectMocks
     private ForgotPasswordService forgotPasswordService;
 
-
+    private final String frontendBaseUrl = "http://example.com";
     private static final String EMAIL = "test@example.com";
     private static final String TOKEN = "testToken";
-    private static final String FRONTEND_BASE_URL = "http://example.com";
-
-
+    private static final String PASSWORD = "password";
 
     @BeforeEach
     void setup() throws NoSuchFieldException, IllegalAccessException {
@@ -76,41 +69,94 @@ class ForgotPasswordServiceTest {
                 userDetailsService,
                 emailService
         );
-
-        // Set frontendBaseUrl using reflection
-        java.lang.reflect.Field frontendBaseUrlField = ForgotPasswordService.class.getDeclaredField("frontendBaseUrl");
-        frontendBaseUrlField.setAccessible(true);
-        frontendBaseUrlField.set(forgotPasswordService, FRONTEND_BASE_URL);
-
+        ReflectionTestUtils.setField(forgotPasswordService, "frontendBaseUrl", frontendBaseUrl);
     }
 
-
     @Test
-    void updatePassword() {
+    void updatePasswordSuccess() {
         // Arrange
         String userEmail = "example@example.com";
-        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest() {
-            public String getEmail() {
-                return userEmail;
-            }
-        };
-
-        UserRepository userRepository = mock(UserRepository.class);
-        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
-        JwtService jwtService = mock(JwtService.class);
-        ReactiveUserDetailsService userDetailsService = mock(ReactiveUserDetailsService.class);
-        EmailService emailService = mock(EmailService.class);
-
-        ForgotPasswordService forgotPasswordService = new ForgotPasswordService(userRepository, passwordEncoder, jwtService, userDetailsService, emailService);
-
+        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequest.builder()
+        		.password(PASSWORD)
+        		.token(TOKEN)
+        		.build();
+        
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+        		.username(userEmail)
+        		.password(resetPasswordRequest.getPassword())
+        		.roles(Role.USER.name())
+        		.build();
+        User userBeforeUpdatePassword = User.builder()
+        		.email(userEmail)
+        		.password("old-password")
+        		.role(Role.USER)
+        		.build();
+        
+        User userAfterUpdatePassword = User.builder()
+        		.email(userEmail)
+        		.password(resetPasswordRequest.getPassword())
+        		.role(Role.USER)
+        		.build();
+        
+        when(jwtService.extractUsername(anyString())).thenReturn(userEmail);
+        when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.just(userDetails));
+        when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(true);
+        when(userRepository.findByEmail(anyString())).thenReturn(Mono.just(userBeforeUpdatePassword));
+        when(userRepository.save(any(User.class))).thenReturn(Mono.just(userAfterUpdatePassword));
+        
+        Mono<String> result = forgotPasswordService.updatePassword(resetPasswordRequest);
+        
+        StepVerifier.create(result)
+        	.expectNext("You have successfully changed your password.")
+        	.verifyComplete();
+    }
+    
+    @Test
+    void updatePasswordUsernameIsEmpty() {
+        // Arrange
+        String userEmail = "example@example.com";
+        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequest.builder()
+        		.password(PASSWORD)
+        		.token(TOKEN)
+        		.build();
+        
+        when(jwtService.extractUsername(userEmail)).thenReturn(null);
+        
         // Act and assert
         assertThrows(NullPointerException.class, () -> {
             forgotPasswordService.updatePassword(resetPasswordRequest);
         });
     }
+    
+    @Test
+    void updatePasswordTokenIsInvalid() {
+        // Arrange
+        String userEmail = "example@example.com";
+        ResetPasswordRequest resetPasswordRequest = ResetPasswordRequest.builder()
+        		.password(PASSWORD)
+        		.token(TOKEN)
+        		.build();
+        
+        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
+        		.username(userEmail)
+        		.password(resetPasswordRequest.getPassword())
+        		.roles(Role.USER.name())
+        		.build();
+        
+        when(jwtService.extractUsername(anyString())).thenReturn(userEmail);
+        when(userDetailsService.findByUsername(anyString())).thenReturn(Mono.just(userDetails));
+        when(jwtService.isTokenValid(anyString(), any(UserDetails.class))).thenReturn(false);
+        
+        Mono<String> result = forgotPasswordService.updatePassword(resetPasswordRequest);
+        
+        StepVerifier.create(result)
+        .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
+                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.UNAUTHORIZED)
+        .verify();
+    }
 
     @Test
-    void processForgotPassword_validEmail_shouldSendEmail() throws MessagingException, UnsupportedEncodingException {
+    void processForgotPassword_validEmail_shouldSendEmail() {
         // Mock UserRepository response
         User user = new User();
         user.setEmail(EMAIL);
@@ -160,10 +206,31 @@ class ForgotPasswordServiceTest {
         // Verify no interactions occurred
         verifyNoInteractions(userRepository, jwtService, emailService);
     }
-
+    
 
     @Test
-    public void testProcessForgotPassword_EncodingError() {
+    void processForgotPassword_EmailSendingFailure() {
+        // Arrange
+        String email = "test@example.com";
+        User user = User.builder()
+        		.email(email)
+        		.build();
+        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
+        doThrow(IllegalStateException.class).when(emailService).sendEmail(anyString(), anyString(), anyString());
+
+        // Act
+        Mono<String> result = forgotPasswordService.processForgotPassword(email);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
+                        && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR
+                        && ((ResponseStatusException) throwable).getReason().equals("Failed to send email"))
+                .verify();
+    }
+
+    @Test
+    void testProcessForgotPassword_EncodingError() {
         // Arrange
         String email = "example@example.com";
         String subject = "Reset Password";
@@ -251,33 +318,6 @@ class ForgotPasswordServiceTest {
         // Assert
         assertTrue(true); // Add your assertion here
     }
-
-
-    @Disabled
-    @Test
-    void updatePassword_InvalidTokenAndUser_ShouldThrowException() {
-        // Arrange
-        String token = "invalid-token";
-        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest();
-        resetPasswordRequest.setToken(token);
-        resetPasswordRequest.setPassword("new-password");
-
-        // Mock the behavior of JwtService to throw an exception when token is invalid
-        when(jwtService.extractUsername(token)).thenThrow(new RuntimeException("Invalid token"));
-
-        // Mock the behavior of UserRepository to return an empty Mono
-        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
-
-        // Act and Assert
-        assertThrows(ResponseStatusException.class, () ->
-                forgotPasswordService.updatePassword(resetPasswordRequest));
-
-        // Verify interactions
-        verify(jwtService).extractUsername(token);
-        verify(userRepository).findByEmail(anyString());
-        verifyNoMoreInteractions(jwtService, userRepository, passwordEncoder);
-    }
-
 
 }
 
