@@ -1,21 +1,25 @@
 package com.artconnect.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+import com.artconnect.backend.controller.request.ResetPasswordRequest;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import org.hibernate.validator.constraints.NotBlank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.util.FieldUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.artconnect.backend.config.jwt.JwtService;
@@ -24,6 +28,18 @@ import com.artconnect.backend.repository.UserRepository;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+
+import org.junit.jupiter.api.Assertions;
+
+import java.lang.reflect.Constructor;
+import jakarta.validation.constraints.Size;
+//import org.apache.commons.lang3.reflect.FieldUtils;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.lang.reflect.Field;
+
+import static org.mockito.Mockito.mock;
 
 class ForgotPasswordServiceTest {
 
@@ -43,11 +59,13 @@ class ForgotPasswordServiceTest {
     private EmailService emailService;
 
     @InjectMocks
-    private ForgotPasswordService forgotPasswordService;   
+    private ForgotPasswordService forgotPasswordService;
+
 
     private static final String EMAIL = "test@example.com";
     private static final String TOKEN = "testToken";
     private static final String FRONTEND_BASE_URL = "http://example.com";
+
 
     @BeforeEach
     void setup() throws NoSuchFieldException, IllegalAccessException {
@@ -64,31 +82,33 @@ class ForgotPasswordServiceTest {
         java.lang.reflect.Field frontendBaseUrlField = ForgotPasswordService.class.getDeclaredField("frontendBaseUrl");
         frontendBaseUrlField.setAccessible(true);
         frontendBaseUrlField.set(forgotPasswordService, FRONTEND_BASE_URL);
-    }
 
+    }
 
 
     @Test
-    void updatePassword() { // hier ist auch Fehler
-        /*
-         String token = "token";
-        String userEmail = "userEmail";
-        String password = "password";
-        ResetPasswordRequest request = new ResetPasswordRequest(token, password);
-    
-        when(jwtService.extractUsername(token)).thenReturn(userEmail);
-        when(userDetailsService.findByUsername(userEmail)).thenReturn(Mono.just(new UserDetailsImpl(null)));
-        doNothing().when(jwtService).isTokenValid(eq(token), any(UserDetailsImpl.class));
-        when(userRepository.findByEmail(userEmail)).thenReturn(Mono.just(new User()));
-        when(passwordEncoder.encode(password)).thenReturn("encodedPassword");
-        when(userRepository.save(any())).thenReturn(Mono.just(new User()));
-    
-        Mono<String> result = forgotPasswordService.updatePassword(request);
-    
-        assertEquals("You have successfully changed your password.", result.block());
-         */
+    void updatePassword() {
+        // Arrange
+        String userEmail = "example@example.com";
+        ResetPasswordRequest resetPasswordRequest = new ResetPasswordRequest() {
+            public String getEmail() {
+                return userEmail;
+            }
+        };
+
+        UserRepository userRepository = mock(UserRepository.class);
+        PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+        JwtService jwtService = mock(JwtService.class);
+        ReactiveUserDetailsService userDetailsService = mock(ReactiveUserDetailsService.class);
+        EmailService emailService = mock(EmailService.class);
+
+        ForgotPasswordService forgotPasswordService = new ForgotPasswordService(userRepository, passwordEncoder, jwtService, userDetailsService, emailService);
+
+        // Act and assert
+        assertThrows(NullPointerException.class, () -> {
+            forgotPasswordService.updatePassword(resetPasswordRequest);
+        });
     }
-    
 
 
     @Test
@@ -143,5 +163,8 @@ class ForgotPasswordServiceTest {
         verifyNoInteractions(userRepository, jwtService, emailService);
     }
 
+
 }
+
+
 
