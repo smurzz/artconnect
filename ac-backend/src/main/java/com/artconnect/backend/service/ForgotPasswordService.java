@@ -66,10 +66,8 @@ public class ForgotPasswordService {
 					return Mono.just("We have sent a reset password link to your email. Please check.");
 				})
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with email " + email + " is not found")))
-				.onErrorResume(MessagingException.class, 
-					    err -> Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to send email")))
-				.onErrorResume(UnsupportedEncodingException.class, 
-				    err -> Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to send email")));
+				.onErrorResume(IllegalStateException.class, 
+					    err -> Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to send email")));
 		} else {
 			return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST));
 		}
