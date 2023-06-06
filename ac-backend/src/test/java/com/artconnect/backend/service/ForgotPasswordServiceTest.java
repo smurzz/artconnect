@@ -13,31 +13,17 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.util.FieldUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.model.User;
 import com.artconnect.backend.repository.UserRepository;
-
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import org.junit.jupiter.api.Assertions;
 
-import java.lang.reflect.Constructor;
-import jakarta.validation.constraints.Size;
-//import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
-
-import java.lang.reflect.Field;
 
 import static org.mockito.Mockito.mock;
 
