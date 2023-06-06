@@ -19,9 +19,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 
-import com.artconnect.backend.config.jwt.JwtAuthenticationFilter;
-import com.artconnect.backend.config.jwt.JwtService;
-
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 

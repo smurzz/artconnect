@@ -1,7 +1,5 @@
 package com.artconnect.backend.service;
 
-import java.io.UnsupportedEncodingException;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
@@ -13,7 +11,6 @@ import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.controller.request.ResetPasswordRequest;
 import com.artconnect.backend.repository.UserRepository;
 
-import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 

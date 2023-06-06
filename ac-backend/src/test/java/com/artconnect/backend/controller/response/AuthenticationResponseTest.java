@@ -1,12 +1,10 @@
 package com.artconnect.backend.controller.response;
+import java.lang.reflect.Field;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Field;
 
 public class AuthenticationResponseTest {
     @Test
