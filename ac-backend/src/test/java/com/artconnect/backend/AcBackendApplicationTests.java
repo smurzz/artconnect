@@ -3,12 +3,16 @@ package com.artconnect.backend;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import com.artconnect.backend.config.jwt.JwtService;
 
 // @SpringBootTest
 @WebFluxTest(AcBackendApplication.class)
+@Import(JwtService.class)
 class AcBackendApplicationTests {
 
 	@Test
@@ -19,6 +23,7 @@ class AcBackendApplicationTests {
     private WebTestClient webClient;
 
     @Test
+    @WithMockUser
     public void testGetHelloWorld() {
         webClient
         	.get()
@@ -27,7 +32,7 @@ class AcBackendApplicationTests {
             .exchange()
             .expectStatus().isOk()
             .expectBody(String.class)
-            .isEqualTo("Hello World!");
+            .isEqualTo("Hello from secured ArtConnect!");
     }
 
 }
