@@ -178,7 +178,7 @@ import * as React from 'react';
 import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { Avatar } from '../../Components';
+import Avatar  from '../avatar/Avatar';
 
 const navigation = [
   { name: 'Product', href: '#' },
@@ -219,7 +219,7 @@ function ResponsiveAppBar() {
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Avatar />
           <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-            Log in <span aria-hidden="true">&rarr;</span>
+            Logout <span aria-hidden="true">&rarr;</span>
           </a>
         </div>
       </nav>
