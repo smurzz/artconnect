@@ -7,6 +7,10 @@ import ResetPassword from "./container/resetPassword/ResetPassword";
 import Home from "./container/Home/home";
 import Galerie from "./container/Galerie/Galerie";
 import Login from "./container/Login/Login";
+import ResetPasswortSuccess from "./container/ForgotPassword/ForgetPasswordSuccess"
+import Protected from "./components/protected";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
 function App() {
   return (
@@ -16,8 +20,10 @@ function App() {
         <Route path="/register" element={<Registration />}></Route>
         <Route path="/login" element={<Login />} />
           <Route path ="/forgot" element ={<ForgotPassword/>}/>
+        <Route path ="/resetSuccess" element ={<ResetPasswortSuccess/>}/>
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
           <Route element={<ProtectedRoutes />}>
+            <Route path="/protected" element={<Protected />} />
             <Route path="/galerie" element={<Galerie />}></Route>
           </Route>
       </Routes>

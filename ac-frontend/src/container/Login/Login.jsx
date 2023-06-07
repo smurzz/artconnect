@@ -18,6 +18,16 @@ import { ApiService } from "../../lib/api";
 import AlertDialog from "../../components/Modul/Modul";
 import CircularProgress from '@mui/material/CircularProgress';
 import Modul from "../../components/Modul/Modul";
+import Header from "../../components/headerLogout/header"
+
+//Imports Dialog:
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 
 
@@ -44,43 +54,104 @@ export default function SignInSide() {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
     const [pwd, setPwd] = useState("");
-    const [errMsg, setErrMsg] =useState("");
-    const [msgModal, setMsgModal] = useState(false);
-    useEffect(() => {
-    }, [errMsg]);
 
+    //öffnen und schließen des Error Message Dialoges
+    const [errorMessage, setErrorMessage] = useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [titel, setTitel] = React.useState("");
+    const [message, setMessage] = React.useState("");
+    const [errAlert, seterrAlert] = React.useState("");
+
+    //Immer wenn ein Fehler aus dem Backend kommt, wird der Fehler Dialog angezeigt
+
+    useEffect(() => {
+        setErrorMessage(false);
+        seterrAlert("");
+        setTitel("");
+        setMessage("");
+    }, [email, pwd]);
+
+    const handleClose = () => {
+        setOpen(false);
+        setTitel("");
+        setMessage("");
+    };
+
+    const userDataValid = () => {
+        console.log("Inside UserDataValid");
+        const errArray=[];
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const isValidPassword = pwd.length >= 3;
+
+        if (!email.trim() | !isValidEmail) {
+            errArray.push("Invalid email address")
+        }
+        if (!pwd.trim() | !isValidPassword) {
+            console.log("Password cannot be empty");
+            errArray.push("Password should contain at least 3 characters")
+        }
+
+        if(errArray.length > 0){
+            console.log(errArray);
+            setErrorMessage(true);
+            seterrAlert(errArray.map(str => <p>{str}</p>));
+            return false;
+        }else{
+            console.log("valid true");
+            return true;
+        }
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setLoading(true);
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        await ApiService.postLogin({
-            email: email,
-            password: pwd,
-        }).then((res)=>{
-            setLoading(false);
-            if(res === "success"){
-                navigate("/galerie", { state: { message: "login message" } });
-            }else{
-                setMsgModal(true);
-                setErrMsg(res);
-                console.log(res);
-            }
-        });
+        if(userDataValid() == true){
+            setLoading(true);
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            await ApiService.postLogin({
+                email: email,
+                password: pwd,
+            }).then((res)=>{
+                setLoading(false);
+                if(res === "success"){
+                    navigate("/galerie");
+                }else{
+                    setOpen(true);
+                    setTitel("Error");
+                    setMessage(res);
+                }
+            });
+        }
     };
 
   return (
     <ThemeProvider theme={defaultTheme}>
-        {
-            msgModal &&
-            <Modul data={{
-                message: errMsg,
-                success:false,
-                error:true,
-                type: "login"
-            }}/>
-        }
-      <Grid container component="main" sx={{ height: '100vh' }}>
+        <Header/>
+      <Grid container component="main" maxWidth="xs" sx={{ height: '100vh' }}>
+          { open &&
+              <div >
+                  <Dialog
+                      open={open}
+                      maxWidth="xs" // Set the maxWidth to limit the dialog's width
+                      onClose={handleClose}
+                      aria-labelledby="alert-dialog-title"
+                      aria-describedby="alert-dialog-description"
+                  >
+                      <DialogTitle id="alert-dialog-title">
+                          {titel}
+                      </DialogTitle>
+                      <DialogContent>
+                          <DialogContentText id="alert-dialog-description">
+                              {message}
+                          </DialogContentText>
+                      </DialogContent>
+                      <DialogActions>
+                          <Button onClick={handleClose} autoFocus>
+                              Ok
+                          </Button>
+                      </DialogActions>
+                  </Dialog>
+              </div>}
+
         <CssBaseline />
         <Grid
           item
@@ -96,7 +167,7 @@ export default function SignInSide() {
             backgroundPosition: 'center',
           }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Grid item xs={12} sm={8} md={5} square>
           <Box
             sx={{
               my: 8,
@@ -113,7 +184,10 @@ export default function SignInSide() {
               Sign in
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
+                {errorMessage && <div className="alert alert-danger" role="alert">
+                    {errAlert}
+                </div>}
+                <TextField
                 margin="normal"
                 required
                 fullWidth
@@ -153,11 +227,11 @@ export default function SignInSide() {
                         Forgot password?
                     </Link>
                 </Grid>
+
                 <Grid item>
                     <Link to="/Register" className="body2">
                         Don't have an account? Sign Up
                     </Link>
-                    {!{errMsg} && <AlertDialog/>}
                 </Grid>
               </Grid>
               <Copyright sx={{ mt: 5 }} />

@@ -4,10 +4,12 @@ import "./home.css"
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import './home.css';
+import Header from "../../components/headerLogout/header"
 
 const home = () => {
   return (
     <html>
+    <Header/>
     <main>
 
     <article >

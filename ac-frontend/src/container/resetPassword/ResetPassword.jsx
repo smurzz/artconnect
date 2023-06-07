@@ -17,6 +17,15 @@ import { ApiService } from "../../lib/api";
 import {Link, useNavigate, useLocation} from "react-router-dom";
 import Modul from "../../components/Modul/Modul";
 import CircularProgress from '@mui/material/CircularProgress';
+import Header from "../../components/headerLogout/header"
+//Imports Dialog:
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const FORGET_URL = "/forgot-password"
 function Copyright(props) {
@@ -45,62 +54,86 @@ export default function ResetPassword() {
     const [pwd, setPwd] = useState("");
     const [matchPwd, setMatchPwd] = useState("");
     const [validMatch, setValidMatch] = useState(false);
-    const [msg, setMsg] = useState("");
-    const [resetPassword, setResetPassword] = useState(false);
-    const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    //Hook that makes sure both passwords are the same
+    //öffnen und schließen des Error Message Dialoges
+    const [errorMessage, setErrorMessage] = useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [titel, setTitel] = React.useState("");
+    const [message, setMessage] = React.useState("");
+    const [errAlert, seterrAlert] = React.useState("");
+    const [success, setSuccess] = React.useState(false);
+
+    const handleClose = () => {
+        setOpen(false);
+        setTitel("");
+        setMessage("");
+        setLoading(false);
+        if(success){
+            navigate("/Login");
+        }
+    };
+
     useEffect(() => {
-        setValidMatch(pwd === matchPwd);
+        setErrorMessage(false);
+        seterrAlert("");
+        setTitel("");
+        setMessage("");
     }, [pwd, matchPwd]);
+
+    const userDataValid = () => {
+        console.log("Inside UserDataValid");
+        const errArray=[];
+        const isValidPassword = pwd.length >= 3;
+        if (!pwd.trim() | !isValidPassword) {
+            errArray.push("Password should contain at least 3 characters")
+        }
+        if (pwd !== matchPwd) {
+            console.log("passwords dont match. Please enter the same password twice");
+            errArray.push("passwords dont match. Please enter the same password twice")
+        }
+
+        if(errArray.length > 0){
+            console.log(errArray);
+            setErrorMessage(true);
+            seterrAlert(errArray.map(str => <p>{str}</p>));
+            return false;
+        }else{
+            return true;
+        }
+    }
 
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setLoading(true);
-        if(pwd !== matchPwd){
-            setMsg("the password don't match. Please choose matching Passwords");
-            setError(true);
-            setResetPassword(false);
-        }else{
-        const response = await ApiService.postResetPassword({
-            password: pwd,
-            token: token
-        });
-        if(response === "success"){
-            setLoading(false);
-            setMsg("your password was successfully resetted");
-            setResetPassword(true);
-            console.log("success");
-            navigate("/protected", { state: { message: "login message" } });
-        }else{
-            setMsg(response);
-            setError(true);
-            setResetPassword(false);
+        if(userDataValid() == true){
+            setLoading(true);
+                const response = await ApiService.postResetPassword({
+                    password: pwd,
+                    token: token
+                });
+                if(response === "success"){
+                    setLoading(false);
+                    setOpen(true);
+                    setSuccess(true);
+                    setTitel("Success");
+                    setMessage("Congratulations! Your password has been successfully reset.");
+                    console.log("success");
+                }else{
+                    setLoading(false);
+                    setOpen(true);
+                    setTitel("Error");
+                    console.log("error");
+                    setMessage("Opps! Something went wrong! Please try again later.");
+                }
+                console.log("handle submit");
         }
-        console.log("handle submit");}
     };
 
     return (
         <ThemeProvider theme={defaultTheme}>
+            <Header/>
             <Grid container component="main" sx={{ height: '100vh' }}>
-                {resetPassword &&
-                    <Modul data={{
-                        message: msg,
-                        success:true,
-                        error: false,
-                        type: "resetPassword"
-                    }}/>
-                }
-                {error &&
-                    <Modul data={{
-                        message: msg,
-                        success:false,
-                        error:true,
-                        type: "resetPassword"
-                    }}/>
-                }
                 <CssBaseline />
                 <Grid
                     item
@@ -133,6 +166,9 @@ export default function ResetPassword() {
                             Forgot Password
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                            {errorMessage && <div className="alert alert-danger" role="alert">
+                                {errAlert}
+                            </div>}
                             <TextField
                                 margin="normal"
                                 type="password"
@@ -179,6 +215,30 @@ export default function ResetPassword() {
                                         Don't have an account? Sign Up
                                     </Link>
                                 </Grid>
+                                { open &&
+                                    <div >
+                                        <Dialog
+                                            open={open}
+                                            maxWidth="xs" // Set the maxWidth to limit the dialog's width
+                                            onClose={handleClose}
+                                            aria-labelledby="alert-dialog-title"
+                                            aria-describedby="alert-dialog-description"
+                                        >
+                                            <DialogTitle id="alert-dialog-title">
+                                                {titel}
+                                            </DialogTitle>
+                                            <DialogContent>
+                                                <DialogContentText id="alert-dialog-description">
+                                                    {message}
+                                                </DialogContentText>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={handleClose} autoFocus>
+                                                    Ok
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                    </div>}
                             </Grid>
                             <Copyright sx={{ mt: 5 }} />
                         </Box>

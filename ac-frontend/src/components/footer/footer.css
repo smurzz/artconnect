@@ -10,6 +10,7 @@
   }
   
   .grid__footer {
+    margin-top: 5rem;
     grid-template-columns: 1.5fr 1.5fr 1fr 1fr;
   }
 

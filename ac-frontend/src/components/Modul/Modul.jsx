@@ -11,10 +11,10 @@ import {Link, useNavigate} from "react-router-dom";
 export default function AlertDialog(props) {
     const navigate = useNavigate();
     const [open, setOpen] = React.useState(true);
-
     const[header,setHeader] = React.useState("");
 
     useEffect(() => {
+        setOpen(true);
         if(props.data.type == "registration" && props.data.error == false){
             setHeader("Registration successful")
         }
@@ -30,15 +30,12 @@ export default function AlertDialog(props) {
         if(props.data.type == "registration" && props.data.error == false){
             navigate("/login");
             setOpen(false);
-            window.location.reload();
         }
         if(props.data.type == "resetPassword" && props.data.error== false){
-            navigate("/reset-password");
+            navigate("/resetSuccess");
             setOpen(false);
-            window.location.reload();
         }
         setOpen(false);
-        window.location.reload();
     };
 
     return (

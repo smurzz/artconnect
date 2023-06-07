@@ -81,9 +81,9 @@ async function postLogin(payload) {
 
 async function getDataSecured(url, payload) {
     const tokenInfo = await storageService.getTokenInformation();
+    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
     if(!tokenInfo) return null;
     try{
-        console.log("1");
         const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
         var _headers = {
             headers: {
@@ -98,6 +98,7 @@ async function getDataSecured(url, payload) {
             }
             return result;
     }catch(error){
+        storageService.logout();
         return null;
     }
 

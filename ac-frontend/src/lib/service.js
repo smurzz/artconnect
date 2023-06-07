@@ -5,7 +5,7 @@ import { storageService } from "./localStorage";
 
 //Refresh Tokenlogik
 async function checkTokens(accessToken, refreshToken, accessTime, refreshTime){
-    if (isTokenExpired(accessTime) && !isTokenExpired(refreshTime*2000)) {
+    if (isTokenExpired(accessTime) && !isTokenExpired(refreshTime)) {
         console.log("Old Token " +  accessToken);
         var _headers = {
             headers: {
@@ -28,7 +28,7 @@ async function checkTokens(accessToken, refreshToken, accessTime, refreshTime){
 }
 
 function isTokenExpired(expTime) {
-    return Date.now() >= expTime ; // true
+    return Date.now() >= expTime*1000; // zum Umwandeln von Millisekunden in Sekunden
 }
 
 //private Routing Logik
@@ -47,20 +47,9 @@ async function logout(){
     console.log("logoutfuncition: "+ logout);
   return logout;
 }
-
-async function setRememberMe(remeberMe){
-    await storageService.setRemeberMe(remeberMe);
-}
-
-async function getRemeberMe(){
-
-    return await storageService.getRemeberMe();
-}
 export const logikService = {
     checkTokens,
     isLoggedIn,
-    setRememberMe,
-    getRemeberMe,
     logout
 }
 

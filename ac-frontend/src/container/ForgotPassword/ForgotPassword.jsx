@@ -18,7 +18,15 @@ import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
 import Modul from "../../components/Modul/Modul";
 import CircularProgress from '@mui/material/CircularProgress';
-
+import Header from "../../components/headerLogout/header"
+//Imports Dialog:
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const FORGET_URL = "/forgot-password"
 function Copyright(props) {
@@ -42,58 +50,99 @@ const defaultTheme = createTheme();
 export default function ForgotPassword() {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
-    const [msg, setMsg] = useState("");
-    const [resetPassword, setResetPassword] = useState(false);
-    const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    //öffnen und schließen des Error Message Dialoges
+    const [errorMessage, setErrorMessage] = useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [titel, setTitel] = React.useState("");
+    const [message, setMessage] = React.useState("");
+    const [errAlert, seterrAlert] = React.useState("");
+    const [success, setSuccess] = React.useState(false);
+
+    useEffect(() => {
+        setErrorMessage(false);
+        seterrAlert("");
+        setTitel("");
+        setMessage("");
+    }, [email]);
+
+    const handleClose = () => {
+        setOpen(false);
+        setTitel("");
+        setMessage("");
+        if(success){
+            navigate("/resetSuccess");
+        }
+    };
+
+    const userDataValid = () => {
+        console.log("Inside UserDataValid");
+        const errArray=[];
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        //const isValidPassword = pwd.length >= 3;
+
+        if (!email.trim() | !isValidEmail) {
+            errArray.push("Invalid email address")
+        }
+
+        if(errArray.length > 0){
+            console.log(errArray);
+            setErrorMessage(true);
+            seterrAlert(errArray.map(str => <p>{str}</p>));
+            return false;
+        }else{
+            console.log("valid true");
+            return true;
+        }
+    }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setLoading(true);
-        await new Promise((resolve) => setTimeout(resolve, 300));
-        var _headers = {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        };
-        try {
-            let result = await axios.get(FORGET_URL, {
-                params: {
-                    email: email,
+        if(userDataValid() == true){
+            console.log("userdaten valid");
+            setLoading(true);
+            await new Promise((resolve) => setTimeout(resolve, 300));
+            var _headers = {
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            }, _headers);
+            };
+            try {
+                let result = await axios.get(FORGET_URL, {
+                    params: {
+                        email: email,
+                    },
+                }, _headers);
 
-            setLoading(false);
-                setMsg(result.data);
-                setResetPassword(true);
+                setLoading(false);
+                setOpen(true);
+                setSuccess(true);
+                setTitel("Success");
+                setMessage("Please click on the verification link sent to your email to reset the password. Thank you!");
                 console.log("success");
-        } catch (e) {
-            setMsg(JSON.stringify(e.response.data.message));
-            setError(true);
-            setResetPassword(false);
-        }
+            } catch (e) {
+                setLoading(false);
+                setOpen(true);
+                setTitel("Error");
+                console.log("error");
+                console.log("error: "+ e);
+                if(e == "AxiosError: Request failed with status code 404"){
+                    setMessage("We couldn't find your email address in our records. Please make sure you've entered the correct email address or consider signing up to create a new account.");
 
+                }else{
+                    setMessage("Opps! Something went wrong, please try again later");
+
+                }
+
+            }
+        }
     };
+
   return (
     <ThemeProvider theme={defaultTheme}>
+        <Header/>
       <Grid container component="main" sx={{ height: '100vh' }}>
-          {resetPassword &&
-              <Modul data={{
-                  message: msg,
-                  success:true,
-                  error: false,
-                  type: "resetPassword"
-              }}/>
-          }
-          {error &&
-              <Modul data={{
-                  message: msg,
-                  success:false,
-                  error:true,
-                  type: "resetPassword"
-              }}/>
-          }
         <CssBaseline />
         <Grid
           item
@@ -109,7 +158,7 @@ export default function ForgotPassword() {
             backgroundPosition: 'center',
           }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Grid item xs={12} sm={8} md={5} component={Paper} square>
           <Box
             sx={{
               my: 8,
@@ -126,6 +175,9 @@ export default function ForgotPassword() {
               Forgot Password
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+                    {errorMessage && <div className="alert alert-danger" role="alert">
+                        {errAlert}
+                    </div>}
               <TextField
                 margin="normal"
                 required
@@ -154,6 +206,30 @@ export default function ForgotPassword() {
                         Don't have an account? Sign Up
                     </Link>
                 </Grid>
+                  { open &&
+                      <div >
+                          <Dialog
+                              open={open}
+                              maxWidth="xs" // Set the maxWidth to limit the dialog's width
+                              onClose={handleClose}
+                              aria-labelledby="alert-dialog-title"
+                              aria-describedby="alert-dialog-description"
+                          >
+                              <DialogTitle id="alert-dialog-title">
+                                  {titel}
+                              </DialogTitle>
+                              <DialogContent>
+                                  <DialogContentText id="alert-dialog-description">
+                                      {message}
+                                  </DialogContentText>
+                              </DialogContent>
+                              <DialogActions>
+                                  <Button onClick={handleClose} autoFocus>
+                                      Ok
+                                  </Button>
+                              </DialogActions>
+                          </Dialog>
+                      </div>}
               </Grid>
               <Copyright sx={{ mt: 5 }} />
             </Box>
