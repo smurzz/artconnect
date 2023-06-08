@@ -18,9 +18,9 @@ const home = () => {
     <div className="home-container">
       <Header />
       <div className="slider-container">
-        <h1 className="heading_primary">Welcome to ArtConnect</h1>
+        <h1 className="heading_primary txt_set">Welcome to ArtConnect</h1>
         <div className="slider">
-          <Carousel
+          <Carousel className="slider"
             showThumbs={false}
             showStatus={false}
             infiniteLoop={true}
@@ -29,25 +29,25 @@ const home = () => {
           >
             {/* */}
             <div>
-              <img className='slide-image' src={Image1} alt="matilda_2" />
+              <img className='slide-image float' src={Image1} alt="matilda_2" />
             </div>
             <div>
-              <img className='slide-image' src={Image2} alt="matild_3" />
+              <img className='slide-image float' src={Image2} alt="matild_3" />
             </div>
             <div>
-              <img className='slide-image' src={Image3} alt="picture1" />
+              <img className='slide-image float' src={Image3} alt="picture1" />
             </div>
             <div>
-              <img className='slide-image' src={Image4} alt="picture2" />
+              <img className='slide-image float' src={Image4} alt="picture2" />
             </div>
             <div>
-              <img className='slide-image' src={Image5} alt="picture3" />
+              <img className='slide-image float' src={Image5} alt="picture3" />
             </div>
             <div>
-              <img className="slide-image" src={Image6} alt="picture4" />
+              <img className="slide-image float" src={Image6} alt="picture4" />
             </div>
             <div>
-              <img className='slide-image' src={Image7} alt="picture5" />
+              <img className='slide-image float' src={Image7} alt="picture5" />
             </div>
 
           </Carousel>

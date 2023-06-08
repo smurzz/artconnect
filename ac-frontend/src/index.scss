@@ -196,15 +196,15 @@ body {
 
 /* Conatainer */
 
+.float {
+object-fit: contain !important;
+  overflow: hidden !important;
+}
+
 .container {
   max-width: 120rem;
   padding: 0 3.2rem;
   margin: 0 auto;
-}
-
-.footer {
-  padding: 12.8rem 0;
-  border-top: 1px solid #eee;
 }
 
 /* Reusable Grid */
