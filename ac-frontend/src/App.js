@@ -4,7 +4,7 @@ import Layout from "./components/Layout/Layout";
 import ProtectedRoutes from "./components/protectedRoutes";
 import ForgotPassword from "./container/ForgotPassword/ForgotPassword";
 import ResetPassword from "./container/resetPassword/ResetPassword";
-import Home from "./container/Home/home";
+import Home from "./container/Home2/Home";
 import Galerie from "./container/Galerie/Galerie";
 import Galerie2 from "./container/Galerie/Galerie2";
 import Login from "./container/Login/Login";

@@ -8,7 +8,7 @@ export default function Footer() {
     <>
       <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
         <Typography variant="h6" align="center" gutterBottom>
-          Footer
+          ArtConnect
         </Typography>
         <Typography
           variant="subtitle1"

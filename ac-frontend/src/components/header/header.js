@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react'
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { logikService } from "../../lib/service";
 
 import { useTheme } from '@mui/material/styles';
@@ -156,7 +156,7 @@ function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            ArtConnect
+              <Link to="/" underline="hover"> ArtConnect </Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {navigation.map((page) => (

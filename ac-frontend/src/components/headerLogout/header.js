@@ -1,11 +1,10 @@
-import {useNavigate} from "react-router-dom";
+import {useNavigate, Link} from "react-router-dom";
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import BrushIcon from '@mui/icons-material/Brush';
 import { useTheme } from '@mui/material/styles';
@@ -43,7 +42,7 @@ export default function ButtonAppBar() {
                                 textDecoration: 'none',
                             }}>
                     {/*         <Link underline="hover" to="/"> Artconnect </Link> */}
-                            <Link href="#" underline="hover"> ArtConnect </Link>
+                            <Link to="/" underline="hover"> ArtConnect </Link>
                         </Typography>
                     </div>
                     <div className="searchBar">
