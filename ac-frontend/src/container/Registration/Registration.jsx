@@ -268,7 +268,14 @@ function SignUp(props) {
                         type="submit"
                         fullWidth
                         variant="contained"
-                        sx={{mt: 3, mb: 2}}
+                        sx={{
+                            mt: 3,
+                            mb: 2,
+                            backgroundColor: '#434544',
+                            '&:hover': {
+                              backgroundColor: '#0a0a0a ',
+                            }
+                        }}
                     >
                         Sign Up
                     </Button>

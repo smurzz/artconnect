@@ -3,87 +3,57 @@ import "./home.css"
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import './home.css';
 import Header from "../../components/headerLogout/header"
+
+import Image1 from './slide_Images/matilda2.jpg';
+import Image2 from './slide_Images/matilda3.jpg';
+import Image3 from './slide_Images/picture1.jpg';
+import Image4 from './slide_Images/picture2.jpg';
+import Image5 from './slide_Images/picture3.jpg';
+import Image6 from './slide_Images/picture4.jpg';
+import Image7 from './slide_Images/picture5.jpg';
 
 const home = () => {
   return (
-    <html>
-    <Header/>
-    <main>
+    <div className="home-container">
+      <Header />
+      <div className="slider-container">
+        <h1 className="heading_primary">Welcome to ArtConnect</h1>
+        <div className="slider">
+          <Carousel
+            showThumbs={false}
+            showStatus={false}
+            infiniteLoop={true}
+            autoPlay={true}
+            interval={5000}
+          >
+            {/* */}
+            <div>
+              <img className='slide-image' src={Image1} alt="matilda_2" />
+            </div>
+            <div>
+              <img className='slide-image' src={Image2} alt="matild_3" />
+            </div>
+            <div>
+              <img className='slide-image' src={Image3} alt="picture1" />
+            </div>
+            <div>
+              <img className='slide-image' src={Image4} alt="picture2" />
+            </div>
+            <div>
+              <img className='slide-image' src={Image5} alt="picture3" />
+            </div>
+            <div>
+              <img className="slide-image" src={Image6} alt="picture4" />
+            </div>
+            <div>
+              <img className='slide-image' src={Image7} alt="picture5" />
+            </div>
 
-    <article >
-      <header className='container center-text'>
-        <h1 className='heading_primary'>Willkomen bei ArtConnect</h1> 
-      </header>
-      <section>
-    
-      <div >
-      <Carousel
-        showThumbs={false}
-        showStatus={false}
-        infiniteLoop={true}
-        autoPlay={true}
-        interval={5000}
-      >
-        <div>
-        <img  src="slide_Images\matilda1.jpg" alt="matilda_1" width={500} height={750}/>
-         {/*<p className="legend">Image 1</p>*/}
+          </Carousel>
         </div>
-        <div>
-          <img  src="slide_Images\matilda2.jpg" alt="matilda2" width={500} height={750}/>
-           {/*<p className="legend">Image 2</p>*/}
-        </div>
-        <div>
-          <img  src="slide_Images\matilda3.jpg" alt="matilda3" width={500} height={750} />
-          {/*<p className="legend">Image 3</p>*/}
-        </div>
-        <div>
-          <img  src="slide_Images\matilda4.jpg" alt="matilda3" width={500} height={750}/>
-         {/*<p className="legend">Image 4</p>*/}
-        </div>
-      </Carousel>
+      </div>
     </div>
-
-
-{/* 
-<div id="carouselExampleIndicators" class="carousel slide">
-  <div class="carousel-indicators">
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-  </div>
-  <div class="carousel-inner center-text">
-    <div class="carousel-item active">
-      <img src="slide_Images\matilda1.jpg" class="d-block w-50 center-text" alt="..."/>
-    </div>
-    <div class="carousel-item center-text">
-      <img src="slide_Images\matilda2.jpg" class="d-block w-50 center-text" alt="..."/>
-    </div>
-    <div class="carousel-item center-text">
-      <img src="slide_Images\matilda3.jpg" class="d-block w-50 center-text" alt="..."/>
-    </div>
-  </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Previous</span>
-  </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="visually-hidden">Next</span>
-  </button>
-</div>
-  */}
-      </section>
-      <footer>
-
-      </footer>
-    </article>
-
-    </main>
-    </html>
-   
-
   )
 }
 
