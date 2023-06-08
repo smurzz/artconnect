@@ -1,0 +1,14 @@
+html{
+    font-size: 100%; //makes zooming easier
+}
+
+button{
+    text-align:center;
+    cursor: pointer;
+}
+
+a, a:hover, a:focus, a:active, a:visited{
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
