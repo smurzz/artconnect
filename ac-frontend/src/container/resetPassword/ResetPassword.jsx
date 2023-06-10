@@ -15,8 +15,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useEffect, useState} from "react";
 import { ApiService } from "../../lib/api";
 import {Link, useNavigate, useLocation} from "react-router-dom";
-import Modul from "../../components/Modul/Modul";
-import CircularProgress from '@mui/material/CircularProgress';
+//lineaer loading
+import LinearProgress from '@mui/material/LinearProgress';
 import Header from "../../components/headerLogout/header"
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -160,7 +160,7 @@ export default function ResetPassword() {
                         }}
                     >
                         <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
-                            {loading ?<CircularProgress /> :<LockOutlinedIcon />}
+                            <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
                             Forgot Password
@@ -199,12 +199,26 @@ export default function ResetPassword() {
                                 onChange={(e) => setMatchPwd(e.target.value)}
                                 value={matchPwd}
                             />
+                            <Grid item sm={12}>
+
+                                <Box sx={{ width: '100%' }}>
+                                    {loading &&   <LinearProgress />}
+                                </Box>
+
+                            </Grid>
                             <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                            >
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            disabled={loading}
+                            sx={{
+                            mt: 3,
+                            mb: 2,
+                            backgroundColor: '#434544',
+                            '&:hover': {
+                                backgroundColor: '#0a0a0a ',
+                            }
+                        }}>
                                 Reset password
                             </Button>
                             <Grid container>

@@ -16,8 +16,8 @@ import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
-import Modul from "../../components/Modul/Modul";
-import CircularProgress from '@mui/material/CircularProgress';
+//lineaer loading
+import LinearProgress from '@mui/material/LinearProgress';
 import Header from "../../components/headerLogout/header"
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -169,7 +169,7 @@ export default function ForgotPassword() {
             }}
           >
               <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
-                  {loading ?<CircularProgress /> :<LockOutlinedIcon />}
+                <LockOutlinedIcon />
               </Avatar>
             <Typography component="h1" variant="h5">
               Forgot Password
@@ -190,12 +190,26 @@ export default function ForgotPassword() {
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
               />
-              <Button
+                <Grid item sm={12}>
+
+                    <Box sx={{ width: '100%' }}>
+                        {loading &&   <LinearProgress />}
+                    </Box>
+
+                </Grid>
+                <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
+                disabled={loading}
+                sx={{
+                mt: 3,
+                mb: 2,
+                backgroundColor: '#434544',
+                '&:hover': {
+                    backgroundColor: '#0a0a0a ',
+                }
+            }}>
                 Reset password
               </Button>
               <Grid container>

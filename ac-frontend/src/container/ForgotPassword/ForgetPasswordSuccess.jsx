@@ -16,7 +16,6 @@ import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
-import Modul from "../../components/Modul/Modul";
 import CircularProgress from '@mui/material/CircularProgress';
 import DoneIcon from '@mui/icons-material/Done';
 import Header from "../../components/headerLogout/header"

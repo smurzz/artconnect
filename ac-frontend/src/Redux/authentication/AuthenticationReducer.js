@@ -30,6 +30,15 @@ export default function authenticationReducer(state = initialState, action) {
                 pending: false,
                 errorSignup: action.errorSignup
             }
+        case authenticationActions.RESET_STATE:
+            return{
+                ...state,
+                user: null,
+                pending: false,
+                errorSignup: null,
+                status: '',
+                message: '',
+            }
         default:
             return state;
     }
