@@ -7,6 +7,7 @@ import ResetPassword from "./container/resetPassword/ResetPassword";
 import Home from "./container/Home/home";
 import Galerie from "./container/Galerie/Galerie";
 import Galerie2 from "./container/Galerie/Galerie2";
+import Profile from "./container/Profile/Profile";
 import Login from "./container/Login/Login";
 import ResetPasswortSuccess from "./container/ForgotPassword/ForgetPasswordSuccess"
 import Protected from "./components/protected";
@@ -18,14 +19,18 @@ function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Home />}></Route>
+        <Route path="/profile" element={<Profile />}></Route>
         <Route path="/register" element={<Registration />}></Route>
         <Route path="/login" element={<Login />} />
           <Route path ="/forgot" element ={<ForgotPassword/>}/>
         <Route path ="/resetSuccess" element ={<ResetPasswortSuccess/>}/>
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
-          <Route element={<ProtectedRoutes />}>
+        {/* protected */}
             <Route path="/protected" element={<Protected />} />
             <Route path="/galerie" element={<Galerie2 />}></Route>
+        {/* protected */}
+          <Route element={<ProtectedRoutes />}>
+
           </Route>
       </Routes>
     </Layout>

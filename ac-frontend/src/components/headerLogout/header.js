@@ -24,7 +24,9 @@ export default function ButtonAppBar() {
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static" style={{ backgroundColor: '#0a0a0a' }}>
-                <Toolbar sx={{ mr: 2 ,  justifyContent: 'space-between' }}>
+                <div className="mx-auto max-w-3xl">
+
+                <Toolbar sx={{   justifyContent: 'space-between' }}>
                     <div className="flexBox">
                         <BrushIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}></BrushIcon>
                         <Typography
@@ -65,6 +67,7 @@ export default function ButtonAppBar() {
                     <Button color="inherit" onClick={() => navigateTo("register")}>Register</Button>
                     </div>
                 </Toolbar>
+                </div>
             </AppBar>
         </Box>
     );
