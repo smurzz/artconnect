@@ -16,7 +16,6 @@ import Image7 from './slide_Images/picture5.jpg';
 const home = () => {
   return (
     <div className="home-container">
-      <Header />
       <div className="slider-container">
         <h1 className="heading_primary txt_set">Welcome to ArtConnect</h1>
         <div className="slider">

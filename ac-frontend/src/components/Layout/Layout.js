@@ -8,7 +8,10 @@ import {  useState } from "react";
 import HeaderLogout from "../../components/headerLogout/header";
 const Layout = ({ children }) => {
   return (
-    <React.Fragment>
+    <React.Fragment >
+        <header className="container">
+        <HeaderLogout></HeaderLogout>
+        </header>
       <main>{children}</main>
         <Footer />
     </React.Fragment>
