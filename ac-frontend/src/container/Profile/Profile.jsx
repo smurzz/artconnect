@@ -1,24 +1,28 @@
 import React, { Fragment } from 'react'
+import EmptyGalerie from './../../components/emptyGalerie/EmptyGalerie'
+import Navbar from './../../components/navbar/Navbar'
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 import { CodeBracketIcon, EllipsisVerticalIcon, FlagIcon, StarIcon } from '@heroicons/react/20/solid'
 import { PaperClipIcon } from '@heroicons/react/20/solid'
+import Footer from './../../components/secondFooter/Footer'
 
 const profile = {
-    name: 'Ricardo Cooper',
-    email: 'ricardo.cooper@example.com',
+    name: 'Vyacheslav',
+    email: 'Vyacheslav@example.com',
+    web: 'Vyacheslav.com',
     avatar:
       'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
     backgroundImage:
       'https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
     fields: [
       ['Phone', '(555) 123-4567'],
-      ['Email', 'ricardocooper@example.com'],
+      ['Email', 'Vyacheslav@example.com'],
       ['Title', 'Senior Front-End Developer'],
       ['Team', 'Product Development'],
       ['Location', 'San Francisco'],
       ['Sits', 'Oasis, 4th floor'],
-      ['Salary', '$145,000'],
+      ['Salary', '12$'],
       ['Birthday', 'June 8, 1990'],
     ],
   }
@@ -30,6 +34,9 @@ const profile = {
 const Profile = () => {
   return (
     <>
+        <header>
+            <Navbar />
+        </header>
     <div>
     <div>
       <div>
@@ -49,15 +56,8 @@ const Profile = () => {
                 type="button"
                 className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
               >
-                <EnvelopeIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-                <span>Message</span>
-              </button>
-              <button
-                type="button"
-                className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              >
-                <PhoneIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-                <span>Call</span>
+                {/* <EnvelopeIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" /> */}
+                <span>Bearbeiten</span>
               </button>
             </div>
           </div>
@@ -73,16 +73,16 @@ const Profile = () => {
       <div className="mx-auto max-w-3xl">
 
       </div>
-      <div className="px-4 sm:px-0">
-        <h3 className="text-base font-semibold leading-7 text-gray-900">Applicant Information</h3>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Personal details and application.</p>
-      </div>
+      {/* <div className="px-4 sm:px-0">
+        <h3 className="text-base font-semibold leading-7 text-gray-900">Biografie</h3>
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Persönliche Beschreibung ...</p>
+      </div> */}
       <div className="mt-6 border-t border-gray-100">
         <dl className="divide-y divide-gray-100">
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Full name</dt>
             <dd className="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              <span className="flex-grow">Margot Foster</span>
+              <span className="flex-grow">{profile.name}</span>
               <span className="ml-4 flex-shrink-0">
                 <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
                   Update
@@ -91,9 +91,9 @@ const Profile = () => {
             </dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Application for</dt>
+            <dt className="text-sm font-medium leading-6 text-gray-900">Tel. </dt>
             <dd className="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              <span className="flex-grow">Backend Developer</span>
+              <span className="flex-grow">01725450303</span>
               <span className="ml-4 flex-shrink-0">
                 <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
                   Update
@@ -104,7 +104,7 @@ const Profile = () => {
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Email address</dt>
             <dd className="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              <span className="flex-grow">margotfoster@example.com</span>
+              <span className="flex-grow">{profile.email}</span>
               <span className="ml-4 flex-shrink-0">
                 <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
                   Update
@@ -113,9 +113,13 @@ const Profile = () => {
             </dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Salary expectation</dt>
+            <dt className="text-sm font-medium leading-6 text-gray-900">Website</dt>
             <dd className="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              <span className="flex-grow">$120,000</span>
+              <span className="flex-grow">
+                <a href={''}>
+                {profile.web}
+                </a>
+                </span>
               <span className="ml-4 flex-shrink-0">
                 <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
                   Update
@@ -124,7 +128,7 @@ const Profile = () => {
             </dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">About</dt>
+            <dt className="text-sm font-medium leading-6 text-gray-900">Biografie</dt>
             <dd className="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <span className="flex-grow">
                 Fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur
@@ -193,11 +197,13 @@ const Profile = () => {
           </div>
         </dl>
       </div>
-
+        <EmptyGalerie />
       </div>
     </div>
 
-   
+   <footer>
+      <Footer />
+   </footer>
 
 
 
