@@ -1,37 +1,43 @@
 package com.artconnect.backend.controller.response;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.server.ResponseStatusException;
 
+import jakarta.validation.ConstraintViolationException;
 import reactor.core.publisher.Mono;
 
 @ControllerAdvice
 public class ValidationHandler {
 
     @ExceptionHandler(WebExchangeBindException.class)
-    public Mono<ResponseEntity<List<String>>> handleException(WebExchangeBindException e) {
+    public Mono<String> handleException(WebExchangeBindException e) {
         var errors = e.getBindingResult()
         		.getFieldErrors()
                 .stream()
                 .map(fieldError -> new String( fieldError.getField() + ": " + fieldError.getDefaultMessage()))
-                .collect(Collectors.toList());
-        return Mono.just(ResponseEntity.badRequest().body(errors));
+                .collect(Collectors.joining(", "));
+        return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, errors));
     }
     
 	@ExceptionHandler(DuplicateKeyException.class)
     public Mono<ResponseEntity<String>> handleDuplicateKeyException(DuplicateKeyException e) {
         String message = e.getMessage();
         if (message.contains("email")) {
-            return Mono.just(ResponseEntity.badRequest().body("Email already exists"));
+            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists"));
         } else {
-            return Mono.just(ResponseEntity.badRequest().body("Duplicate key error"));
+        	return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicate key error"));
         }
 	}
-
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+    public Mono<ResponseEntity<String>> handleImageUploadException(ConstraintViolationException e) {
+		return Mono.just(ResponseEntity.badRequest().body("Image is bigger than 5Mb or is not PNG, JPEG, or JPG"));
+	}
 }
