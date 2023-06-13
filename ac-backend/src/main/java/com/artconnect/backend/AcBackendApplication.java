@@ -16,10 +16,5 @@ public class AcBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AcBackendApplication.class, args);
 	}
-	
-	@GetMapping("/")
-    public Mono<String> getHelloWorld() {
-        return Mono.just("Hello from secured ArtConnect!");
-    }
 
 }
