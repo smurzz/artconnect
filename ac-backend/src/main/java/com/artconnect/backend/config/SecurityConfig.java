@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	final String PATH_AUTH = "/auth/**";
+	final String PATH_USERS = "/users/**";
 
 	private final JwtAuthenticationFilter jwtAuthFilter;
 	private final ReactiveAuthenticationManager reactiveAuthenticationManager;
@@ -41,6 +42,10 @@ public class SecurityConfig {
 						.pathMatchers(HttpMethod.GET, PATH_AUTH).permitAll()
 						.pathMatchers(HttpMethod.GET, "/forgot-password/**").permitAll()
 						.pathMatchers(HttpMethod.POST, "/reset-password/**").permitAll()
+						
+						.pathMatchers(HttpMethod.GET, PATH_USERS).permitAll()
+						.pathMatchers(HttpMethod.POST, PATH_USERS).hasRole("ADMIN")
+						
 						.anyExchange().authenticated()
 						.and()
 				)
