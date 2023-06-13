@@ -1,13 +1,17 @@
-package com.artconnect.backend.model;
+package com.artconnect.backend.model.user;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.artconnect.backend.model.Image;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,11 +37,25 @@ public class User implements UserDetails {
 	
 	private String password;
 	
+	private LocalDate dateOfBirthday;
+	
+    private Status isDateOfBirthVisible;
+	
 	private Date createdAt;
 	
-	private boolean isEnabled;
+	private Status isAccountEnabled;
 	
 	private Role role;
+	
+	private Image profilePhoto;
+	
+	private String biography;
+	
+	private List<Exhibition> exhibitions;
+	
+	private Contacts contacts;
+	
+	private List<SocialMedia> socialMedias;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -71,6 +89,6 @@ public class User implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return isEnabled;
+		return true;
 	}
 }

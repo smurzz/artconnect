@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.artconnect.backend.model.user.Status;
 import com.artconnect.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class UserCleanupTask {
 	
     @Scheduled(fixedRate = 60000) // 1 minute
 	public void cleanupUsers() {
-    	userRepository.findByisEnabled(false)
+    	userRepository.findByisAccountEnabled(Status.RESTRICTED)
     		.filter(user -> (user.getCreatedAt().getTime() + confirmTokenValidity) <= new Date().getTime())
     		.flatMap(userRepository::delete)
     		.subscribe(); 		

@@ -1,4 +1,4 @@
-package com.artconnect.backend.model;
+package com.artconnect.backend.model.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

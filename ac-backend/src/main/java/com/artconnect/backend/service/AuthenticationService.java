@@ -18,8 +18,9 @@ import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.controller.request.AuthenticationRequest;
 import com.artconnect.backend.controller.request.RegisterRequest;
 import com.artconnect.backend.controller.response.AuthenticationResponse;
-import com.artconnect.backend.model.Role;
-import com.artconnect.backend.model.User;
+import com.artconnect.backend.model.user.Role;
+import com.artconnect.backend.model.user.Status;
+import com.artconnect.backend.model.user.User;
 import com.artconnect.backend.repository.UserRepository;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -46,7 +47,7 @@ public class AuthenticationService {
 				.email(request.getEmail())
 				.password(passwordEncoder.encode(request.getPassword()))
 				.createdAt(new Date())
-				.isEnabled(false)
+				.isAccountEnabled(Status.RESTRICTED)
 				.role(Role.USER)
 				.build();
 		return userRepository.save(user)
@@ -73,7 +74,7 @@ public class AuthenticationService {
 							if(jwtService.isTokenValid(confirmToken, userDetails)) {
 								return userRepository.findByEmail(userEmail)
 				                        .flatMap(user -> {
-				                            user.setEnabled(true);
+				                            user.setIsAccountEnabled(Status.PUBLIC);
 				                            return userRepository.save(user)
 				                            		.thenReturn(succeedConfirmEmail());
 				                        });	
@@ -94,7 +95,7 @@ public class AuthenticationService {
 				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()))
 				.then(userRepository.findByEmail(request.getEmail()))
 				.flatMap(user -> {
-					if(user.isEnabled()) {
+					if(user.getIsAccountEnabled().equals(Status.PUBLIC)) {
 						String jwtToken = jwtService.generateToken(user);
 						String refreshToken = jwtService.generateRefreshToken(user);
 						return Mono.just(AuthenticationResponse.builder()
