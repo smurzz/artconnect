@@ -4,7 +4,6 @@ import {AiOutlineArrowLeft} from 'react-icons/ai';
 import {AiOutlineArrowRight} from 'react-icons/ai';
 import {GrClose} from 'react-icons/gr';
 import { useState } from 'react';
-import Header from '../../components/header/header'
 import './Galerie.css';
 
 const Galerie = () => {
@@ -82,7 +81,6 @@ const Galerie = () => {
 
   return (
     <>
-        <Header/>
         <div className='container center-text margin-bottom-md'>
             <h1 className='heading_primary'>Galerie</h1>
             {openModal && 

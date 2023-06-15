@@ -10,7 +10,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Header from '../../components/header/header';
 
 import Image1 from './imgSlides/original.jpg';
 import Image2 from './imgSlides/original2.jpg';
@@ -83,7 +82,6 @@ const defaultTheme = createTheme();
 export default function Gallery() {
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Header />
             <main>
                 {/* Hero unit */}
                 <Box

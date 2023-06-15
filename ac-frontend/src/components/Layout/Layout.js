@@ -1,5 +1,4 @@
 import React, {useEffect} from "react";
-import Header from "../header/header";
 import Footer from "../footer/footer";
 import { Outlet } from "react-router-dom";
 import {logikService} from "../../lib/service";
