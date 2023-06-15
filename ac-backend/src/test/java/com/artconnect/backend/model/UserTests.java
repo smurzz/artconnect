@@ -18,7 +18,7 @@ import org.springframework.security.core.GrantedAuthority;
 import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.model.user.Status;
 import com.artconnect.backend.model.user.User;
-
+//should to be corrected
 class UserTests {
 
     @Nested
