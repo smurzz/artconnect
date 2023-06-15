@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,35 +62,49 @@ public class UserController {
 	public Mono<User> getUserByIdForAdmin(@PathVariable("id") String id) {
 		return userService.findById(id);
 	}
+	
+	@GetMapping
+	public Mono<UserResponse> getUserByEmail(@RequestParam(value="email") String email) {
+		return userService.findByEmail(email)
+				.map(user -> UserResponse.fromUser(user));
+	}
 
 	@PostMapping("/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<User> createUser(@RequestBody User user) {
-		return userService.createUser(user);
+		return userService.create(user);
 	}
-
+	
 	@PutMapping("/{id}")
-	public Mono<UserResponse> updateUser(@PathVariable("id") String id, @RequestBody UserRequest userRequest) {
+	public Mono<UserResponse> updateMyAccount(
+			@PathVariable("id") String id, 
+			@RequestBody UserRequest userRequest, 
+			@RequestHeader("Authorization") String authorization){
 		User user = User.builder()
 				.firstname(userRequest.getFirstname())
 				.lastname(userRequest.getLastname())
 				.dateOfBirthday(userRequest.getDateOfBirthday())
+				.isDateOfBirthVisible(userRequest.getIsDateOfBirthVisible())
 				.biography(userRequest.getBiography())
 				.exhibitions(userRequest.getExhibitions())
 				.contacts(userRequest.getContacts())
 				.socialMedias(userRequest.getSocialMedias())
 				.build();
-		return userService.update(id, user)
+		return userService.update(id, user, authorization)
 				.map(updatedUser -> UserResponse.fromUser(updatedUser));
 	}
 	
 	@PutMapping("/{id}/admin")
 	@PreAuthorize("hasRole('ADMIN')")
-	public Mono<User> updateUserByAdmin(@PathVariable("id") String id, @RequestBody User user) {
-		return userService.update(id, user);
+	public Mono<User> updateUserByAdmin(
+			@PathVariable("id") String id, 
+			@RequestBody User user,
+			@RequestHeader("Authorization") String authorization) {
+		return userService.update(id, user, authorization);
 	}
 
 	@PostMapping(value = "/profile-photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<ResponseEntity<byte[]>> addProfilePhoto(
 			@RequestPart Mono<FilePart> file, 
 			@RequestHeader("Content-Length") Long fileSize,
@@ -106,10 +121,8 @@ public class UserController {
 	
 	@GetMapping("/{id}/profile-photo")
 	public Mono<ResponseEntity<byte[]>> getUserProfilePhotoById (@PathVariable String id){
-		System.out.println("We are in the UserController");
 		return userService.getProfilePhotoById(id)
 				.map(image -> {
-					System.out.println("Sending response from UserController");
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentType(MediaType.valueOf(image.getContentType()));
 					headers.set("Content-Disposition", "attachment; filename=" + image.getTitle());
@@ -118,23 +131,16 @@ public class UserController {
 		});
 	}
 	
-	@DeleteMapping("/{id}/admin")
-	@PreAuthorize("hasRole('ADMIN')")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public Mono<Void> deleteUser(@PathVariable String id) {
-	    return userService.deleteUser(id);
-	}
-
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public Mono<Void> deleteMyAccount(@PathVariable String id, @RequestHeader("Authorization") String authorization) {
-	    return userService.deleteMyAccont(id, authorization);
+	public Mono<Void> deleteUser(@PathVariable String id, @RequestHeader("Authorization") String authorization) {
+	    return userService.delete(id, authorization);
 	}
 
 	@DeleteMapping("/")
 	@PreAuthorize("hasRole('ADMIN')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public Mono<Void> deleteAllTutorials() {
+	public Mono<Void> deleteAllUsers() {
 		return userService.deleteAll();
 	}
 }

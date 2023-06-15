@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	final String PATH_AUTH = "/auth/**";
-	final String PATH_USERS = "/users/**";
+	final String PATH_USERS = "/users/";
 
 	private final JwtAuthenticationFilter jwtAuthFilter;
 	private final ReactiveAuthenticationManager reactiveAuthenticationManager;
@@ -45,6 +45,7 @@ public class SecurityConfig {
 						
 						.pathMatchers(HttpMethod.GET, PATH_USERS).permitAll()
 						.pathMatchers(HttpMethod.POST, PATH_USERS).hasRole("ADMIN")
+						.pathMatchers(HttpMethod.POST, PATH_USERS + "profile-photo").hasAnyRole("USER", "ADMIN")
 						
 						.anyExchange().authenticated()
 						.and()
