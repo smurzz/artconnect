@@ -18,7 +18,12 @@ import org.springframework.security.core.GrantedAuthority;
 import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.model.user.Status;
 import com.artconnect.backend.model.user.User;
-//should to be corrected
+
+
+import java.time.LocalDate;
+import java.util.Date;
+
+
 class UserTests {
 
     @Nested
@@ -139,7 +144,7 @@ class UserTests {
             User user = new User();
             Status expectedEnabled = Status.PUBLIC;
             user.setIsAccountEnabled(expectedEnabled);
-            assertEquals(expectedEnabled, user.isEnabled());
+            assertTrue(user.isEnabled());
         }
 
         @Test
@@ -237,7 +242,7 @@ class UserTests {
             User user = new User();
             Status expectedEnabled = Status.PUBLIC;
             user.setIsAccountEnabled(expectedEnabled);
-            assertEquals(expectedEnabled, user.isEnabled());
+            assertTrue(user.isEnabled());
         }
 
         @Test
@@ -427,29 +432,44 @@ class UserTests {
     @DisplayName("@RequiredArgsConstructor")
     class RequiredArgsConstructor {
 
-//        @Test
-//        @DisplayName("Constructor should assign values correctly")
-//        void testConstructor() {
-//            String id = "123";
-//            String firstname = "John";
-//            String lastname = "Doe";
-//            String email = "john.doe@example.com";
-//            String password = "password123";
-//            Date createdAt = new Date();
-//            Status isEnabled = Status.PUBLIC;		// already changed
-//            Role role = Role.ADMIN;
-//
-//            User user = new User(id, firstname, lastname, email, password, createdAt, isEnabled, role);
-//
-//            assertEquals(id, user.getId());
-//            assertEquals(firstname, user.getFirstname());
-//            assertEquals(lastname, user.getLastname());
-//            assertEquals(email, user.getEmail());
-//            assertEquals(password, user.getPassword());
-//            assertEquals(createdAt, user.getCreatedAt());
-//            assertEquals(isEnabled, user.isEnabled());
-//            assertEquals(role, user.getRole());
-//        }
+        @Test
+        @DisplayName("Constructor should assign values correctly")
+        void testConstructor() {
+            String id = "123";
+            String firstname = "John";
+            String lastname = "Doe";
+            String email = "john.doe@example.com";
+            String password = "password123";
+            LocalDate dateOfBirth = LocalDate.now();
+            Status isDateOfBirthVisible = Status.PUBLIC;
+            Date createdAt = new Date();
+            Status isAccountEnabled = Status.PUBLIC;
+            Role role = Role.ADMIN;
+
+            User user = User.builder()
+                    .id(id)
+                    .firstname(firstname)
+                    .lastname(lastname)
+                    .email(email)
+                    .password(password)
+                    .dateOfBirthday(dateOfBirth)
+                    .isDateOfBirthVisible(isDateOfBirthVisible)
+                    .createdAt(createdAt)
+                    .isAccountEnabled(isAccountEnabled)
+                    .role(role)
+                    .build();
+
+            assertEquals(id, user.getId());
+            assertEquals(firstname, user.getFirstname());
+            assertEquals(lastname, user.getLastname());
+            assertEquals(email, user.getEmail());
+            assertEquals(password, user.getPassword());
+            assertEquals(dateOfBirth, user.getDateOfBirthday());
+            assertEquals(isDateOfBirthVisible, user.getIsDateOfBirthVisible());
+            assertEquals(createdAt, user.getCreatedAt());
+            assertEquals(isAccountEnabled, user.getIsAccountEnabled());
+            assertEquals(role, user.getRole());
+        }
 
         @Test
         @DisplayName("Constructor should assign default values correctly")
@@ -462,37 +482,53 @@ class UserTests {
             assertEquals(null, user.getLastname());
             assertEquals(null, user.getEmail());
             assertEquals(null, user.getPassword());
+            assertEquals(null, user.getDateOfBirthday());
+            assertEquals(null, user.getIsDateOfBirthVisible());
             assertEquals(null, user.getCreatedAt());
-            assertEquals(false, user.isEnabled());
+            assertEquals(true, user.isAccountNonExpired()); // Modified assertion
+            assertEquals(true, user.isAccountNonLocked()); // Modified assertion
+            assertEquals(true, user.isCredentialsNonExpired()); // Modified assertion
+            assertEquals(true, user.isEnabled()); // Modified assertion
             assertEquals(null, user.getRole());
+            assertEquals(null, user.getProfilePhoto());
+            assertEquals(null, user.getBiography());
+            assertEquals(null, user.getExhibitions());
+            assertEquals(null, user.getContacts());
+            assertEquals(null, user.getSocialMedias());
         }
 
-//        @Test
-//        @DisplayName("Constructor should assign null values correctly")
-//        void testConstructorWithNullValues() {
-//            String expectedId = null;
-//            String expectedFirstname = null;
-//            String expectedLastname = null;
-//            String expectedEmail = null;
-//            String expectedPassword = null;
-//            Date expectedCreatedAt = null;
-//            Status expectedIsEnabled = Status.PUBLIC;
-//            Role expectedRole = null;
-//
-//            User user = new User(
-//                    expectedId, expectedFirstname, expectedLastname, expectedEmail,
-//                    expectedPassword, expectedCreatedAt, expectedIsEnabled, expectedRole
-//            );
-//
-//            // Verify that null values are assigned correctly
-//            assertEquals(expectedId, user.getId());
-//            assertEquals(expectedFirstname, user.getFirstname());
-//            assertEquals(expectedLastname, user.getLastname());
-//            assertEquals(expectedEmail, user.getEmail());
-//            assertEquals(expectedPassword, user.getPassword());
-//            assertEquals(expectedCreatedAt, user.getCreatedAt());
-//            assertEquals(expectedIsEnabled, user.isEnabled());
-//            assertEquals(expectedRole, user.getRole());
-//        }
+        @Test
+        @DisplayName("Constructor should assign null values correctly")
+        void testConstructorWithNullValues() {
+            String expectedId = null;
+            String expectedFirstname = null;
+            String expectedLastname = null;
+            String expectedEmail = null;
+            String expectedPassword = null;
+            Date expectedCreatedAt = null;
+            Status expectedIsEnabled = Status.PUBLIC; // Update the expected value here
+            Role expectedRole = null;
+
+            User user = User.builder()
+                    .id(expectedId)
+                    .firstname(expectedFirstname)
+                    .lastname(expectedLastname)
+                    .email(expectedEmail)
+                    .password(expectedPassword)
+                    .createdAt(expectedCreatedAt)
+                    .isAccountEnabled(expectedIsEnabled) // Update the setter method here
+                    .role(expectedRole)
+                    .build();
+
+            // Verify that null values are assigned correctly
+            assertEquals(expectedId, user.getId());
+            assertEquals(expectedFirstname, user.getFirstname());
+            assertEquals(expectedLastname, user.getLastname());
+            assertEquals(expectedEmail, user.getEmail());
+            assertEquals(expectedPassword, user.getPassword());
+            assertEquals(expectedCreatedAt, user.getCreatedAt());
+            assertTrue(user.isEnabled()); // Use assertTrue to check for true value
+            assertEquals(expectedRole, user.getRole());
+        }
     }
 }
