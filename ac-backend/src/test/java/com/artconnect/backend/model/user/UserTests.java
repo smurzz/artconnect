@@ -1,4 +1,4 @@
-package com.artconnect.backend.model;
+package com.artconnect.backend.model.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
