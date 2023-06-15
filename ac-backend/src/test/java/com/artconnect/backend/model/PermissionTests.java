@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.artconnect.backend.model.user.Permission;
+
 @DisplayName("Permission Tests")
 class PermissionTests {
 

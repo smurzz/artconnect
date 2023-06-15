@@ -26,8 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.controller.request.ResetPasswordRequest;
-import com.artconnect.backend.model.Role;
-import com.artconnect.backend.model.User;
+import com.artconnect.backend.model.user.Role;
+import com.artconnect.backend.model.user.User;
 import com.artconnect.backend.repository.UserRepository;
 
 import reactor.core.publisher.Mono;

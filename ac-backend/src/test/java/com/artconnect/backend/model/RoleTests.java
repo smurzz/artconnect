@@ -1,13 +1,17 @@
 package com.artconnect.backend.model;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import com.artconnect.backend.model.user.Permission;
+import com.artconnect.backend.model.user.Role;
+
 import java.util.Collections;
 import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.Set;
 
-import static com.artconnect.backend.model.Permission.*;
+import static com.artconnect.backend.model.user.Permission.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 

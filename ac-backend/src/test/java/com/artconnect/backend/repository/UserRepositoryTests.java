@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.artconnect.backend.model.User;
+import com.artconnect.backend.model.user.Status;
+import com.artconnect.backend.model.user.User;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -59,14 +60,14 @@ class UserRepositoryTests {
     @Test
     void testFindByIsEnabled_Success() {
         // Given
-        boolean isEnabled = true;
-        User user1 = User.builder().isEnabled(isEnabled).email("user1@example.com").build();
-        User user2 = User.builder().isEnabled(isEnabled).email("user2@example.com").build();
+        Status isEnabled = Status.PUBLIC;
+        User user1 = User.builder().isAccountEnabled(isEnabled).email("user1@example.com").build();
+        User user2 = User.builder().isAccountEnabled(isEnabled).email("user2@example.com").build();
 
-        when(userRepository.findByisEnabled(isEnabled)).thenReturn(Flux.just(user1, user2));
+        when(userRepository.findByisAccountEnabled(isEnabled)).thenReturn(Flux.just(user1, user2));
 
         // When
-        Flux<User> foundUsersFlux = userRepository.findByisEnabled(isEnabled);
+        Flux<User> foundUsersFlux = userRepository.findByisAccountEnabled(isEnabled);
 
         // Then
         StepVerifier.create(foundUsersFlux)
@@ -79,12 +80,12 @@ class UserRepositoryTests {
     @Test
     void testFindByIsEnabled_NoUsersFound() {
         // Given
-        boolean isEnabled = true;
+    	Status isEnabled = Status.PUBLIC;
 
-        when(userRepository.findByisEnabled(isEnabled)).thenReturn(Flux.empty());
+        when(userRepository.findByisAccountEnabled(isEnabled)).thenReturn(Flux.empty());
 
         // When
-        Flux<User> foundUsersFlux = userRepository.findByisEnabled(isEnabled);
+        Flux<User> foundUsersFlux = userRepository.findByisAccountEnabled(isEnabled);
 
         // Then
         StepVerifier.create(foundUsersFlux)
@@ -96,12 +97,12 @@ class UserRepositoryTests {
     @Test
     void testFindByIsEnabled_EmptyResult() {
         // Given
-        boolean isEnabled = false;
+    	Status isEnabled = Status.RESTRICTED;;
 
-        when(userRepository.findByisEnabled(isEnabled)).thenReturn(Flux.empty());
+        when(userRepository.findByisAccountEnabled(isEnabled)).thenReturn(Flux.empty());
 
         // When
-        Flux<User> foundUsersFlux = userRepository.findByisEnabled(isEnabled);
+        Flux<User> foundUsersFlux = userRepository.findByisAccountEnabled(isEnabled);
 
         // Then
         StepVerifier.create(foundUsersFlux)

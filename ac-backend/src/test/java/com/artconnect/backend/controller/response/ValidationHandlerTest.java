@@ -21,6 +21,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.artconnect.backend.controller.AuthenticationController;
 import com.artconnect.backend.controller.request.RegisterRequest;
@@ -111,12 +112,13 @@ public class ValidationHandlerTest {
 
 			WebExchangeBindException exception = new WebExchangeBindException(parameter, bindingResult);
 
-			ResponseEntity<List<String>> responseEntity = validationHandler.handleException(exception).block();
+			Mono<String> response= validationHandler.handleException(exception);
 
-			assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-			assertThat(responseEntity.getBody().size()).isEqualTo(2);
-			assertThat(responseEntity.getBody().get(0)).isEqualTo("field1: message1");
-			assertThat(responseEntity.getBody().get(1)).isEqualTo("field2: message2");
+			StepVerifier.create(response)
+	        .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
+	                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST
+	                && ((ResponseStatusException) throwable).getReason().equals("fieldName1.field1: message1, fieldName2.field2: message2"))
+	        .verify();
 	    }
 	    
 	    @Test

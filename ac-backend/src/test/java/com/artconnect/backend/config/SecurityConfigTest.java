@@ -23,8 +23,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import com.artconnect.backend.AcBackendApplication;
 import com.artconnect.backend.config.jwt.JwtAuthenticationFilter;
 import com.artconnect.backend.config.jwt.JwtService;
-import com.artconnect.backend.model.Role;
-import com.artconnect.backend.model.User;
+import com.artconnect.backend.model.user.Role;
+import com.artconnect.backend.model.user.User;
 import com.artconnect.backend.repository.UserRepository;
 
 import reactor.core.publisher.Mono;

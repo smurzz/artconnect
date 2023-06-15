@@ -27,8 +27,9 @@ import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.controller.request.AuthenticationRequest;
 import com.artconnect.backend.controller.request.RegisterRequest;
 import com.artconnect.backend.controller.response.AuthenticationResponse;
-import com.artconnect.backend.model.Role;
-import com.artconnect.backend.model.User;
+import com.artconnect.backend.model.user.Role;
+import com.artconnect.backend.model.user.Status;
+import com.artconnect.backend.model.user.User;
 import com.artconnect.backend.repository.UserRepository;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -87,7 +88,7 @@ class AuthenticationServiceTest {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .createdAt(new Date(0))
-                .isEnabled(false)
+                .isAccountEnabled(Status.RESTRICTED)
                 .role(Role.USER)
                 .build();
 

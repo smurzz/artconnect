@@ -1,5 +1,6 @@
 package com.artconnect.backend.controller;
-import com.artconnect.backend.model.User;
+import com.artconnect.backend.model.user.Status;
+import com.artconnect.backend.model.user.User;
 import com.artconnect.backend.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
@@ -21,17 +22,17 @@ class UserCleanupTaskTest {
 
         // Create a user that should be cleaned up
         User expiredUser = new User();
-        expiredUser.setEnabled(false);
+        expiredUser.setIsAccountEnabled(Status.RESTRICTED);
         expiredUser.setCreatedAt(new Date(currentTime.getTime() - confirmTokenValidity - 1000)); // Set to expired
 
         // Create a user that should not be cleaned up
         User validUser = new User();
-        validUser.setEnabled(false);
+        validUser.setIsAccountEnabled(Status.RESTRICTED);
         validUser.setCreatedAt(new Date(currentTime.getTime() - confirmTokenValidity + 1000)); // Set to valid
 
         // Create a Flux of users to be returned by the repository
         Flux<User> users = Flux.just(expiredUser, validUser);
-        when(userRepository.findByisEnabled(false)).thenReturn(users);
+        when(userRepository.findByisAccountEnabled(Status.RESTRICTED)).thenReturn(users);
 
         // Create a Mono representing the deletion of the expired user
         Mono<Void> deleteResult = Mono.empty(); // Or create a successful deletion Mono if applicable
