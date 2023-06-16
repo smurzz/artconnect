@@ -6,14 +6,16 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.Date;
 
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.GrantedAuthority;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.model.user.Status;
@@ -531,4 +533,43 @@ class UserTests {
             assertEquals(expectedRole, user.getRole());
         }
     }
+
+    @Nested
+    @DisplayName("NoArgsConstructor")
+    class NoArgsConstructor {
+
+        @Test
+        @DisplayName("Constructor should assign null values correctly")
+        void testConstructorWithNullValues() {
+            User user = new User();
+
+            // Verify that all properties are set to null
+            assertNull(user.getId());
+            assertNull(user.getFirstname());
+            assertNull(user.getLastname());
+            assertNull(user.getEmail());
+            assertNull(user.getPassword());
+            assertNull(user.getDateOfBirthday());
+            assertNull(user.getIsDateOfBirthVisible());
+            assertNull(user.getCreatedAt());
+            assertNull(user.getIsAccountEnabled());
+            assertNull(user.getRole());
+            assertNull(user.getProfilePhoto());
+            assertNull(user.getBiography());
+            assertNull(user.getExhibitions());
+            assertNull(user.getContacts());
+            assertNull(user.getSocialMedias());
+        }
+    }
+        @Test
+        @DisplayName("should create a User object with null values")
+        void testConstructorWithNullValues() {
+            User user = new User();
+
+            assertNull(user.getId());
+            assertNull(user.getFirstname());
+            assertNull(user.getLastname());
+            assertNull(user.getEmail());
+            assertNull(user.getPassword());
+        }
 }
