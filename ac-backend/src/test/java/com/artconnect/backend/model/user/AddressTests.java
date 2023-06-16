@@ -169,4 +169,122 @@ public class AddressTests {
         // Assert
         Assertions.assertEquals(address1.hashCode(), address2.hashCode()); // Same field values, so hashCodes should be equal
     }
+
+    @Test
+    public void testNoArgsConstructor() {
+        // Act
+        Address address = new Address();
+
+        // Assert
+        Assertions.assertNull(address.getStreet());
+        Assertions.assertNull(address.getPostalCode());
+        Assertions.assertNull(address.getCity());
+        Assertions.assertNull(address.getCountry());
+    }
+
+    @Test
+    public void testAddressSetterMethods() {
+        // Arrange
+        Address address = new Address();
+
+        // Act
+        address.setStreet("Main Street");
+        address.setPostalCode("12345");
+        address.setCity("New York");
+        address.setCountry("USA");
+
+        // Assert
+        Assertions.assertEquals("Main Street", address.getStreet());
+        Assertions.assertEquals("12345", address.getPostalCode());
+        Assertions.assertEquals("New York", address.getCity());
+        Assertions.assertEquals("USA", address.getCountry());
+    }
+
+    @Test
+    public void testAllArgsConstructor() {
+        // Arrange
+        String street = "Main Street";
+        String postalCode = "12345";
+        String city = "New York";
+        String country = "USA";
+
+        // Act
+        Address address = new Address(street, postalCode, city, country);
+
+        // Assert
+        Assertions.assertEquals(street, address.getStreet());
+        Assertions.assertEquals(postalCode, address.getPostalCode());
+        Assertions.assertEquals(city, address.getCity());
+        Assertions.assertEquals(country, address.getCountry());
+    }
+
+    @Test
+    public void testSetterMethods() {
+        // Arrange
+        Address address = new Address();
+
+        // Act
+        address.setStreet("Main Street");
+        address.setPostalCode("12345");
+        address.setCity("New York");
+        address.setCountry("USA");
+
+        // Assert
+        Assertions.assertEquals("Main Street", address.getStreet());
+        Assertions.assertEquals("12345", address.getPostalCode());
+        Assertions.assertEquals("New York", address.getCity());
+        Assertions.assertEquals("USA", address.getCountry());
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        // Arrange
+        Address address1 = new Address("Main Street", "12345", "New York", "USA");
+        Address address2 = new Address("Main Street", "12345", "New York", "USA");
+        Address address3 = new Address("Second Street", "54321", "Los Angeles", "USA");
+
+        // Assert
+        Assertions.assertEquals(address1, address2); // Same field values, so should be equal
+        Assertions.assertNotEquals(address1, address3); // Different field values, so should not be equal
+
+        Assertions.assertEquals(address1.hashCode(), address2.hashCode()); // Same field values, so hashCodes should be equal
+    }
+
+    @Test
+    public void testToString() {
+        // Arrange
+        Address address = new Address("Main Street", "12345", "New York", "USA");
+
+        // Act
+        String addressString = address.toString();
+
+        // Assert
+        Assertions.assertTrue(addressString.contains("street=Main Street"));
+        Assertions.assertTrue(addressString.contains("postalCode=12345"));
+        Assertions.assertTrue(addressString.contains("city=New York"));
+        Assertions.assertTrue(addressString.contains("country=USA"));
+    }
+
+    @Test
+    public void testBuilderPattern() {
+        // Arrange
+        String street = "Main Street";
+        String postalCode = "12345";
+        String city = "New York";
+        String country = "USA";
+
+        // Act
+        Address address = Address.builder()
+                .street(street)
+                .postalCode(postalCode)
+                .city(city)
+                .country(country)
+                .build();
+
+        // Assert
+        Assertions.assertEquals(street, address.getStreet());
+        Assertions.assertEquals(postalCode, address.getPostalCode());
+        Assertions.assertEquals(city, address.getCity());
+        Assertions.assertEquals(country, address.getCountry());
+    }
 }

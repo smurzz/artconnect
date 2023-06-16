@@ -164,4 +164,69 @@ public class SocialMediaTest {
         Assertions.assertEquals(original.getLink(), copy.getLink());
     }
 
+    @Test
+    public void testSocialMediaSetterAndGetters() {
+        // Create a SocialMedia object
+        SocialMedia socialMedia = new SocialMedia();
+
+        // Set the title and link using setters
+        socialMedia.setTitle("YouTube");
+        socialMedia.setLink("https://youtube.com");
+
+        // Verify the values using getters
+        Assertions.assertEquals("YouTube", socialMedia.getTitle());
+        Assertions.assertEquals("https://youtube.com", socialMedia.getLink());
+    }
+
+    @Test
+    public void testSocialMediaHashCode() {
+        // Create two SocialMedia objects with the same values
+        SocialMedia socialMedia1 = new SocialMedia("Twitter", "https://twitter.com");
+        SocialMedia socialMedia2 = new SocialMedia("Twitter", "https://twitter.com");
+
+        // Verify the hashCode() method
+        Assertions.assertEquals(socialMedia1.hashCode(), socialMedia2.hashCode());
+    }
+
+    @Test
+    public void testSocialMediaToStringWithNullValues() {
+        // Create a SocialMedia object with null values
+        SocialMedia socialMedia = new SocialMedia(null, null);
+
+        // Verify the toString() representation with null values
+        String expectedToString = "SocialMedia(title=null, link=null)";
+        Assertions.assertEquals(expectedToString, socialMedia.toString());
+    }
+
+    @Test
+    public void testSocialMediaEqualsWithNull() {
+        // Create a SocialMedia object
+        SocialMedia socialMedia = new SocialMedia("Twitter", "https://twitter.com");
+
+        // Verify the equals() method with null
+        Assertions.assertNotEquals(socialMedia, null);
+    }
+
+    @Test
+    public void testSocialMediaEqualsWithDifferentObjectType() {
+        // Create a SocialMedia object
+        SocialMedia socialMedia = new SocialMedia("Twitter", "https://twitter.com");
+
+        // Verify the equals() method with a different object type
+        Assertions.assertNotEquals(socialMedia, "Twitter");
+    }
+
+    @Test
+    public void testSocialMediaEqualsAndHashCodeWithDefaultValues() {
+        // Create two SocialMedia objects with default values
+        SocialMedia socialMedia1 = new SocialMedia();
+        SocialMedia socialMedia2 = new SocialMedia();
+
+        // Verify the equals() method with default values
+        Assertions.assertEquals(socialMedia1, socialMedia2);
+
+        // Verify the hashCode() method with default values
+        Assertions.assertEquals(socialMedia1.hashCode(), socialMedia2.hashCode());
+    }
+
 }
