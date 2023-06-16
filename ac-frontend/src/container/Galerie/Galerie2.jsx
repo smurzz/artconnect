@@ -1,15 +1,5 @@
 import * as React from 'react';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 
 import Image1 from './imgSlides/original.jpg';
 import Image2 from './imgSlides/original2.jpg';
@@ -21,139 +11,156 @@ import Image7 from './imgSlides/original7.jpg';
 import Image8 from './imgSlides/original8.jpg';
 import Image9 from './imgSlides/original9.jpg';
 
-const card1 = {
-    url: `${Image1}`,
-    title: "Wandering Dunes",
-    description: "Dedication to Immigrants from Central Asia (Sketch), 2002, Ink on paper"
-}
+const products = [
+    {
+      id: 1,
+      name: 'Earthen Bottle',
+      href: '#',
+      price: '$48',
+      imageSrc: Image1,
+      imageAlt: 'Tall slender porcelain bottle with natural clay textured body and cork stopper.',
+    },
+    {
+      id: 2,
+      name: 'Nomad Tumbler',
+      href: '#',
+      price: '$35',
+      imageSrc: Image2,
+      imageAlt: 'Olive drab green insulated bottle with flared screw lid and flat top.',
+    },
+    {
+      id: 3,
+      name: 'Focus Paper Refill',
+      href: '#',
+      price: '$89',
+      imageSrc: Image3,
+      imageAlt: 'Person using a pen to cross a task off a productivity paper card.',
+    },
+    {
+      id: 4,
+      name: 'Machined Mechanical Pencil',
+      href: '#',
+      price: '$35',
+      imageSrc: Image4,
+      imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
+    },
+    {
+      id: 5,
+      name: 'Machined Mechanical Pencil',
+      href: '#',
+      price: '$35',
+      imageSrc: Image5,
+      imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
+    },
+    {
+      id: 6,
+      name: 'Machined Mechanical Pencil',
+      href: '#',
+      price: '$35',
+      imageSrc: Image6,
+      imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
+    },
+    {
+      id: 7,
+      name: 'Machined Mechanical Pencil',
+      href: '#',
+      price: '$35',
+      imageSrc: Image7,
+      imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
+    },
+    {
+      id: 8,
+      name: 'Machined Mechanical Pencil',
+      href: '#',
+      price: '$35',
+      imageSrc: Image8,
+      imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
+    },
+    {
+      id: 9,
+      name: 'Machined Mechanical Pencil',
+      href: '#',
+      price: '$35',
+      imageSrc: Image9,
+      imageAlt: 'Hand holding black machined steel mechanical pencil with brass tip and top.',
+    },
+    // More products...
+  ]
 
-const card2 = {
-    url: `${Image2}`,
-    title: "Totality Inventory",
-    description: "Roster of Infinity, 1976, Paper, pencil, ink"
-}
-
-const card3 = {
-    url: `${Image3}`,
-    title: "Lenin’s Plans of Monumental Propaganda",
-    description: "1984 Pencil and collage on paper"
-}
-
-const card4 = {
-    url: `${Image4}`,
-    title: "Moslem",
-    description: "Single-channel video, Duration: 17:41 min."
-}
-
-const card5 = {
-    url: `${Image5}`,
-    title: "Malevich",
-    description: " The Great Turning Point, 1990, Pencil, ink, gouache and collage on paper, Each: 29.7 x 42 cm."
-}
-
-const card6 = {
-    url: `${Image6}`,
-    title: "1m²",
-    description: "1978-2007, Installation, matchboxes."
-}
-
-const card7 = {
-    url: `${Image7}`,
-    title: "Mantras of the USSR #1",
-    description: "1977, Collage and pencil on paper, 30 x 42 cm."
-}
-
-const card8 = {
-    url: `${Image8}`,
-    title: "Red Mantra",
-    description: "The victory of communism is inevitable, dalla serie, 1979"
-}
-const card9 = {
-    url: `${Image9}`,
-    title: "Breathe Quietly",
-    description: "1976-2013 Illustation view at Laura Bulian Gallery"
-}
-
-const cards = [card1, card2, card3, card4, card5, card6, card7, card8, card9];
-
-// TODO remove, this demo shouldn't need to reset the theme.
-const defaultTheme = createTheme();
+  const profile = {
+    name: 'Vyacheslav',
+    email: 'Vyacheslav@example.com',
+    web: 'Vyacheslav.com',
+    avatar:
+      'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80',
+    fields: [
+      ['Phone', '(555) 123-4567'],
+      ['Email', 'Vyacheslav@example.com'],
+      ['Title', 'Senior Front-End Developer'],
+      ['Team', 'Product Development'],
+      ['Location', 'San Francisco'],
+      ['Sits', 'Oasis, 4th floor'],
+      ['Salary', '12$'],
+      ['Birthday', 'June 8, 1990'],
+    ],
+  }
 
 export default function Gallery() {
     return (
-        <ThemeProvider theme={defaultTheme}>
-            <main>
-                {/* Hero unit */}
-                <Box
-                    sx={{
-                        bgcolor: 'background.paper',
-                        pt: 8,
-                        pb: 6,
-                    }}
-                >
-                    <Container maxWidth="sm">
-                        <Typography
-                            component="h1"
-                            variant="h2"
-                            align="center"
-                            color="text.primary"
-                            gutterBottom
-                        >
-                            Hello Vyacheslav!
-                        </Typography>
-                        <Typography variant="h5" align="center" color="text.secondary" paragraph>
-                            Welcome to your account! Here, you can unleash your creativity and create 
-                            your very own gallery of artwork. Let your imagination soar as you showcase 
-                            your artistic talents to the world. We're excited to see the masterpieces 
-                            you'll share with us.
-                        </Typography>
-                        <Stack
-                            sx={{ pt: 4 }}
-                            direction="row"
-                            spacing={2}
-                            justifyContent="center"
-                        >
-                            <Button variant="contained" sx={{ backgroundColor: '#434544', '&:hover': { backgroundColor: '#0a0a0a'} }}>
-                                Add Artwork
-                            </Button>
-                            <Button variant="outlined" sx={{ backgroundColor: '#fff', borderColor: '#434544', color: '#434544', '&:hover': { backgroundColor: '#f7f7f7', borderColor: '#0a0a0a',} }}>Update Gallery</Button>
-                        </Stack>
-                    </Container>
-                </Box>
-                <Container sx={{ py: 8 }} maxWidth="md">
-                    {/* End hero unit */}
-                    <Grid container spacing={4}>
-                        {cards.map((card) => (
-                            <Grid item key={card.title} xs={12} sm={6} md={4}>
-                                <Card
-                                    sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                                >
-                                    <CardMedia
-                                        component="div"
-                                        sx={{
-                                            // 16:9
-                                            pt: '56.25%',
-                                        }}
-                                        image={card.url}
-                                    />
-                                    <CardContent sx={{ flexGrow: 1 }}>
-                                        <Typography gutterBottom variant="h5" component="h2">
-                                            {card.title}
-                                        </Typography>
-                                        <Typography>
-                                            {card.desc}
-                                        </Typography>
-                                    </CardContent>
-                                    <CardActions>
-                                        <Button size="small">View</Button>
-                                        <Button size="small">Edit</Button>
-                                    </CardActions>
-                                </Card>
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Container>
-            </main>
-        </ThemeProvider>
+        <>
+        <div className='pb-7'>
+        <div>
+          <img className="h-32 w-full object-cover lg:h-48" src={profile.backgroundImage} alt="" />
+        </div>
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
+            <div className="flex">
+              <img className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32" src={profile.avatar} alt="" />
+            </div>
+            <div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
+              <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
+                <h1 className="truncate text-2xl font-bold text-gray-900">{profile.name}</h1>
+              </div>
+              <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
+                <button
+                  type="button"
+                  className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                  >
+                  {/* <EnvelopeIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" /> */}
+                  <span>Bearbeiten</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
+            <h1 className="truncate text-2xl font-bold text-gray-900">{profile.name}</h1>
+          </div>
+        </div>
+      </div>
+
+        <div className="bg-white">
+        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+          <h2 className="sr-only">Products</h2>
+  
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+            {products.map((product) => (
+              <a key={product.id} href={product.href} className="group">
+                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
+                  <img
+                    src={product.imageSrc}
+                    alt={product.imageAlt}
+                    className="h-full w-full object-cover object-center group-hover:opacity-75"
+                  />
+                </div>
+                <h3 className="link mt-4 text-sm text-gray-700">{product.name}</h3>
+                <p className="link mt-1 text-lg font-medium text-gray-900">{product.price}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+      </>
     );
 }
