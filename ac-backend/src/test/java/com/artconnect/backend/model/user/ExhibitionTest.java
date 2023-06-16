@@ -136,4 +136,162 @@ public class ExhibitionTest {
         Assertions.assertNull(exhibition.getDescription());
     }
 
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithPartialData() {
+        Exhibition exhibition1 = Exhibition.builder()
+                .title("Art Exhibition")
+                .year(2022)
+                .build();
+
+        Exhibition exhibition2 = Exhibition.builder()
+                .title("Art Exhibition")
+                .year(2022)
+                .build();
+
+        Exhibition exhibition3 = Exhibition.builder()
+                .title("Sculpture Exhibition")
+                .year(2023)
+                .build();
+
+        // Verify equals() method
+        Assertions.assertEquals(exhibition1, exhibition2);
+        Assertions.assertNotEquals(exhibition1, exhibition3);
+
+        // Verify hashCode() method
+        Assertions.assertEquals(exhibition1.hashCode(), exhibition2.hashCode());
+        Assertions.assertNotEquals(exhibition1.hashCode(), exhibition3.hashCode());
+    }
+
+    @Test
+    public void testExhibitionToStringWithPartialData() {
+        String title = "Art Exhibition";
+        int year = 2022;
+
+        Exhibition exhibition = Exhibition.builder()
+                .title(title)
+                .year(year)
+                .build();
+
+        String expectedToString = "Exhibition(title=Art Exhibition, location=null, year=2022, description=null)";
+        Assertions.assertEquals(expectedToString, exhibition.toString());
+    }
+
+    @Test
+    public void testExhibitionConstructorWithNegativeYear() {
+        String title = "Art Exhibition";
+        String location = "Gallery";
+        int year = -2022;
+        String description = "A showcase of contemporary art";
+
+        Exhibition exhibition = new Exhibition(title, location, year, description);
+
+        Assertions.assertEquals(title, exhibition.getTitle());
+        Assertions.assertEquals(location, exhibition.getLocation());
+        Assertions.assertEquals(year, exhibition.getYear());
+        Assertions.assertEquals(description, exhibition.getDescription());
+    }
+
+    @Test
+    public void testExhibitionSettersWithNullValues() {
+        Exhibition exhibition = new Exhibition();
+
+        String title = null;
+        String location = null;
+        int year = 0;
+        String description = null;
+
+        exhibition.setTitle(title);
+        exhibition.setLocation(location);
+        exhibition.setYear(year);
+        exhibition.setDescription(description);
+
+        Assertions.assertNull(exhibition.getTitle());
+        Assertions.assertNull(exhibition.getLocation());
+        Assertions.assertEquals(year, exhibition.getYear());
+        Assertions.assertNull(exhibition.getDescription());
+    }
+
+    @Test
+    public void testExhibitionBuilderWithNullValues() {
+        String title = null;
+        String location = null;
+        int year = 0;
+        String description = null;
+
+        Exhibition exhibition = Exhibition.builder()
+                .title(title)
+                .location(location)
+                .year(year)
+                .description(description)
+                .build();
+
+        Assertions.assertNull(exhibition.getTitle());
+        Assertions.assertNull(exhibition.getLocation());
+        Assertions.assertEquals(year, exhibition.getYear());
+        Assertions.assertNull(exhibition.getDescription());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithNullValues() {
+        Exhibition exhibition1 = Exhibition.builder()
+                .title(null)
+                .location(null)
+                .year(0)
+                .description(null)
+                .build();
+
+        Exhibition exhibition2 = Exhibition.builder()
+                .title(null)
+                .location(null)
+                .year(0)
+                .description(null)
+                .build();
+
+        // Verify equals() method
+        Assertions.assertEquals(exhibition1, exhibition2);
+
+        // Verify hashCode() method
+        Assertions.assertEquals(exhibition1.hashCode(), exhibition2.hashCode());
+    }
+
+    @Test
+    public void testExhibitionToStringWithNullValues() {
+        String title = null;
+        String location = null;
+        int year = 0;
+        String description = null;
+
+        Exhibition exhibition = Exhibition.builder()
+                .title(title)
+                .location(location)
+                .year(year)
+                .description(description)
+                .build();
+
+        String expectedToString = "Exhibition(title=null, location=null, year=0, description=null)";
+        Assertions.assertEquals(expectedToString, exhibition.toString());
+    }
+
+    @Test
+    public void testExhibitionToStringWithEmptyValues() {
+        Exhibition exhibition = Exhibition.builder().build();
+
+        String expectedToString = "Exhibition(title=null, location=null, year=0, description=null)";
+        Assertions.assertEquals(expectedToString, exhibition.toString());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithEmptyValues() {
+        Exhibition exhibition1 = Exhibition.builder().build();
+        Exhibition exhibition2 = Exhibition.builder().build();
+
+        // Verify equals() method
+        Assertions.assertEquals(exhibition1, exhibition2);
+
+        // Verify hashCode() method
+        Assertions.assertEquals(exhibition1.hashCode(), exhibition2.hashCode());
+    }
+
 }
+
+
