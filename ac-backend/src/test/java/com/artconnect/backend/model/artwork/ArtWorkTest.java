@@ -2,6 +2,7 @@ package com.artconnect.backend.model.artwork;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -204,6 +205,134 @@ public class ArtWorkTest {
 
         // Assert
         assertEquals(newTitle, retrievedTitle);
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentTitle() {
+        // Arrange
+        ArtWork artwork1 = new ArtWork("Title1", new ArrayList<>(), "Description", 2022, 10,
+                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
+        ArtWork artwork2 = new ArtWork("Title2", new ArrayList<>(), "Description", 2022, 10,
+                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
+
+        // Assert
+        assertNotEquals(artwork1, artwork2);
+        assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentDescription() {
+        // Arrange
+        ArtWork artwork1 = new ArtWork("Title", new ArrayList<>(), "Description1", 2022, 10,
+                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
+        ArtWork artwork2 = new ArtWork("Title", new ArrayList<>(), "Description2", 2022, 10,
+                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
+
+        // Assert
+        assertNotEquals(artwork1, artwork2);
+        assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
+    }
+
+
+    @Test
+    public void testNoArgsConstructor() {
+        // Arrange
+
+        // Act
+        ArtWork artwork = new ArtWork();
+
+        // Assert
+        assertNotNull(artwork);
+    }
+
+    @Test
+    public void testAllArgsConstructorWithNoArguments() {
+        // Arrange
+
+        // Act
+        ArtWork artwork = new ArtWork("", null, "", 0, 0, null, null, 0.0, null, null, null);
+
+        // Assert
+        assertNotNull(artwork);
+    }
+
+    @Test
+    public void testSetterGetterForImages() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        List<Image> images = new ArrayList<>();
+
+        // Act
+        artwork.setImages(images);
+        List<Image> retrievedImages = artwork.getImages();
+
+        // Assert
+        assertEquals(images, retrievedImages);
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithNullFields() {
+        // Arrange
+        ArtWork artwork1 = new ArtWork(null, null, null, 0, 0, null, null, 0.0, null, null, null);
+        ArtWork artwork2 = new ArtWork(null, null, null, 0, 0, null, null, 0.0, null, null, null);
+
+        // Assert
+        assertEquals(artwork1, artwork2);
+        assertEquals(artwork1.hashCode(), artwork2.hashCode());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentFields() {
+        // Arrange
+        ArtWork artwork1 = new ArtWork("Title1", null, "Description1", 2022, 10, null, null, 99.99, null, "Location1", null);
+        ArtWork artwork2 = new ArtWork("Title2", null, "Description2", 2023, 5, null, null, 49.99, null, "Location2", null);
+
+        // Assert
+        assertNotEquals(artwork1, artwork2);
+        assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithSelf() {
+        // Arrange
+        ArtWork artwork = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
+
+        // Assert
+        assertEquals(artwork, artwork);
+        assertEquals(artwork.hashCode(), artwork.hashCode());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentObject() {
+        // Arrange
+        ArtWork artwork = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
+        String differentObject = "Not an ArtWork object";
+
+        // Assert
+        assertNotEquals(artwork, differentObject);
+        assertNotEquals(artwork.hashCode(), differentObject.hashCode());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithEqualObjects() {
+        // Arrange
+        ArtWork artwork1 = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
+        ArtWork artwork2 = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
+
+        // Assert
+        assertEquals(artwork1, artwork2);
+        assertEquals(artwork1.hashCode(), artwork2.hashCode());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentLikes() {
+        // Arrange
+        ArtWork artwork1 = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
+        ArtWork artwork2 = new ArtWork("Title", null, "Description", 2022, 5, null, null, 99.99, null, "Location", null);
+
+        // Assert
+        assertNotEquals(artwork1, artwork2);
+        assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
     }
 
 }
