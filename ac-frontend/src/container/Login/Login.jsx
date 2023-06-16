@@ -17,7 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ApiService } from "../../lib/api";
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';
-import Header from "../../components/headerLogout/header"
+import Header from "../../components/headerComponent/headerLogout"
 
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";

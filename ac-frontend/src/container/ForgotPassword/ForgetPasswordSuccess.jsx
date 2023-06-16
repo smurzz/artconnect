@@ -18,7 +18,7 @@ import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
 import CircularProgress from '@mui/material/CircularProgress';
 import DoneIcon from '@mui/icons-material/Done';
-import Header from "../../components/headerLogout/header"
+import Header from "../../components/headerComponent/headerLogout"
 
 const FORGET_URL = "/forgot-password"
 function Copyright(props) {
@@ -43,6 +43,7 @@ export default function ResetPasswortSuccess() {
     return (
         <ThemeProvider theme={defaultTheme}>
             <Header/>
+            <main>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
                 <Grid
@@ -84,6 +85,7 @@ export default function ResetPasswortSuccess() {
                     </Box>
                 </Grid>
             </Grid>
-        </ThemeProvider>
+            </main>
+            </ThemeProvider>
     );
 }

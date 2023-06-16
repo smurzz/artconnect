@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import {useTheme} from '@mui/material/styles';
 import {styled} from '@mui/material/styles';
 import { Link, useNavigate } from "react-router-dom";
-import Header from "../../components/headerComponent/headerLogout"
+import Header from "../../components/headerComponent/headerLogedIn"
 import "./homeTailwind.css"
 
 //Carousel

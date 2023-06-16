@@ -18,7 +18,8 @@ import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';
-import Header from "../../components/headerLogout/header"
+import Header from "../../components/headerComponent/headerLogout"
+
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -142,6 +143,7 @@ export default function ForgotPassword() {
   return (
     <ThemeProvider theme={defaultTheme}>
         <Header/>
+        <main>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -250,6 +252,7 @@ export default function ForgotPassword() {
           </Box>
         </Grid>
       </Grid>
+        </main>
     </ThemeProvider>
   );
 }

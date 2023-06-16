@@ -4,14 +4,10 @@ import { Outlet } from "react-router-dom";
 import {logikService} from "../../lib/service";
 import {Link,Navigate} from "react-router-dom";
 import {  useState } from "react";
-import HeaderLogout from "../../components/headerLogout/header";
 const Layout = ({ children }) => {
   return (
     <React.Fragment >
-        <header className="container">
-        <HeaderLogout></HeaderLogout>
-        </header>
-      <main>{children}</main>
+      {children}
         <Footer />
     </React.Fragment>
   );

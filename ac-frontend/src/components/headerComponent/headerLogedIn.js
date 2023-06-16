@@ -5,12 +5,6 @@ import {logikService} from "../../lib/service";
 import "./header.css"
 import Button from '@mui/material/Button';
 
-
-//redux
-import {useDispatch} from "react-redux";
-import {connect} from 'react-redux';
-import * as loginAction from '../../Redux/jwtToken/JwtTokenAction';
-
 import {Fragment} from 'react'
 import {Disclosure, Menu, Transition} from '@headlessui/react'
 import {MagnifyingGlassIcon} from '@heroicons/react/20/solid'
@@ -31,25 +25,20 @@ const settings = [
     {name: 'Logout', href: '#'},
 ];
 
-const mapStateToProps = state => {
-    const {jwt} = state
-    return jwt;
-}
-
-function ResponsiveAppBar(props) {
-    const navigate = useNavigate();
+export default function ResponsiveAppBar() {
+    const navigate= useNavigate();
 
     const logout = async (event) => {
         const logout = await logikService.logout();
         console.log("logout");
         if (logout == "success") {
-            props.sendLogoutAction();
             navigate("/");
         }
     }
 
 
     return (
+        <header>
         <Disclosure as="nav" className="bg-white">
             {({open}) => (
                 <>
@@ -70,17 +59,17 @@ function ResponsiveAppBar(props) {
                                 </div>
                                 <div className="hidden lg:ml-6 lg:flex lg:space-x-8">
                                     {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                                    <Link to="/"
+                                    <Link to="/home"
                                         className="link inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
                                     >
                                         Dashboard
                                     </Link>
-                                    <a
-                                        href="#"
+                                    <Link
+                                        to="/galerie"
                                         className="link inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                                     >
                                         Galerie
-                                    </a>
+                                    </Link>
                                 </div>
                             </div>
                             <div className="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end">
@@ -150,7 +139,7 @@ function ResponsiveAppBar(props) {
                                             className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                             <Menu.Item>
                                                 {({active}) => (
-                                                    <Link to="/"
+                                                    <Link to="/galerie"
                                                         className={classNames(active ? 'link bg-gray-100' : '', 'link block px-4 py-2 text-sm text-gray-700')}
                                                     >
                                                         Your Galerie
@@ -159,24 +148,23 @@ function ResponsiveAppBar(props) {
                                             </Menu.Item>
                                             <Menu.Item>
                                                 {({active}) => (
-                                                    <a
-                                                        href="#"
+                                                    <Link to="/profil"
                                                         className={classNames(active ? 'link bg-gray-100 fullwidth' : '', 'link block px-4 py-2 text-sm text-gray-700 fullwidth')}
                                                     >
                                                         Settings
-                                                    </a>
+                                                    </Link>
                                                 )}
                                             </Menu.Item>
                                             <Menu.Item>
                                                 {({active}) => (
-                                                    <Button
+                                                    <button
 
                                                         onClick ={() =>{logout()}}
                                                         href="#"
                                                         className={classNames(active ? 'link bg-gray-100 fullwidth' : '', 'link block px-4 py-2 text-sm text-gray-700 fullwidth')}
                                                     >
-                                                        Sign outt
-                                                    </Button>
+                                                        Sign out
+                                                    </button>
                                                 )}
                                             </Menu.Item>
                                         </Menu.Items>
@@ -191,31 +179,17 @@ function ResponsiveAppBar(props) {
                             {/* Current: "bg-indigo-50 border-indigo-500 text-indigo-700", Default: "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800" */}
                             <Disclosure.Button
                                 as="a"
-                                href="#"
+                                onClick ={() =>{navigate("/home")}}
                                 className="link block border-l-4 border-indigo-500 bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700"
                             >
                                 Dashboard
                             </Disclosure.Button>
                             <Disclosure.Button
                                 as="a"
-                                href="#"
+                                onClick ={() =>{navigate("/galerie")}}
                                 className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
                             >
-                                Team
-                            </Disclosure.Button>
-                            <Disclosure.Button
-                                as="a"
-                                href="#"
-                                className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-                            >
-                                Projects
-                            </Disclosure.Button>
-                            <Disclosure.Button
-                                as="a"
-                                href="#"
-                                className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
-                            >
-                                Calendar
+                                Galerie
                             </Disclosure.Button>
                         </div>
                         <div className="border-t border-gray-200 pb-3 pt-4">
@@ -243,13 +217,15 @@ function ResponsiveAppBar(props) {
                                 <Disclosure.Button
                                     as="a"
                                     href="#"
+                                    onClick ={() =>{navigate("/galerie")}}
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                                 >
-                                    Your Profile
+                                    Your Galerie
                                 </Disclosure.Button>
                                 <Disclosure.Button
                                     as="a"
                                     href="#"
+                                    onClick ={() =>{navigate("/profil")}}
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                                 >
                                     Settings
@@ -258,6 +234,7 @@ function ResponsiveAppBar(props) {
                                     as="a"
                                     href="#"
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                                    onClick ={() =>{logout()}}
                                 >
                                     Sign out
                                 </Disclosure.Button>
@@ -267,14 +244,6 @@ function ResponsiveAppBar(props) {
                 </>
             )}
         </Disclosure>
+        </header>
     )
 }
-const mapDispatchToProps = dispatch => {
-    return {
-        sendLogoutAction: () => dispatch(loginAction.getLogoutAction())
-    }
-}
-
-//SignIn
-const ConnectedSignIn = connect(mapStateToProps, mapDispatchToProps)(ResponsiveAppBar)
-export default ConnectedSignIn;

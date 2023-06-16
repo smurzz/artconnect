@@ -21,7 +21,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Header from "../../components/headerLogout/header";
+import Header from "../../components/headerComponent/headerLogout"
 
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';

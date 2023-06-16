@@ -3,7 +3,7 @@ import "./home.css"
 
 import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import Header from "../../components/headerLogout/header"
+import Header from "../../components/headerComponent/headerLogout"
 
 import Image1 from './slide_Images/matilda2.jpg';
 import Image2 from './slide_Images/matilda3.jpg';
