@@ -5,6 +5,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.bson.BsonBinary;
 import org.bson.types.Binary;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+
+
+import static org.junit.jupiter.api.Assertions.*;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -171,6 +178,124 @@ public class ImageTest {
                 .title("Sample Image")
                 .contentType("image/jpeg")
                 .build();
+
+        // Assert that the images are equal
+        assertEquals(image1, image2);
+
+        // Assert that the hash codes are equal
+        assertEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Nested
+    @DisplayName("Getter and Setter Tests")
+    class GetterSetterTests {
+
+        private Image image;
+
+        @BeforeEach
+        void setUp() {
+            image = new Image();
+        }
+
+        @Test
+        void setId() {
+            image.setId("123");
+            assertEquals("123", image.getId());
+        }
+
+        @Test
+        void setImage() {
+            Binary binaryImage = new Binary(new byte[]{0x01, 0x02, 0x03});
+            image.setImage(binaryImage);
+            assertEquals(binaryImage, image.getImage());
+        }
+
+        @Test
+        void setTitle() {
+            image.setTitle("Sample Image");
+            assertEquals("Sample Image", image.getTitle());
+        }
+
+        @Test
+        void setContentType() {
+            image.setContentType("image/jpeg");
+            assertEquals("image/jpeg", image.getContentType());
+        }
+    }
+
+    @Nested
+    @DisplayName("Builder Tests")
+    class BuilderTests {
+
+        private Image image;
+
+        @BeforeEach
+        void setUp() {
+            Binary binaryImage = new Binary(new byte[]{0x01, 0x02, 0x03});
+            image = Image.builder()
+                    .id("123")
+                    .image(binaryImage)
+                    .title("Sample Image")
+                    .contentType("image/jpeg")
+                    .build();
+        }
+
+        @Test
+        void testBuilderId() {
+            assertEquals("123", image.getId());
+        }
+
+        @Test
+        void testBuilderImage() {
+            Binary binaryImage = new Binary(new byte[]{0x01, 0x02, 0x03});
+            assertEquals(binaryImage, image.getImage());
+        }
+
+        @Test
+        void testBuilderTitle() {
+            assertEquals("Sample Image", image.getTitle());
+        }
+
+        @Test
+        void testBuilderContentType() {
+            assertEquals("image/jpeg", image.getContentType());
+        }
+    }
+
+    @Test
+    public void testAllArgsConstructor() {
+        // Create an instance of Image using the all-args constructor
+        String id = "123";
+        Binary image = new Binary(new byte[]{0x01, 0x02, 0x03});
+        String title = "Sample Image";
+        String contentType = "image/jpeg";
+
+        Image imageInstance = new Image(id, image, title, contentType);
+
+        // Assert the properties of the image
+        assertEquals(id, imageInstance.getId());
+        assertEquals(image, imageInstance.getImage());
+        assertEquals(title, imageInstance.getTitle());
+        assertEquals(contentType, imageInstance.getContentType());
+    }
+
+    @Test
+    public void testNoArgsConstructor() {
+        // Create an instance of Image using the no-args constructor
+        Image imageInstance = new Image();
+
+        // Assert that all properties are null
+        assertNull(imageInstance.getId());
+        assertNull(imageInstance.getImage());
+        assertNull(imageInstance.getTitle());
+        assertNull(imageInstance.getContentType());
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        // Create two images with the same properties
+        Image image1 = new Image("123", new Binary(new byte[]{0x01, 0x02, 0x03}), "Sample Image", "image/jpeg");
+        Image image2 = new Image("123", new Binary(new byte[]{0x01, 0x02, 0x03}), "Sample Image", "image/jpeg");
 
         // Assert that the images are equal
         assertEquals(image1, image2);
