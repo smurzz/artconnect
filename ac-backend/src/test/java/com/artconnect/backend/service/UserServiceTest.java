@@ -183,4 +183,60 @@ public class UserServiceTest {
                 })
                 .verify();
     }
+
+    @Test
+    void createUser_Success() {
+        // Arrange
+        User user = new User();
+        user.setCreatedAt(new Date());
+
+        when(userRepository.save(user)).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<User> result = userService.create(user);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNext(user)
+                .verifyComplete();
+
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void createUser_Error() {
+        // Arrange
+        User user = new User();
+        user.setCreatedAt(new Date());
+
+        when(userRepository.save(user)).thenReturn(Mono.error(new IllegalArgumentException()));
+
+        // Act
+        Mono<User> result = userService.create(user);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorSatisfies(error -> {
+                    assert error instanceof ResponseStatusException;
+                    assert ((ResponseStatusException) error).getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR;
+                })
+                .verify();
+
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void deleteAll_Success() {
+        // Arrange
+        when(userRepository.deleteAll()).thenReturn(Mono.empty());
+
+        // Act
+        Mono<Void> result = userService.deleteAll();
+
+        // Assert
+        StepVerifier.create(result)
+                .verifyComplete();
+
+        verify(userRepository).deleteAll();
+    }
 }
