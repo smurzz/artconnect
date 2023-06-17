@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -38,7 +39,7 @@ public class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
-
+    @InjectMocks
     private UserService userService;
 
     @BeforeEach
@@ -238,5 +239,70 @@ public class UserServiceTest {
                 .verifyComplete();
 
         verify(userRepository).deleteAll();
+    }
+
+    @Test
+    public void testGetProfilePhotoById_WithExistingUser_ShouldReturnProfilePhoto() {
+        // Arrange
+        String userId = "123";
+        User user = new User();
+        user.setProfilePhoto(new Image());
+
+        when(userRepository.findById(userId)).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<Image> result = userService.getProfilePhotoById(userId);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextCount(1)
+                .verifyComplete();
+
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    public void testGetProfilePhotoById_WithNonExistingUser_ShouldThrowException() {
+        // Arrange
+        String userId = "456";
+
+        when(userRepository.findById(userId)).thenReturn(Mono.empty());
+
+        // Act
+        Mono<Image> result = userService.getProfilePhotoById(userId);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException
+                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.NOT_FOUND
+                                && throwable.getMessage().contains("User with id " + userId + " is not found.")
+                )
+                .verify();
+
+        verify(userRepository, times(1)).findById(userId);
+    }
+
+    @Test
+    public void testGetProfilePhotoById_WithUserWithoutProfilePhoto_ShouldThrowException() {
+        // Arrange
+        String userId = "789";
+        User user = new User();
+
+        when(userRepository.findById(userId)).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<Image> result = userService.getProfilePhotoById(userId);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException
+                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.NOT_FOUND
+                                && throwable.getMessage().contains("User with id " + userId + " has no profile photo.")
+                )
+                .verify();
+
+        verify(userRepository, times(1)).findById(userId);
     }
 }
