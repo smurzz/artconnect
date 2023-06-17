@@ -304,4 +304,169 @@ public class ImageTest {
         assertEquals(image1.hashCode(), image2.hashCode());
     }
 
+    @Test
+    public void testImageEqualityWithNullProperties() {
+        // Create two images with null properties
+        Image image1 = new Image();
+        Image image2 = new Image();
+
+        // Assert that the images are equal
+        assertEquals(image1, image2);
+    }
+
+    @Test
+    public void testImageInequalityWithDifferentProperties() {
+        // Create two images with different properties
+        Image image1 = new Image();
+        image1.setId("123");
+        Image image2 = new Image();
+        image2.setId("456");
+
+        // Assert that the images are not equal
+        assertNotEquals(image1, image2);
+    }
+
+    @Test
+    public void testImageHashCodeWithNullProperties() {
+        // Create two images with null properties
+        Image image1 = new Image();
+        Image image2 = new Image();
+
+        // Assert that the hash codes are equal
+        assertEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Test
+    public void testImageHashCodeWithDifferentProperties() {
+        // Create two images with different properties
+        Image image1 = new Image();
+        image1.setId("123");
+        Image image2 = new Image();
+        image2.setId("456");
+
+        // Assert that the hash codes are not equal
+        assertNotEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Test
+    public void testImageSettersWithNonNullProperties() {
+        // Create an image
+        Image image = new Image();
+
+        // Set non-null properties using setters
+        image.setId("123");
+        image.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image.setTitle("Sample Image");
+        image.setContentType("image/jpeg");
+
+        // Assert the properties using getters
+        assertEquals("123", image.getId());
+        assertEquals(new Binary(new byte[]{0x01, 0x02, 0x03}), image.getImage());
+        assertEquals("Sample Image", image.getTitle());
+        assertEquals("image/jpeg", image.getContentType());
+    }
+
+    @Test
+    public void testImageSettersWithNullProperties() {
+        // Create an image with initial non-null properties
+        Image image = new Image();
+        image.setId("123");
+        image.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image.setTitle("Sample Image");
+        image.setContentType("image/jpeg");
+
+        // Set properties to null using setters
+        image.setId(null);
+        image.setImage(null);
+        image.setTitle(null);
+        image.setContentType(null);
+
+        // Assert that all properties are null
+        assertNull(image.getId());
+        assertNull(image.getImage());
+        assertNull(image.getTitle());
+        assertNull(image.getContentType());
+    }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithNullProperties() {
+        // Create two images with null properties
+        Image image1 = new Image();
+        Image image2 = new Image();
+
+        // Assert that the images are equal
+        assertEquals(image1, image2);
+
+        // Assert that the hash codes are equal
+        assertEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Test
+    public void testImageToStringWithNullProperties() {
+        // Create an image with null properties
+        Image image = new Image();
+
+        // Create the expected string representation
+        String expectedToString = "Image(id=null, image=null, title=null, contentType=null)";
+
+        // Assert the string representation of the image
+        assertEquals(expectedToString, image.toString());
+    }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithDifferentObject() {
+        // Create an image and a different object
+        Image image = new Image();
+        Object otherObject = new Object();
+
+        // Assert that the image and the different object are not equal
+        assertNotEquals(image, otherObject);
+
+        // Assert that the hash codes are not equal
+        assertNotEquals(image.hashCode(), otherObject.hashCode());
+    }
+
+    @Test
+    public void testImageCopy() {
+        // Create an image
+        Image image = new Image();
+        image.setId("123");
+        image.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image.setTitle("Sample Image");
+        image.setContentType("image/jpeg");
+
+        // Create a copy of the image
+        Image copiedImage = new Image();
+        copiedImage.setId(image.getId());
+        copiedImage.setImage(image.getImage());
+        copiedImage.setTitle(image.getTitle());
+        copiedImage.setContentType(image.getContentType());
+
+        // Assert that the copied image is equal to the original image
+        assertEquals(image, copiedImage);
+
+        // Assert that the copied image is a different instance
+        assertNotSame(image, copiedImage);
+    }
+
+    @Test
+    public void testImageBuilderWithNullValues() {
+        // Create an image using the builder pattern with null values
+        Image image = Image.builder()
+                .id(null)
+                .image(null)
+                .title(null)
+                .contentType(null)
+                .build();
+
+        // Assert that all properties are null
+        assertNull(image.getId());
+        assertNull(image.getImage());
+        assertNull(image.getTitle());
+        assertNull(image.getContentType());
+    }
 }
+
+
+
+
