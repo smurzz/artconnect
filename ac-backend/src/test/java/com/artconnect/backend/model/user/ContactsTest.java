@@ -419,4 +419,85 @@ public class ContactsTest {
         assertNotEquals(builderContacts1, builderContacts2);
     }
 
+    @Test
+    public void testSetterEqualsAndHashCode() {
+        // Create a new instance of Contacts
+        Contacts newContacts = new Contacts();
+
+        // Set the same values as the original contacts
+        newContacts.setTelefonNumber(123456789);
+        newContacts.setAddress(address);
+        newContacts.setWebsite("www.example.com");
+
+        // The new contacts object should be equal to the original one and have the same hash code
+        assertEquals(contacts, newContacts);
+        assertEquals(contacts.hashCode(), newContacts.hashCode());
+    }
+
+    @Test
+    public void testSetterWithDifferentValues() {
+        // Create a new instance of Contacts
+        Contacts newContacts = new Contacts();
+
+        // Set different values compared to the original contacts
+        newContacts.setTelefonNumber(987654321);
+        newContacts.setAddress(null);
+        newContacts.setWebsite("www.new-website.com");
+
+        // The new contacts object should not be equal to the original one
+        assertNotEquals(contacts, newContacts);
+    }
+
+    @Test
+    public void testNoArgsConstructorWithDefaultValuesToString() {
+        // Create an instance using the no-args constructor with default values
+        Contacts noArgsConstructorContacts = new Contacts();
+
+        // Verify the string representation of the contacts object
+        String expectedString = "Contacts(telefonNumber=0, address=null, website=null)";
+        assertEquals(expectedString, noArgsConstructorContacts.toString());
+    }
+
+    @Test
+    public void testNoArgsConstructorAndSetterToString() {
+        // Create a new instance of Contacts using the no-args constructor
+        Contacts noArgsConstructorContacts = new Contacts();
+
+        // Set the same values as the original contacts using setters
+        noArgsConstructorContacts.setTelefonNumber(123456789);
+        noArgsConstructorContacts.setAddress(address);
+        noArgsConstructorContacts.setWebsite("www.example.com");
+
+        // Verify the string representation of the new contacts object
+        String expectedString = "Contacts(telefonNumber=123456789, address=Address(street=123 Main St, postalCode=12345, city=City, country=Country), website=www.example.com)";
+        assertEquals(expectedString, noArgsConstructorContacts.toString());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithNull() {
+        // The contacts instance should not be equal to null
+        assertNotEquals(contacts, null);
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentClass() {
+        // The contacts instance should not be equal to an instance of a different class
+        assertNotEquals(contacts, "SomeString");
+    }
+
+    @Test
+    public void testAllArgsConstructorAndBuilderToString() {
+        // Create a new instance of Contacts using the all-args constructor and the builder
+        Contacts allArgsConstructorContacts = new Contacts(123456789, address, "www.example.com");
+        Contacts builderContacts = Contacts.builder()
+                .telefonNumber(123456789)
+                .address(address)
+                .website("www.example.com")
+                .build();
+
+        // Verify the string representation of the new contacts objects
+        assertEquals(contacts.toString(), allArgsConstructorContacts.toString());
+        assertEquals(contacts.toString(), builderContacts.toString());
+    }
+
 }
