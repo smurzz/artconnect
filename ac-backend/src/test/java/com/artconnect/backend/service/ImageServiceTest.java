@@ -8,12 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import com.artconnect.backend.model.Image;
 import com.artconnect.backend.repository.ImageRepository;
+
 
 public class ImageServiceTest {
 
@@ -83,5 +85,4 @@ public class ImageServiceTest {
                                 && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.NOT_FOUND)
                 .verify();
     }
-
 }
