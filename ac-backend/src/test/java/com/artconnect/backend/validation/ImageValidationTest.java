@@ -3,6 +3,7 @@ package com.artconnect.backend.validation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import java.lang.reflect.Field;
 
 class ImageValidationTest {
     private ImageValidation imageValidation;
@@ -304,4 +305,56 @@ class ImageValidationTest {
         Assertions.assertTrue(imageValidation.validFile());
     }
 
+
+    @Test
+    void testValidFileWithInvalidProperties() {
+        ImageValidation imageValidation = new ImageValidation(5242880, "application/pdf", "document.pdf");
+
+        Assertions.assertFalse(imageValidation.validFile());
+    }
+
+
+
+    @Test
+    void testValidFileWithMaxSize() {
+        ImageValidation imageValidation = new ImageValidation(10485760, "image/png", "image.png");
+
+        Assertions.assertTrue(imageValidation.validFile());
+    }
+
+    @Test
+    void testValidFileWithExceededMaxSize() {
+        ImageValidation imageValidation = new ImageValidation(15728640, "image/png", "image.png");
+
+        Assertions.assertFalse(imageValidation.validFile());
+    }
+
+    @Test
+    void testEqualsAndHashCodeAfterModification() throws NoSuchFieldException, IllegalAccessException {
+        ImageValidation imageValidation1 = new ImageValidation(5242880, "image/png", "image.png");
+        ImageValidation imageValidation2 = new ImageValidation(5242880, "image/png", "image.png");
+
+        // Modifying 'size' field using reflection
+        Field sizeField = ImageValidation.class.getDeclaredField("size");
+        sizeField.setAccessible(true);
+        sizeField.set(imageValidation2, 15728640);
+
+        Assertions.assertNotEquals(imageValidation1, imageValidation2);
+        Assertions.assertNotEquals(imageValidation1.hashCode(), imageValidation2.hashCode());
+    }
+
+    @Test
+    void testToStringAfterModification() throws NoSuchFieldException, IllegalAccessException {
+        ImageValidation imageValidation = new ImageValidation(5242880, "image/png", "image.png");
+
+        // Modifying 'fileName' field using reflection
+        Field fileNameField = ImageValidation.class.getDeclaredField("fileName");
+        fileNameField.setAccessible(true);
+        fileNameField.set(imageValidation, "modified.png");
+
+        String expected = "ImageValidation(size=5242880, contentType=image/png, fileName=modified.png)";
+        String actual = imageValidation.toString();
+
+        Assertions.assertEquals(expected, actual);
+    }
 }
