@@ -70,6 +70,7 @@ public class UserController {
 	}
 
 	@PostMapping("/")
+	@PreAuthorize("hasRole('ADMIN')")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<User> createUser(@RequestBody User user) {
 		return userService.create(user);
