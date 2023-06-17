@@ -465,6 +465,202 @@ public class ImageTest {
         assertNull(image.getTitle());
         assertNull(image.getContentType());
     }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithSameObject() {
+        // Create an image
+        Image image = new Image();
+        image.setId("123");
+        image.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image.setTitle("Sample Image");
+        image.setContentType("image/jpeg");
+
+        // Assert that the image is equal to itself
+        assertEquals(image, image);
+
+        // Assert that the hash code is consistent
+        assertEquals(image.hashCode(), image.hashCode());
+    }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithEqualObjects() {
+        // Create two images with the same properties
+        Image image1 = new Image();
+        image1.setId("123");
+        image1.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image1.setTitle("Sample Image");
+        image1.setContentType("image/jpeg");
+
+        Image image2 = new Image();
+        image2.setId("123");
+        image2.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image2.setTitle("Sample Image");
+        image2.setContentType("image/jpeg");
+
+        // Assert that the images are equal
+        assertEquals(image1, image2);
+
+        // Assert that the hash codes are equal
+        assertEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithDifferentId() {
+        // Create two images with different ids
+        Image image1 = new Image();
+        image1.setId("123");
+        image1.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image1.setTitle("Sample Image");
+        image1.setContentType("image/jpeg");
+
+        Image image2 = new Image();
+        image2.setId("456");
+        image2.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image2.setTitle("Sample Image");
+        image2.setContentType("image/jpeg");
+
+        // Assert that the images are not equal
+        assertNotEquals(image1, image2);
+
+        // Assert that the hash codes are not equal
+        assertNotEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithDifferentImage() {
+        // Create two images with different images
+        Image image1 = new Image();
+        image1.setId("123");
+        image1.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image1.setTitle("Sample Image");
+        image1.setContentType("image/jpeg");
+
+        Image image2 = new Image();
+        image2.setId("123");
+        image2.setImage(new Binary(new byte[]{0x04, 0x05, 0x06}));
+        image2.setTitle("Sample Image");
+        image2.setContentType("image/jpeg");
+
+        // Assert that the images are not equal
+        assertNotEquals(image1, image2);
+
+        // Assert that the hash codes are not equal
+        assertNotEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithDifferentContentType() {
+        // Create two images with different content types
+        Image image1 = new Image();
+        image1.setId("123");
+        image1.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image1.setTitle("Sample Image");
+        image1.setContentType("image/jpeg");
+
+        Image image2 = new Image();
+        image2.setId("123");
+        image2.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image2.setTitle("Sample Image");
+        image2.setContentType("image/png");
+
+        // Assert that the images are not equal
+        assertNotEquals(image1, image2);
+
+        // Assert that the hash codes are not equal
+        assertNotEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithIdenticalObjects() {
+        // Create an image
+        Image image = new Image();
+        image.setId("123");
+        image.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image.setTitle("Sample Image");
+        image.setContentType("image/jpeg");
+
+        // Assert that the image is equal to itself
+        assertEquals(image, image);
+
+        // Assert that the hash code remains consistent
+        assertEquals(image.hashCode(), image.hashCode());
+    }
+
+    @Test
+    public void testImageEqualsAndHashCodeWithDifferentObjects() {
+        // Create two images with the same properties
+        Image image1 = new Image();
+        image1.setId("123");
+        image1.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image1.setTitle("Sample Image");
+        image1.setContentType("image/jpeg");
+
+        Image image2 = new Image();
+        image2.setId("123");
+        image2.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image2.setTitle("Sample Image");
+        image2.setContentType("image/jpeg");
+
+        // Assert that the images are equal
+        assertEquals(image1, image2);
+
+        // Assert that the hash codes are equal
+        assertEquals(image1.hashCode(), image2.hashCode());
+    }
+
+    @Test
+    public void testImageCopyConstructor() {
+        // Create an image
+        Image originalImage = new Image();
+        originalImage.setId("123");
+        originalImage.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        originalImage.setTitle("Sample Image");
+        originalImage.setContentType("image/jpeg");
+
+        // Create a copy of the image manually
+        Image copiedImage = new Image();
+        copiedImage.setId(originalImage.getId());
+        copiedImage.setImage(originalImage.getImage());
+        copiedImage.setTitle(originalImage.getTitle());
+        copiedImage.setContentType(originalImage.getContentType());
+
+        // Assert that the copied image is equal to the original image
+        assertEquals(originalImage, copiedImage);
+
+        // Assert that the copied image is a different object
+        assertNotSame(originalImage, copiedImage);
+    }
+
+    @Test
+    public void testImageGettersAndSetters() {
+        // Create an image
+        Image image = new Image();
+        image.setId("123");
+        image.setImage(new Binary(new byte[]{0x01, 0x02, 0x03}));
+        image.setTitle("Sample Image");
+        image.setContentType("image/jpeg");
+
+        // Test getters
+        assertEquals("123", image.getId());
+        assertEquals(new Binary(new byte[]{0x01, 0x02, 0x03}), image.getImage());
+        assertEquals("Sample Image", image.getTitle());
+        assertEquals("image/jpeg", image.getContentType());
+
+        // Test setters
+        image.setId("456");
+        assertEquals("456", image.getId());
+
+        Binary newImageBinary = new Binary(new byte[]{0x04, 0x05, 0x06});
+        image.setImage(newImageBinary);
+        assertEquals(newImageBinary, image.getImage());
+
+        image.setTitle("New Image");
+        assertEquals("New Image", image.getTitle());
+
+        image.setContentType("image/png");
+        assertEquals("image/png", image.getContentType());
+    }
+
 }
 
 
