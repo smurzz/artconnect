@@ -10,6 +10,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 
+import static org.junit.jupiter.api.Assertions.*;
+
+
 public class ContactsTest {
     private Contacts contacts;
 
@@ -499,5 +502,48 @@ public class ContactsTest {
         assertEquals(contacts.toString(), allArgsConstructorContacts.toString());
         assertEquals(contacts.toString(), builderContacts.toString());
     }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentValues() {
+        // Create a new instance of Contacts with different values
+        Contacts differentContacts = Contacts.builder()
+                .telefonNumber(987654321)
+                .address(Address.builder()
+                        .street("456 Elm St")
+                        .postalCode("54321")
+                        .city("New City")
+                        .country("New Country")
+                        .build())
+                .website("www.new-website.com")
+                .build();
+
+        // The new contacts object should not be equal to the original one and have a different hash code
+        assertNotEquals(contacts, differentContacts);
+        assertNotEquals(contacts.hashCode(), differentContacts.hashCode());
+    }
+
+    @Test
+    public void testHashCode() {
+        Contacts otherContacts = new Contacts();
+        assertNotEquals(contacts.hashCode(), otherContacts.hashCode());
+
+        otherContacts.setTelefonNumber(contacts.getTelefonNumber());
+        otherContacts.setAddress(contacts.getAddress());
+        otherContacts.setWebsite(contacts.getWebsite());
+        assertEquals(contacts.hashCode(), otherContacts.hashCode());
+    }
+
+    @Test
+    public void testEqualsWithDifferentInstance() {
+        Contacts otherContacts = new Contacts();
+        assertNotEquals(contacts, otherContacts);
+
+        otherContacts.setTelefonNumber(contacts.getTelefonNumber());
+        otherContacts.setAddress(contacts.getAddress());
+        otherContacts.setWebsite(contacts.getWebsite());
+        assertEquals(contacts, otherContacts);
+    }
+
+
 
 }
