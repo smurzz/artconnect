@@ -357,4 +357,119 @@ class ImageValidationTest {
 
         Assertions.assertEquals(expected, actual);
     }
+
+    @Test
+    void testEqualsAndHashCodeWithDifferentObjects() {
+        ImageValidation imageValidation1 = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        ImageValidation imageValidation2 = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        Assertions.assertEquals(imageValidation1, imageValidation2);
+        Assertions.assertEquals(imageValidation1.hashCode(), imageValidation2.hashCode());
+
+        // Modify one property in imageValidation2
+        ImageValidation modifiedValidation2 = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/jpeg")
+                .fileName("image.png")
+                .build();
+
+        Assertions.assertNotEquals(imageValidation1, modifiedValidation2);
+        Assertions.assertNotEquals(imageValidation1.hashCode(), modifiedValidation2.hashCode());
+    }
+
+    @Test
+    void testToStringWithDifferentObjects() {
+        ImageValidation imageValidation1 = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        ImageValidation imageValidation2 = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        Assertions.assertEquals(imageValidation1.toString(), imageValidation2.toString());
+
+        // Modify one property in imageValidation2
+        ImageValidation modifiedValidation2 = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("modified.png")
+                .build();
+
+        Assertions.assertNotEquals(imageValidation1.toString(), modifiedValidation2.toString());
+    }
+
+    @Test
+    void testEqualsAndHashCodeWithNullObject() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        Assertions.assertNotEquals(imageValidation, null);
+    }
+
+    @Test
+    void testEqualsAndHashCodeWithDifferentClass() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        Assertions.assertNotEquals(imageValidation, "image.png");
+    }
+
+    @Test
+    void testToStringWithNullProperty() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .build();
+
+        String expected = "ImageValidation(size=5242880, contentType=image/png, fileName=null)";
+        String actual = imageValidation.toString();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void testToStringWithAllNullProperties() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .build();
+
+        String expected = "ImageValidation(size=0, contentType=null, fileName=null)";
+        String actual = imageValidation.toString();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void testToStringWithEmptyStringProperties() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)
+                .contentType("")
+                .fileName("")
+                .build();
+
+        String expected = "ImageValidation(size=5242880, contentType=, fileName=)";
+        String actual = imageValidation.toString();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
 }
