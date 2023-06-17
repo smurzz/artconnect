@@ -11,6 +11,10 @@ import java.util.List;
 import com.artconnect.backend.model.Image;
 import org.junit.jupiter.api.Test;
 
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
+
 public class ArtWorkTest {
     @Test
     public void testCreateArtWork() {
@@ -333,6 +337,180 @@ public class ArtWorkTest {
         // Assert
         assertNotEquals(artwork1, artwork2);
         assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
+    }
+
+    @Test
+    public void testEqualsAndHashCodeWithDifferentObjects() {
+        // Arrange
+        ArtWork artwork1 = new ArtWork();
+        artwork1.setTitle("Title");
+        artwork1.setImages(null);
+        artwork1.setDescription("Description");
+        artwork1.setYearOfCreation(2022);
+        artwork1.setLikes(10);
+        artwork1.setMaterials(null);
+        artwork1.setDimension(null);
+        artwork1.setPrice(99.99);
+        artwork1.setTags(null);
+        artwork1.setLocation("Location");
+        artwork1.setCreatedAt(null);
+
+        ArtWork artwork2 = new ArtWork();
+        artwork2.setTitle("Title");
+        artwork2.setImages(null);
+        artwork2.setDescription("Description");
+        artwork2.setYearOfCreation(2022);
+        artwork2.setLikes(10);
+        artwork2.setMaterials(null);
+        artwork2.setDimension(null);
+        artwork2.setPrice(99.99);
+        artwork2.setTags(null);
+        artwork2.setLocation("Location");
+        artwork2.setCreatedAt(null);
+
+        // Assert
+        assertNotSame(artwork1, artwork2);
+    }
+
+    @Test
+    public void testSetterGetterForTitle() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        String newTitle = "Updated Title";
+
+        // Act
+        artwork.setTitle(newTitle);
+        String retrievedTitle = artwork.getTitle();
+
+        // Assert
+        assertEquals(newTitle, retrievedTitle);
+    }
+
+
+    @Test
+    public void testSetterGetterForDescription() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        String description = "Test description";
+
+        // Act
+        artwork.setDescription(description);
+        String retrievedDescription = artwork.getDescription();
+
+        // Assert
+        assertEquals(description, retrievedDescription);
+    }
+
+    @Test
+    public void testSetterGetterForYearOfCreation() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        int yearOfCreation = 2022;
+
+        // Act
+        artwork.setYearOfCreation(yearOfCreation);
+        int retrievedYearOfCreation = artwork.getYearOfCreation();
+
+        // Assert
+        assertEquals(yearOfCreation, retrievedYearOfCreation);
+    }
+
+    @Test
+    public void testSetterGetterForLikes() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        int likes = 10;
+
+        // Act
+        artwork.setLikes(likes);
+        int retrievedLikes = artwork.getLikes();
+
+        // Assert
+        assertEquals(likes, retrievedLikes);
+    }
+
+    @Test
+    public void testSetterGetterForMaterials() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        List<String> materials = new ArrayList<>();
+
+        // Act
+        artwork.setMaterials(materials);
+        List<String> retrievedMaterials = artwork.getMaterials();
+
+        // Assert
+        assertEquals(materials, retrievedMaterials);
+    }
+
+    @Test
+    public void testSetterGetterForDimension() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        Dimension dimension = new Dimension();
+
+        // Act
+        artwork.setDimension(dimension);
+        Dimension retrievedDimension = artwork.getDimension();
+
+        // Assert
+        assertEquals(dimension, retrievedDimension);
+    }
+
+    @Test
+    public void testSetterGetterForPrice() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        double price = 99.99;
+
+        // Act
+        artwork.setPrice(price);
+        double retrievedPrice = artwork.getPrice();
+
+        // Assert
+        assertEquals(price, retrievedPrice);
+    }
+
+    @Test
+    public void testSetterGetterForTags() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        List<String> tags = new ArrayList<>();
+
+        // Act
+        artwork.setTags(tags);
+        List<String> retrievedTags = artwork.getTags();
+
+        // Assert
+        assertEquals(tags, retrievedTags);
+    }
+
+    @Test
+    public void testSetterGetterForLocation() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        String location = "Test location";
+
+        // Act
+        artwork.setLocation(location);
+        String retrievedLocation = artwork.getLocation();
+
+        // Assert
+        assertEquals(location, retrievedLocation);
+    }
+
+    @Test
+    public void testSetterGetterForCreatedAt() {
+        // Arrange
+        ArtWork artwork = new ArtWork();
+        Date createdAt = new Date();
+
+        // Act
+        artwork.setCreatedAt(createdAt);
+        Date retrievedCreatedAt = artwork.getCreatedAt();
+
+        // Assert
+        assertEquals(createdAt, retrievedCreatedAt);
     }
 
 }
