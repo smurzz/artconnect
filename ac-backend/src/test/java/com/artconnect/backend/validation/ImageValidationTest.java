@@ -531,4 +531,80 @@ class ImageValidationTest {
         Assertions.assertEquals(expected, actual);
     }
 
+    @Test
+    void testValidFileWithNonNullProperties() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        Assertions.assertEquals(5242880, imageValidation.getSize());
+        Assertions.assertEquals("image/png", imageValidation.getContentType());
+        Assertions.assertEquals("image.png", imageValidation.getFileName());
+    }
+
+    @Test
+    void testToStringWithNonNullProperties() {
+        long expectedSize = 5242880;
+        String expectedContentType = "image/png";
+        String expectedFileName = "image.png";
+
+        ImageValidation imageValidation = new ImageValidation(expectedSize, expectedContentType, expectedFileName);
+
+        String expected = "ImageValidation(size=5242880, contentType=image/png, fileName=image.png)";
+        String actual = imageValidation.toString();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void testEqualsAndHashCode() {
+        ImageValidation imageValidation1 = new ImageValidation(5242880, "image/png", "image.png");
+        ImageValidation imageValidation2 = new ImageValidation(5242880, "image/png", "image.png");
+
+        Assertions.assertEquals(imageValidation1, imageValidation2);
+        Assertions.assertEquals(imageValidation1.hashCode(), imageValidation2.hashCode());
+    }
+
+    @Test
+    void testToString() {
+        ImageValidation imageValidation = new ImageValidation(5242880, "image/png", "image.png");
+
+        String expected = "ImageValidation(size=5242880, contentType=image/png, fileName=image.png)";
+        String actual = imageValidation.toString();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void testBuilder() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        Assertions.assertEquals(5242880, imageValidation.getSize());
+        Assertions.assertEquals("image/png", imageValidation.getContentType());
+        Assertions.assertEquals("image.png", imageValidation.getFileName());
+    }
+
+    @Test
+    void testNotEquals() {
+        ImageValidation imageValidation1 = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        ImageValidation imageValidation2 = ImageValidation.builder()
+                .size(1048576)
+                .contentType("image/jpeg")
+                .fileName("image.jpg")
+                .build();
+
+        Assertions.assertNotEquals(imageValidation1, imageValidation2);
+    }
+
 }
