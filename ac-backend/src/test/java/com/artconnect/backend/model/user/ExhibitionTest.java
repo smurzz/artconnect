@@ -292,6 +292,198 @@ public class ExhibitionTest {
         Assertions.assertEquals(exhibition1.hashCode(), exhibition2.hashCode());
     }
 
+    @Test
+    public void testExhibitionNoArgsConstructor() {
+        Exhibition exhibition = new Exhibition();
+
+        Assertions.assertNull(exhibition.getTitle());
+        Assertions.assertNull(exhibition.getLocation());
+        Assertions.assertEquals(0, exhibition.getYear());
+        Assertions.assertNull(exhibition.getDescription());
+    }
+
+    @Test
+    public void testExhibitionAllArgsConstructor() {
+        String title = "Art Exhibition";
+        String location = "Gallery";
+        int year = 2022;
+        String description = "A showcase of contemporary art";
+
+        Exhibition exhibition = new Exhibition(title, location, year, description);
+
+        Assertions.assertEquals(title, exhibition.getTitle());
+        Assertions.assertEquals(location, exhibition.getLocation());
+        Assertions.assertEquals(year, exhibition.getYear());
+        Assertions.assertEquals(description, exhibition.getDescription());
+    }
+
+    @Test
+    public void testExhibitionGetterAndSetter() {
+        Exhibition exhibition = new Exhibition();
+
+        String title = "Art Exhibition";
+        String location = "Gallery";
+        int year = 2022;
+        String description = "A showcase of contemporary art";
+
+        exhibition.setTitle(title);
+        exhibition.setLocation(location);
+        exhibition.setYear(year);
+        exhibition.setDescription(description);
+
+        Assertions.assertEquals(title, exhibition.getTitle());
+        Assertions.assertEquals(location, exhibition.getLocation());
+        Assertions.assertEquals(year, exhibition.getYear());
+        Assertions.assertEquals(description, exhibition.getDescription());
+    }
+
+    @Test
+    public void testExhibitionSetTitle() {
+        String title = "Art Exhibition";
+
+        Exhibition exhibition = new Exhibition();
+        exhibition.setTitle(title);
+
+        Assertions.assertEquals(title, exhibition.getTitle());
+    }
+
+    @Test
+    public void testExhibitionSetLocation() {
+        String location = "Gallery";
+
+        Exhibition exhibition = new Exhibition();
+        exhibition.setLocation(location);
+
+        Assertions.assertEquals(location, exhibition.getLocation());
+    }
+
+    @Test
+    public void testExhibitionSetYear() {
+        int year = 2022;
+
+        Exhibition exhibition = new Exhibition();
+        exhibition.setYear(year);
+
+        Assertions.assertEquals(year, exhibition.getYear());
+    }
+
+    @Test
+    public void testExhibitionSetDescription() {
+        String description = "A showcase of contemporary art";
+
+        Exhibition exhibition = new Exhibition();
+        exhibition.setDescription(description);
+
+        Assertions.assertEquals(description, exhibition.getDescription());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithDifferentObject() {
+        Exhibition exhibition = new Exhibition();
+
+        Assertions.assertNotEquals(exhibition, new Object());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithNullObject() {
+        Exhibition exhibition = new Exhibition();
+
+        Assertions.assertNotEquals(exhibition, null);
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithSameObject() {
+        Exhibition exhibition = new Exhibition();
+
+        Assertions.assertEquals(exhibition, exhibition);
+        Assertions.assertEquals(exhibition.hashCode(), exhibition.hashCode());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithEqualObject() {
+        Exhibition exhibition1 = new Exhibition();
+        Exhibition exhibition2 = new Exhibition();
+
+        Assertions.assertEquals(exhibition1, exhibition2);
+        Assertions.assertEquals(exhibition1.hashCode(), exhibition2.hashCode());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithDifferentTitle() {
+        Exhibition exhibition1 = Exhibition.builder()
+                .title("Art Exhibition")
+                .build();
+
+        Exhibition exhibition2 = Exhibition.builder()
+                .title("Sculpture Exhibition")
+                .build();
+
+        Assertions.assertNotEquals(exhibition1, exhibition2);
+        Assertions.assertNotEquals(exhibition1.hashCode(), exhibition2.hashCode());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithDifferentLocation() {
+        Exhibition exhibition1 = Exhibition.builder()
+                .location("Gallery A")
+                .build();
+
+        Exhibition exhibition2 = Exhibition.builder()
+                .location("Gallery B")
+                .build();
+
+        Assertions.assertNotEquals(exhibition1, exhibition2);
+        Assertions.assertNotEquals(exhibition1.hashCode(), exhibition2.hashCode());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithDifferentYear() {
+        Exhibition exhibition1 = Exhibition.builder()
+                .year(2022)
+                .build();
+
+        Exhibition exhibition2 = Exhibition.builder()
+                .year(2023)
+                .build();
+
+        Assertions.assertNotEquals(exhibition1, exhibition2);
+        Assertions.assertNotEquals(exhibition1.hashCode(), exhibition2.hashCode());
+    }
+
+    @Test
+    public void testExhibitionEqualsAndHashCodeWithDifferentDescription() {
+        Exhibition exhibition1 = Exhibition.builder()
+                .description("Art exhibition showcasing paintings")
+                .build();
+
+        Exhibition exhibition2 = Exhibition.builder()
+                .description("Art exhibition showcasing sculptures")
+                .build();
+
+        Assertions.assertNotEquals(exhibition1, exhibition2);
+        Assertions.assertNotEquals(exhibition1.hashCode(), exhibition2.hashCode());
+    }
+
+    @Test
+    public void testExhibitionCanEqualWithEqualObject() {
+        Exhibition exhibition1 = Exhibition.builder()
+                .title("Art Exhibition")
+                .build();
+
+        Exhibition exhibition2 = Exhibition.builder()
+                .title("Art Exhibition")
+                .build();
+
+        Assertions.assertTrue(exhibition1.canEqual(exhibition2));
+    }
+
+    @Test
+    public void testExhibitionCanEqualWithDifferentObject() {
+        Exhibition exhibition = new Exhibition();
+
+        Assertions.assertFalse(exhibition.canEqual(new Object()));
+    }
+
 }
 
 
