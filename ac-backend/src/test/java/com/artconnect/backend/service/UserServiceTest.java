@@ -535,4 +535,24 @@ public class UserServiceTest {
         verifyNoMoreInteractions(userRepository);
     }
 
+    @Test
+    public void testDelete_UserNotFound() {
+        String id = "123";
+        String authorization = "Bearer <token>";
+
+        when(jwtService.extractUsername(anyString())).thenReturn("user@example.com");
+        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
+
+        Mono<Void> result = userService.delete(id, authorization);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException &&
+                                ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST &&
+                                ((ResponseStatusException) throwable).getReason().equals("User is not found."))
+                .verify();
+
+        verify(userRepository).findByEmail(anyString());
+        verify(userRepository, never()).deleteById(anyString());
+    }
 }
