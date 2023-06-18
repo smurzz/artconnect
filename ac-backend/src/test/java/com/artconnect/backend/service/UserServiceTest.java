@@ -1,4 +1,5 @@
 package com.artconnect.backend.service;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
@@ -29,6 +30,11 @@ import reactor.test.StepVerifier;
 import org.junit.jupiter.api.DisplayName;
 
 
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+
+
+
 
 public class UserServiceTest {
 
@@ -45,6 +51,9 @@ public class UserServiceTest {
     private PasswordEncoder passwordEncoder;
     @InjectMocks
     private UserService userService;
+
+    @Captor
+    private ArgumentCaptor<User> userCaptor;
 
 
     @BeforeEach
@@ -153,8 +162,8 @@ public class UserServiceTest {
                 .expectErrorSatisfies(error -> {
                     Assertions.assertTrue(error instanceof ResponseStatusException);
                     ResponseStatusException exception = (ResponseStatusException) error;
-                    Assertions.assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-                    Assertions.assertEquals("User is not found.", exception.getReason());
+                    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+                    assertEquals("User is not found.", exception.getReason());
                 })
                 .verify();
     }
@@ -184,8 +193,8 @@ public class UserServiceTest {
                 .expectErrorSatisfies(error -> {
                     Assertions.assertTrue(error instanceof ResponseStatusException);
                     ResponseStatusException exception = (ResponseStatusException) error;
-                    Assertions.assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-                    Assertions.assertEquals("User is not found.", exception.getReason());
+                    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+                    assertEquals("User is not found.", exception.getReason());
                 })
                 .verify();
     }
@@ -387,4 +396,86 @@ public class UserServiceTest {
         verify(userRepository).findByEmail(userEmail);
         verifyNoInteractions(imageService);
     }
+
+    @Test
+    void findAll_ReturnsAllUsers() {
+        // Mocking repository behavior
+        User user1 = new User();
+        User user2 = new User();
+        when(userRepository.findAll()).thenReturn(Flux.just(user1, user2));
+
+        // Calling the method and verifying the result
+        Flux<User> result = userService.findAll();
+        StepVerifier.create(result)
+                .expectNext(user1)
+                .expectNext(user2)
+                .verifyComplete();
+
+        // Verifying that the repository method was called
+        verify(userRepository).findAll();
+    }
+
+    @Test
+    void findById_ExistingUserId_ReturnsUser() {
+        // Mocking input data
+        String userId = "123";
+
+        // Mocking repository behavior
+        User user = new User();
+        when(userRepository.findById(userId)).thenReturn(Mono.just(user));
+
+        // Calling the method and verifying the result
+        Mono<User> result = userService.findById(userId);
+        StepVerifier.create(result)
+                .expectNext(user)
+                .verifyComplete();
+
+        // Verifying that the repository method was called with the correct argument
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
+    void findById_NonExistingUserId_ReturnsError() {
+        // Mocking input data
+        String userId = "456";
+
+        // Mocking repository behavior
+        when(userRepository.findById(userId)).thenReturn(Mono.empty());
+
+        // Calling the method and verifying the error response
+        Mono<User> result = userService.findById(userId);
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException
+                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST
+                                && throwable.getMessage().contains("User is not found.")
+                )
+                .verify();
+
+        // Verifying that the repository method was called with the correct argument
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
+    void create_ValidUser_ReturnsCreatedUser() {
+        // Mocking input data
+        User user = new User();
+        user.setCreatedAt(new Date());
+
+        // Mocking repository behavior
+        when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
+
+        // Calling the method and verifying the result
+        Mono<User> result = userService.create(user);
+        StepVerifier.create(result)
+                .expectNext(user)
+                .verifyComplete();
+
+        // Verifying that the repository method was called with the correct argument
+        verify(userRepository).save(userCaptor.capture());
+        User capturedUser = userCaptor.getValue();
+        assertEquals(user.getCreatedAt(), capturedUser.getCreatedAt());
+        // Assert other properties if necessary
+    }
+
 }
