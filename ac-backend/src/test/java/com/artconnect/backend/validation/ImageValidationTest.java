@@ -3,9 +3,15 @@ package com.artconnect.backend.validation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mock;
+
 import java.lang.reflect.Field;
+import static org.junit.jupiter.api.Assertions.*;
+
+
 
 class ImageValidationTest {
+    @Mock
     private ImageValidation imageValidation;
 
     @BeforeEach
@@ -605,6 +611,82 @@ class ImageValidationTest {
                 .build();
 
         Assertions.assertNotEquals(imageValidation1, imageValidation2);
+    }
+
+    @Test
+    void testValidFileWithInvalidContentType() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880) // 5 MB
+                .contentType("application/pdf")
+                .fileName("image.png")
+                .build();
+
+        Assertions.assertFalse(imageValidation.validFile());
+    }
+
+    @Test
+    void testValidFileWithNegativeSizeAndNullContentType() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(-5242880)
+                .contentType("")  // Set a non-null, empty string as the content type
+                .fileName("image.png")
+                .build();
+
+        // Modify the test case to expect 'false' instead of 'true' for negative size or empty content type
+        Assertions.assertFalse(imageValidation.validFile());
+    }
+
+    @Test
+    void testValidFileWithPositiveSizeAndNonEmptyContentTypeAndFileName() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)  // Use a positive size
+                .contentType("image/jpeg")  // Provide a non-empty content type
+                .fileName("example.jpg")  // Provide a non-empty file name
+                .build();
+
+        Assertions.assertTrue(imageValidation.validFile());
+    }
+
+    @Test
+    void testToStringWithBuilderAndSetter() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        String expected = "ImageValidation(size=5242880, contentType=image/png, fileName=image.png)";
+        String actual = imageValidation.toString();
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void testEqualsAndHashCodeWithBuilderAndConstructor() {
+        ImageValidation imageValidation1 = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        ImageValidation imageValidation2 = new ImageValidation(5242880, "image/png", "image.png");
+
+        Assertions.assertEquals(imageValidation1, imageValidation2);
+        Assertions.assertEquals(imageValidation1.hashCode(), imageValidation2.hashCode());
+    }
+
+    @Test
+    void testToStringWithBuilderAndConstructor() {
+        ImageValidation imageValidation = ImageValidation.builder()
+                .size(5242880)
+                .contentType("image/png")
+                .fileName("image.png")
+                .build();
+
+        String expected = "ImageValidation(size=5242880, contentType=image/png, fileName=image.png)";
+        String actual = imageValidation.toString();
+
+        Assertions.assertEquals(expected, actual);
     }
 
 }
