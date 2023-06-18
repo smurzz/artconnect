@@ -3,26 +3,41 @@ package com.artconnect.backend.service;
 import static org.mockito.Mockito.*;
 
 
+import com.artconnect.backend.validation.ImageValidation;
+import org.bson.BsonBinarySubType;
+import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import com.artconnect.backend.model.Image;
 import com.artconnect.backend.repository.ImageRepository;
 
+import java.io.IOException;
+import java.util.Collections;
+
 
 public class ImageServiceTest {
 
     @Mock
     private ImageRepository imageRepository;
-
+    @InjectMocks
     private ImageService imageService;
+
+    @Mock
+    private ImageValidation imageValidation;
 
     @BeforeEach
     public void setUp() {
@@ -84,5 +99,42 @@ public class ImageServiceTest {
                         throwable instanceof ResponseStatusException
                                 && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.NOT_FOUND)
                 .verify();
+    }
+
+    @Test
+    void addPhoto_ValidImage_ReturnsSavedImage() throws IOException {
+        FilePart filePart = mock(FilePart.class);
+        DataBuffer dataBuffer = mock(DataBuffer.class);
+        DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
+        Long sizeFile = 7345874L;
+        HttpHeaders headers = mock(HttpHeaders.class);
+
+        when(dataBuffer.factory()).thenReturn(dataBufferUtils);
+        when(filePart.content()).thenReturn(Flux.fromIterable(Collections.singletonList(dataBuffer)));
+        when(dataBufferUtils.join(Collections.singletonList(dataBuffer))).thenReturn(dataBuffer);
+        when(filePart.headers()).thenReturn(headers);
+        when(filePart.headers().getContentType()).thenReturn(MediaType.IMAGE_JPEG);
+        when(filePart.filename()).thenReturn("ImageFile.jpeg");
+
+        byte[] bytes = new byte[dataBuffer.readableByteCount()];
+        dataBuffer.read(bytes);
+        Binary imageRequestBytes = new Binary(BsonBinarySubType.BINARY, bytes);
+
+        Image image = Image.builder()
+                .image(imageRequestBytes)
+                .title(filePart.filename())
+                .contentType("image/jpeg")
+                .build();
+
+        when(imageValidation.validFile()).thenReturn(true);
+        when(imageRepository.save(any(Image.class))).thenReturn(Mono.just(image));
+
+        Mono<Image> result = imageService.addPhoto(Mono.just(filePart), sizeFile);
+
+        StepVerifier.create(result)
+                .expectNext(image)
+                .expectComplete()
+                .verify();
+
     }
 }
