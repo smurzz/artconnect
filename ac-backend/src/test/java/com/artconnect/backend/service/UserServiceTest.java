@@ -478,4 +478,24 @@ public class UserServiceTest {
         // Assert other properties if necessary
     }
 
+    @Test
+    public void testFindByEmail_ExistingEmail_ReturnsUser() {
+        // Mocking input data
+        String email = "user@example.com";
+        User user = new User();
+        user.setEmail(email);
+
+        // Mocking repository behavior
+        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
+
+        // Calling the method and verifying the result
+        Mono<User> result = userService.findByEmail(email);
+        StepVerifier.create(result)
+                .expectNext(user)
+                .verifyComplete();
+
+        // Verifying that the repository method was called with the correct argument
+        verify(userRepository).findByEmail(email);
+    }
+
 }
