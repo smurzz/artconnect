@@ -498,4 +498,41 @@ public class UserServiceTest {
         verify(userRepository).findByEmail(email);
     }
 
+    @Test
+    public void testDelete_InvalidAuthorizationToken_ReturnsUnauthorizedError() {
+        String id = "123";
+        String authorization = "InvalidToken";
+
+        when(jwtService.extractUsername(anyString())).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+
+        Mono<Void> result = userService.delete(id, authorization);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException &&
+                                ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.UNAUTHORIZED)
+                .verify();
+
+        verifyNoInteractions(userRepository);
+    }
+    @Test
+    public void testDelete_UserNotFound_ReturnsBadRequestError() {
+        String id = "123";
+        String authorization = "Bearer <token>";
+
+        when(jwtService.extractUsername(anyString())).thenReturn("user@example.com");
+        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
+
+        Mono<Void> result = userService.delete(id, authorization);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException &&
+                                ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST)
+                .verify();
+
+        verify(userRepository).findByEmail("user@example.com");
+        verifyNoMoreInteractions(userRepository);
+    }
+
 }
