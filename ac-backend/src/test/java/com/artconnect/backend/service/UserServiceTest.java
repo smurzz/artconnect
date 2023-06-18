@@ -26,6 +26,24 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+
+import org.springframework.mock.web.MockMultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.Part;
+
+
+
+
+
+
 public class UserServiceTest {
 
     @Mock
@@ -304,5 +322,42 @@ public class UserServiceTest {
                 .verify();
 
         verify(userRepository, times(1)).findById(userId);
+    }
+
+
+    @Test
+    public void addProfilePhoto_InvalidAuthorizationToken_ReturnsUnauthorizedError() {
+        // Mocking input data
+        String authorization = "InvalidToken";
+
+        // Calling the method and verifying the error response
+        StepVerifier.create(userService.addProfilePhoto(Mono.empty(), 0L, authorization))
+                .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
+                        && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.UNAUTHORIZED)
+                .verify();
+
+        // Verifying that repository and service methods were not called
+        verifyNoInteractions(userRepository);
+        verifyNoInteractions(imageService);
+    }
+
+    @Test
+    public void addProfilePhoto_UserNotFound_ReturnsUnauthorizedError() {
+        // Mocking input data
+        String authorization = "Bearer token";
+
+        // Mocking repository behavior
+        when(jwtService.extractUsername(anyString())).thenReturn("user@example.com");
+        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
+
+        // Calling the method and verifying the error response
+        StepVerifier.create(userService.addProfilePhoto(Mono.empty(), 0L, authorization))
+                .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
+                        && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.UNAUTHORIZED)
+                .verify();
+
+        // Verifying that repository and service methods were called with the expected arguments
+        verify(userRepository).findByEmail("user@example.com");
+        verifyNoInteractions(imageService);
     }
 }
