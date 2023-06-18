@@ -137,4 +137,30 @@ public class ImageServiceTest {
                 .verify();
 
     }
+
+    @Test
+    void addPhoto_InvalidContentType_ReturnsError() throws IOException {
+        FilePart filePart = mock(FilePart.class);
+        DataBuffer dataBuffer = mock(DataBuffer.class);
+        DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
+        Long sizeFile = 7345874L;
+        HttpHeaders headers = mock(HttpHeaders.class);
+
+        when(dataBuffer.factory()).thenReturn(dataBufferUtils);
+        when(filePart.content()).thenReturn(Flux.fromIterable(Collections.singletonList(dataBuffer)));
+        when(dataBufferUtils.join(Collections.singletonList(dataBuffer))).thenReturn(dataBuffer);
+        when(filePart.headers()).thenReturn(headers);
+        when(filePart.headers().getContentType()).thenReturn(MediaType.APPLICATION_PDF); // Invalid content type
+        when(filePart.filename()).thenReturn("ImageFile.jpeg");
+
+        when(imageValidation.validFile()).thenReturn(false); // Invalid file validation
+
+        Mono<Image> result = imageService.addPhoto(Mono.just(filePart), sizeFile);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException
+                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST)
+                .verify();
+    }
 }
