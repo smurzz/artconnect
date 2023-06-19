@@ -16,7 +16,8 @@ import Protected from "./container/protected";
 import NotFound from "./container/notFound/notFound"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import UserProfileBearbeiten from "./container/UserProfile/userProfileBearbeiten"
+import UserProfileBearbeiten from "./container/UserProfile/userProfileBearbeiten";
+import Bearbeiten from "./container/bearbeiten"
 
 function App() {
   return (
@@ -31,7 +32,8 @@ function App() {
         <Route path ="/resetSuccess" element ={<ResetPasswortSuccess/>}/>
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
         <Route path ="/l" element ={<LandingPage/>}/>
-          <Route element={<ProtectedRoutes />}>
+          <Route  element={<ProtectedRoutes />}>
+            <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
             <Route path="/profil" element ={<UserProfileBearbeiten/>}></Route>
             <Route path="/protected" element={<Protected />} />
             <Route path="/galerie" element={<Galerie2 />}></Route>

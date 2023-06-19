@@ -78,8 +78,8 @@ async function postLogin(payload) {
             }
         }
     }
-
 async function getDataSecured(url, payload) {
+    //relative URL und Body mit JSON
     const tokenInfo = await storageService.getTokenInformation();
     console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
     if(!tokenInfo) return null;
@@ -98,17 +98,71 @@ async function getDataSecured(url, payload) {
             }
             return result;
     }catch(error){
+        //Logged den User bei einem Error aus
         storageService.logout();
         return null;
     }
-
-
-
 }
+async function patchdataSecured(url, payload) {
+    const tokenInfo = await storageService.getTokenInformation();
+    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
+    if(!tokenInfo) return null;
+    try{
+        const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
+        var _headers = {
+            headers: {
+                Authorization: "Bearer " + tokenInfo.accessToken,
+            },
+        };
+        let result;
+        if (!payload) {
+            return null;
+        } else {
+            console.log("inside patch data secured: ");
+            let result = await axios.put(url,payload, _headers);
+        }
+        return result;
+    }catch(error){
+        return null;
+    }
+}
+async function sendImage( payload) {
+    const tokenInfo = await storageService.getTokenInformation();
+    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
+    if(!tokenInfo) return null;
+    try{
+        const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
+        var _headers = {
+            headers: {
+                Authorization: "Bearer " + tokenInfo.accessToken,
+                "Content-type": "multipart/form-data"
+            },
+        };
+        let result;
+        if (!payload) {
+            return null;
+        } else {
+            axios.post('/users/profile-photo', payload, _headers)
+                .then(response => {
+                    const photoData = btoa(
+                        new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
+                    );
+                    const contentType = response.headers['content-type'];
+                    const imageUrl = `data:${contentType};base64,${photoData}`;
+                })
+        }
+        return result;
+    }catch(error){
+        return null;
+    }
+}
+
 
 export const ApiService = {
     postRegister,
     postLogin,
     getDataSecured,
-    postResetPassword
+    postResetPassword,
+    patchdataSecured,
+    sendImage
 }

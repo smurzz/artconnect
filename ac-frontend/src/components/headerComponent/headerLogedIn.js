@@ -32,7 +32,8 @@ export default function ResponsiveAppBar() {
         const logout = await logikService.logout();
         console.log("logout");
         if (logout == "success") {
-            navigate("/");
+            console.log("logout");
+            navigate("/home");
         }
     }
 
