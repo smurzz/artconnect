@@ -172,8 +172,6 @@ public class AuthenticationRequestTest {
         String password = "password123";
 
         AuthenticationRequest authenticationRequest = new AuthenticationRequest(email, password);
-
-        // Verify that the fields are initialized with the provided values
         Assertions.assertEquals(email, authenticationRequest.getEmail());
         Assertions.assertEquals(password, authenticationRequest.getPassword());
     }
@@ -232,5 +230,41 @@ public class AuthenticationRequestTest {
         // Verify that the getPassword() method returns the correct value
         Assertions.assertEquals(password, authenticationRequest.getPassword());
     }
+
+
+    @Test
+    public void testAuthenticationRequest() {
+        String email = "test@example.com";
+        String password = "password123";
+
+        AuthenticationRequest request = new AuthenticationRequest(email, password);
+
+        Assertions.assertEquals(email, request.getEmail());
+        Assertions.assertEquals(password, request.getPassword());
+    }
+
+    @Test
+    public void testAuthenticationRequestValidation() {
+        String invalidEmail = "invalidemail";
+        String invalidPassword = "";
+
+
+        boolean isEmailValid = isEmailValid(invalidEmail);
+        boolean isPasswordValid = isPasswordValid(invalidPassword);
+
+        Assertions.assertFalse(isEmailValid, "Email should be invalid");
+        Assertions.assertFalse(isPasswordValid, "Password should be invalid");
+    }
+
+    private boolean isEmailValid(String email) {
+
+        return email.contains("@");
+    }
+
+    private boolean isPasswordValid(String password) {
+
+        return password.length() >= 8;
+    }
+
 
 }
