@@ -54,7 +54,7 @@ const Profile = () => {
                 className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
               >
                 {/* <EnvelopeIcon className="-ml-0.5 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" /> */}
-                <span>Bearbeiten</span>
+                <span><a className='link' href='http://localhost:3000/bearbeiten'>Bearbeiten</a></span>
               </button>
             </div>
           </div>
@@ -81,9 +81,6 @@ const Profile = () => {
             <dd className="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <span className="flex-grow">{profile.name}</span>
               <span className="ml-4 flex-shrink-0">
-                <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
-                  Update
-                </button>
               </span>
             </dd>
           </div>
@@ -92,9 +89,6 @@ const Profile = () => {
             <dd className="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <span className="flex-grow">01725450303</span>
               <span className="ml-4 flex-shrink-0">
-                <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
-                  Update
-                </button>
               </span>
             </dd>
           </div>
@@ -103,9 +97,6 @@ const Profile = () => {
             <dd className="mt-1 flex text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <span className="flex-grow">{profile.email}</span>
               <span className="ml-4 flex-shrink-0">
-                <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
-                  Update
-                </button>
               </span>
             </dd>
           </div>
@@ -118,9 +109,6 @@ const Profile = () => {
                 </a>
                 </span>
               <span className="ml-4 flex-shrink-0">
-                <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
-                  Update
-                </button>
               </span>
             </dd>
           </div>
@@ -133,60 +121,24 @@ const Profile = () => {
                 nostrud pariatur mollit ad adipisicing reprehenderit deserunt qui eu.
               </span>
               <span className="ml-4 flex-shrink-0">
-                <button type="button" className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500">
-                  Update
-                </button>
               </span>
             </dd>
           </div>
           <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Attachments</dt>
+            <dt className="text-sm font-medium leading-6 text-gray-900">Social Media</dt>
             <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
               <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
                 <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
                   <div className="flex w-0 flex-1 items-center">
-                    <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                    <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                      <span className="truncate font-medium">resume_back_end_developer.pdf</span>
-                      <span className="flex-shrink-0 text-gray-400">2.4mb</span>
-                    </div>
+
                   </div>
                   <div className="ml-4 flex flex-shrink-0 space-x-4">
-                    <button
-                      type="button"
-                      className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      Update
-                    </button>
-                    <span className="text-gray-200" aria-hidden="true">
-                      |
-                    </span>
-                    <button type="button" className="rounded-md bg-white font-medium text-gray-900 hover:text-gray-800">
-                      Remove
-                    </button>
+
                   </div>
                 </li>
                 <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
-                  <div className="flex w-0 flex-1 items-center">
-                    <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                    <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                      <span className="truncate font-medium">coverletter_back_end_developer.pdf</span>
-                      <span className="flex-shrink-0 text-gray-400">4.5mb</span>
-                    </div>
-                  </div>
                   <div className="ml-4 flex flex-shrink-0 space-x-4">
-                    <button
-                      type="button"
-                      className="rounded-md bg-white font-medium text-indigo-600 hover:text-indigo-500"
-                    >
-                      Update
-                    </button>
-                    <span className="text-gray-200" aria-hidden="true">
-                      |
-                    </span>
-                    <button type="button" className="rounded-md bg-white font-medium text-gray-900 hover:text-gray-800">
-                      Remove
-                    </button>
+
                   </div>
                 </li>
               </ul>

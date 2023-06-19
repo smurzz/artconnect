@@ -32,11 +32,11 @@ function App() {
         <Route path ="/resetSuccess" element ={<ResetPasswortSuccess/>}/>
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
         <Route path ="/l" element ={<LandingPage/>}/>
-          <Route  element={<ProtectedRoutes />}>
             <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
             <Route path="/profil" element ={<UserProfileBearbeiten/>}></Route>
             <Route path="/protected" element={<Protected />} />
             <Route path="/galerie" element={<Galerie2 />}></Route>
+          <Route  element={<ProtectedRoutes />}>
           </Route>
         <Route path='*' element={<NotFound/>}/>
       </Routes>

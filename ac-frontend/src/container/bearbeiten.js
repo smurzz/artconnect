@@ -30,6 +30,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import {useDispatch} from "react-redux";
 import {connect} from 'react-redux';
 
+import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 
 function Bearbeiten(props) {
     //triggers Statechanges so the component reloads
@@ -172,7 +173,7 @@ function Bearbeiten(props) {
             await ApiService.sendImage(formData);
         }
     }
-
+    
 const handleSubmit = async (event) => {
     event.preventDefault();
     //build the request Body:
@@ -215,8 +216,476 @@ const handleSubmit = async (event) => {
     console.log("Request Body: ", requestBody);
     const result = await ApiService.patchdataSecured("/users/" + users[0].id, requestBody);
 }
+
 return (
     <>
+    {/* tailwind ui */}
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}
+      <div className="mx-auto max-w-3xl">
+    <form onSubmit={handleSubmit}>
+      <div className="space-y-12">
+        <div className="border-b border-gray-900/10 pb-12">
+          <h2 className="text-base font-semibold leading-7 text-gray-900">Profile</h2>
+          <p className="mt-1 text-sm leading-6 text-gray-600">
+            Diese Informationen werden öffentlich dargestellt. Sei also Vorsichtig welche Informationen du preis gibst!
+          </p>
+
+          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+            <div className="col-span-full">
+              <label htmlFor="biography" className="block text-sm font-medium leading-6 text-gray-900">
+                Biographie
+              </label>
+              <div className="mt-2">
+                <textarea
+                  id="biography"
+                  name="biography"
+                  rows={3}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  defaultValue={''}
+                  value={userBearbeiten.biography}
+                           onChange={async (e) => {
+                               setUserBearbeiten({...userBearbeiten, biography: e.target.value})
+                           }}
+                />
+              </div>
+              <p className="mt-3 text-sm leading-6 text-gray-600">Schreib ein paar Sätze über dich.</p>
+            </div>
+
+            <div className="col-span-full">
+              <label htmlFor="photo" className="block text-sm font-medium leading-6 text-gray-900">
+                Profil Bild
+              </label>
+
+              <form>
+
+                <div className="mt-2 flex items-center gap-x-3">
+                    <UserCircleIcon className="h-12 w-12 text-gray-300" aria-hidden="true" />
+                    <input type="file" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
+                    {errorMessage && <p>{errorMessage}</p>}
+                    <button onClick={handleFileUpload}>Upload</button>
+                </div>
+              </form>
+            </div>
+
+            <div className="col-span-full">
+              <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
+                Banner
+              </label>
+              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                <div className="text-center">
+                  <PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
+                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                    <label
+                      htmlFor="file-upload"
+                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                    >
+                      <span>Lade ein Bild hoch</span>
+                      <input id="file-upload" name="file-upload" type="file" accept=".jpg, .jpeg, .png" className="sr-only" onChange={handleFileChange} />
+                    </label>
+                      {errorMessage && <p>{errorMessage}</p>}
+                    {/* <p className="pl-1">or drag and drop</p> */}
+                  </div>
+                      <button onClick={handleFileUpload}>Upload</button>
+                  <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-b border-gray-900/10 pb-12">
+          <h2 className="text-base font-semibold leading-7 text-gray-900">Persönliche Informationen</h2>
+
+          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="sm:col-span-3">
+              <label htmlFor="firstname" className="block text-sm font-medium leading-6 text-gray-900">
+                Vorname
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="firstname"
+                  id="firstname"
+                  autoComplete="given-name"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={userBearbeiten.firstname}
+                           onChange={async (e) => {
+                               setUserBearbeiten({...userBearbeiten, firstname: e.target.value})
+                           }}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="lastname" className="block text-sm font-medium leading-6 text-gray-900">
+                Nachname
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="lastname"
+                  id="lastname"
+                  autoComplete="family-name"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={userBearbeiten.lastname}
+                           onChange={async (e) => {
+                               setUserBearbeiten({...userBearbeiten, lastname: e.target.value})
+                           }}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-4">
+              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                Email Addresse
+              </label>
+              <div className="mt-2">
+                <input
+                  id="email"
+                  name="email"
+                  type="text"
+                  autoComplete="email"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={userBearbeiten.email}
+                           onChange={async (e) => {
+                               setUserBearbeiten({...userBearbeiten, email: e.target.value})
+                           }}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-4">
+              <label htmlFor="telefonNumber" className="block text-sm font-medium leading-6 text-gray-900">
+                Telefonnummer
+              </label>
+              <div className="mt-2">
+                <input
+                  id="telefonNumber"
+                  name="telefonNumber"
+                  type="text"
+                  autoComplete="telefonnummer"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={constact.telefonNumber || ""}
+                           onChange={async (e) => {
+                               setContacts({...constact, telefonNumber: e.target.value})
+                           }}
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-4">
+              <label htmlFor="webseite" className="block text-sm font-medium leading-6 text-gray-900">
+                Webseite
+              </label>
+              <div className="mt-2">
+                <input
+                  id="webseite"
+                  name="webseite"
+                  type="text"
+                  autoComplete="webseite"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={constact.address.website}
+                           onChange={(e) => {
+                               setContacts({
+                                   ...constact,
+                                   website: e.target.value
+                               });
+                           }}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="country" className="block text-sm font-medium leading-6 text-gray-900">
+                Land
+              </label>
+              <div className="mt-2">
+                <select
+                  id="country"
+                  name="country"
+                  autoComplete="country-name"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                  value={constact.address.country}
+                           onChange={(e) => {
+                               setContacts({
+                                   ...constact,
+                                   address: {
+                                       ...constact.address,
+                                       country: e.target.value
+                                   }
+                               });
+                           }}
+                >
+                  <option>United States</option>
+                  <option>Canada</option>
+                  <option>Mexico</option>
+                  <option>Germany</option>
+                  <option>United Kingdoms</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="col-span-full">
+              <label htmlFor="street-address" className="block text-sm font-medium leading-6 text-gray-900">
+                Addresse
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="street"
+                  id="street-address"
+                  autoComplete="street-address"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={constact.address.street}
+                           onChange={(e) => {
+                               setContacts({
+                                   ...constact,
+                                   address: {
+                                       ...constact.address,
+                                       street: e.target.value
+                                   }
+                               });
+                           }}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2 sm:col-start-1">
+              <label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
+                Stadt
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="city"
+                  id="city"
+                  autoComplete="address-level2"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={constact.address.city}
+                           onChange={(e) => {
+                               setContacts({
+                                   ...constact,
+                                   address: {
+                                       ...constact.address,
+                                       city: e.target.value
+                                   }
+                               });
+                           }}
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="region" className="block text-sm font-medium leading-6 text-gray-900">
+                Bundesstat
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="region"
+                  id="region"
+                  autoComplete="address-level1"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="postalCode" className="block text-sm font-medium leading-6 text-gray-900">
+                ZIP / Postal code
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="postalCode"
+                  id="postalCode"
+                  autoComplete="postalCode"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  value={constact.address.postalCode}
+                           onChange={(e) => {
+                               setContacts({
+                                   ...constact,
+                                   address: {
+                                       ...constact.address,
+                                       postalCode: e.target.value
+                                   }
+                               });
+                           }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-b border-gray-900/10 pb-12">
+        <h2 className="text-base font-semibold leading-7 text-gray-900">Ausstellung</h2>
+        {
+            exhibitionValues.map((element, index) => (
+                <div className="form-inline" key={index}>
+                    {
+                        index ?
+                            <Button type="button" className="button inputField remove"
+                                    onClick={() => removeExhibitionFields(index)}>Remove</Button>
+                            : null
+                    } 
+
+                    <div className="sm:col-span-4">
+                            <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">
+                                Title
+                            </label>
+                            <div className="mt-2">
+                                <input
+                                id="title"
+                                name="title"
+                                type="text"
+                                autoComplete="Title"
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                value={element.title || ""}
+                                   onChange={e => handleExhibition(index, e)}
+                                />
+                            </div>
+                    </div>
+                    <div className="sm:col-span-4">
+                            <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900">
+                                Ort
+                            </label>
+                            <div className="mt-2">
+                                <input
+                                id="location"
+                                name="location"
+                                type="text"
+                                autoComplete="Location"
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                value={element.location || ""}
+                                   onChange={e => handleExhibition(index, e)}
+                                />
+                            </div>
+                    </div>
+                    <div className="sm:col-span-4">
+                            <label htmlFor="Beschreibung" className="block text-sm font-medium leading-6 text-gray-900">
+                                Beschreibung
+                            </label>
+                            <div className="mt-2">
+                                <input
+                                id="description"
+                                name="description"
+                                type="text"
+                                autoComplete="description"
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                value={element.description || ""} onChange={e => handleExhibition(index, e)}
+                                />
+                            </div>
+                    </div>
+                    <div className="sm:col-span-4">
+                            <label htmlFor="year" className="block text-sm font-medium leading-6 text-gray-900">
+                                Jahr
+                            </label>
+                            <div className="mt-2">
+                                <input
+                                id="year"
+                                name="year"
+                                type="text"
+                                autoComplete="Jahr"
+                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                value={element.year || ""}
+                                   onChange={e => handleExhibition(index, e)}
+                                />
+                            </div>
+                    </div>
+                </div>
+            ))
+        }
+       <div className='pt-7'>
+       <button
+          type="submit"
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          onClick={() => addExhibitionFields()}
+        >
+          Hinzufügen
+        </button>
+       </div>
+
+       
+        </div>
+
+        <div className="border-b border-gray-900/10 pb-12">
+        <h2 className="text-base font-semibold leading-7 text-gray-900">Social Media</h2>
+
+        {
+            socialMedia.map((element, index) => (
+                <div className="form-inline" key={index}>
+                    {
+                        index ?
+                            <Button type="button" className="button inputField remove"
+                                    onClick={() => removeSocialMediaFields(index)}>Remove</Button>
+                            : null
+                    }
+                    <div className="sm:col-span-2 sm:col-start-1">
+                        <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">
+                            Title
+                        </label>
+                        <div className="mt-2">
+                            <input
+                            type="text"
+                            name="title"
+                            id="title"
+                            autoComplete="address-level2"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            value={element.title || ""}
+                                   onChange={e => handleSocailMedia(index, e)}
+                            />
+                        </div>
+                        </div>
+
+                        <div className="sm:col-span-2">
+                        <label htmlFor="link" className="block text-sm font-medium leading-6 text-gray-900">
+                            Location
+                        </label>
+                        <div className="mt-2">
+                            <input
+                            type="text"
+                            name="link"
+                            id="link"
+                            autoComplete="address-level1"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            value={element.link || ""}
+                                   onChange={e => handleSocailMedia(index, e)}
+                            />
+                        </div>
+                    </div>
+                </div>
+            ))
+        }
+
+       <div className='pt-7'>
+       <button
+          type="submit"
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          onClick={() => addSocialMediaField()}
+        >
+          Hinzufügen
+        </button>
+       </div>
+
+        </div>
+      </div>
+
+      <div className="mt-6 flex items-center justify-end gap-x-6">
+        <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
+          Abbrechen
+        </button>
+        <button
+          type="submit"
+          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Speichern
+        </button>
+      </div>
+    </form>
+    </div>
+    </div>
+    {/* tailwind ui */}
+
         <p>
             <Container sx={{py: 8}} maxWidth="md">
                 {/*user map*/}
