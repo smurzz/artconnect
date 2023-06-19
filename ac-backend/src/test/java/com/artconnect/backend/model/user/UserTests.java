@@ -684,6 +684,79 @@ class UserTests {
                     .build();
             assertEquals(expectedBiography, user.getBiography());
         }
+
+        @Test
+        @DisplayName("builder should create a new User instance with default values")
+        void testBuilderWithDefaultValues() {
+            User user = User.builder().build();
+
+            // Verify that default values are assigned correctly
+            assertNull(user.getId());
+            assertNull(user.getFirstname());
+            assertNull(user.getLastname());
+            assertNull(user.getEmail());
+            assertNull(user.getPassword());
+            assertNull(user.getDateOfBirthday());
+            assertNull(user.getIsDateOfBirthVisible());
+            assertNull(user.getCreatedAt());
+            assertTrue(user.isAccountNonExpired());
+            assertTrue(user.isAccountNonLocked());
+            assertTrue(user.isCredentialsNonExpired());
+            assertTrue(user.isEnabled());
+            assertNull(user.getRole());
+            assertNull(user.getProfilePhoto());
+            assertNull(user.getBiography());
+            assertNull(user.getExhibitions());
+        }
+
+        @Test
+        @DisplayName("builder should create a new User instance with provided values")
+        void testBuilderWithProvidedValues() {
+            String id = "123";
+            String firstname = "John";
+            String lastname = "Doe";
+            String email = "john.doe@example.com";
+            String password = "password123";
+            LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+            Status isDateOfBirthVisible = Status.PUBLIC;
+            Date createdAt = new Date();
+            Status isAccountEnabled = Status.PUBLIC;
+            Role role = Role.ADMIN;
+            Image profilePhoto = new Image();
+            String biography = "Lorem ipsum dolor sit amet";
+            List<Exhibition> exhibitions = List.of(new Exhibition());
+
+            User user = User.builder()
+                    .id(id)
+                    .firstname(firstname)
+                    .lastname(lastname)
+                    .email(email)
+                    .password(password)
+                    .dateOfBirthday(dateOfBirth)
+                    .isDateOfBirthVisible(isDateOfBirthVisible)
+                    .createdAt(createdAt)
+                    .isAccountEnabled(isAccountEnabled)
+                    .role(role)
+                    .profilePhoto(profilePhoto)
+                    .biography(biography)
+                    .exhibitions(exhibitions)
+                    .build();
+
+            // Verify that the builder correctly assigns the provided values
+            assertEquals(id, user.getId());
+            assertEquals(firstname, user.getFirstname());
+            assertEquals(lastname, user.getLastname());
+            assertEquals(email, user.getEmail());
+            assertEquals(password, user.getPassword());
+            assertEquals(dateOfBirth, user.getDateOfBirthday());
+            assertEquals(isDateOfBirthVisible, user.getIsDateOfBirthVisible());
+            assertEquals(createdAt, user.getCreatedAt());
+            assertEquals(isAccountEnabled, user.getIsAccountEnabled());
+            assertEquals(role, user.getRole());
+            assertEquals(profilePhoto, user.getProfilePhoto());
+            assertEquals(biography, user.getBiography());
+            assertEquals(exhibitions, user.getExhibitions());
+        }
     }
 
     @Nested
@@ -767,4 +840,81 @@ class UserTests {
         }
     }
 
+
+    @Test
+    @DisplayName("toString should return a non-null string")
+    void testToString() {
+        User user = new User();
+        assertNotNull(user.toString());
+    }
+
+    @Test
+    @DisplayName("equals should return true for the same User instance")
+    void testEqualsSameInstance() {
+        User user = new User();
+        assertTrue(user.equals(user));
+    }
+
+    @Test
+    @DisplayName("equals should return true for equal User instances")
+    void testEqualsEqualInstances() {
+        User user1 = User.builder().id("1").build();
+        User user2 = User.builder().id("1").build();
+        assertTrue(user1.equals(user2));
+        assertTrue(user2.equals(user1));
+    }
+
+    @Test
+    @DisplayName("equals should return false for different User instances")
+    void testEqualsDifferentInstances() {
+        User user1 = User.builder().id("1").build();
+        User user2 = User.builder().id("2").build();
+        assertFalse(user1.equals(user2));
+        assertFalse(user2.equals(user1));
+    }
+
+    @Test
+    @DisplayName("equals should return false when comparing User with null")
+    void testEqualsWithNull() {
+        User user = User.builder().id("1").build();
+        assertFalse(user.equals(null));
+    }
+
+    @Test
+    @DisplayName("equals should return false when comparing User with a different object type")
+    void testEqualsWithDifferentType() {
+        User user = User.builder().id("1").build();
+        assertFalse(user.equals("user"));
+    }
+
+    @Test
+    @DisplayName("hashCode should return the same value for equal User instances")
+    void testHashCodeEqualInstances() {
+        User user1 = User.builder().id("1").build();
+        User user2 = User.builder().id("1").build();
+        assertEquals(user1.hashCode(), user2.hashCode());
+    }
+
+    @Test
+    @DisplayName("hashCode should return different values for different User instances")
+    void testHashCodeDifferentInstances() {
+        User user1 = User.builder().id("1").build();
+        User user2 = User.builder().id("2").build();
+        assertNotEquals(user1.hashCode(), user2.hashCode());
+    }
+
+    @Test
+    @DisplayName("hashCode should return the same value for User instances with null ID")
+    void testHashCodeWithNullId() {
+        User user1 = User.builder().id(null).build();
+        User user2 = User.builder().id(null).build();
+        assertEquals(user1.hashCode(), user2.hashCode());
+    }
+
+    @Test
+    @DisplayName("builder should set the correct ID")
+    void testBuilderWithId() {
+        User user = User.builder().id("1").build();
+        assertEquals("1", user.getId());
+    }
 }
