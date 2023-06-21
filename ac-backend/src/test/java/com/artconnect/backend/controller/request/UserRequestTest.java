@@ -1,4 +1,5 @@
 package com.artconnect.backend.controller.request;
+import static com.mongodb.assertions.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -163,4 +164,17 @@ public class UserRequestTest {
         // Verify the biography is set correctly
         assertEquals("Lorem ipsum dolor sit amet", userRequest.getBiography());
     }
+
+    @Test
+    void isDateOfBirthVisible_DefaultValue_ShouldBeNull() {
+        // Assert
+        assertNull(userRequest.getIsDateOfBirthVisible());
+    }
+
+    @Test
+    void isAccountEnabled_DefaultValue_ShouldBeNull() {
+        // Assert
+        assertNull(userRequest.getIsAccountEnabled());
+    }
+
 }
