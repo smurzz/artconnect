@@ -30,10 +30,83 @@ import com.artconnect.backend.controller.request.RegisterRequest;
 
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import reactor.core.publisher.Mono;
 
 
 //NEED TO BE CORRECTED
 public class ValidationHandlerTest {
+
+    private ValidationHandler validationHandler;
+
+    @BeforeEach
+    public void setup() {
+        validationHandler = new ValidationHandler();
+    }
+
+    @Test
+    public void handleImageUploadException_ReturnsBadRequestStatus() {
+        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
+        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
+        ResponseEntity<String> result = response.block();
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+    }
+
+    @Test
+    public void handleImageUploadException_ReturnsExpectedErrorMessage() {
+        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
+        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
+        ResponseEntity<String> result = response.block();
+
+        Assertions.assertEquals("Image is bigger than 5Mb or is not PNG, JPEG, or JPG", result.getBody());
+    }
+
+    @Test
+    public void handleImageUploadException_ReturnsMonoWithExpectedValue() {
+        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
+        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
+
+        Assertions.assertNotNull(response);
+        Assertions.assertTrue(response instanceof Mono);
+    }
+
+    @Test
+    public void handleImageUploadException_ReturnsExpectedResponseEntity() {
+        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
+        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
+        ResponseEntity<String> result = response.block();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
+        Assertions.assertEquals("Image is bigger than 5Mb or is not PNG, JPEG, or JPG", result.getBody());
+    }
+
+    @Test
+    public void handleImageUploadException_DoesNotThrowException() {
+        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
+
+        Assertions.assertDoesNotThrow(() -> {
+            validationHandler.handleImageUploadException(exception).block();
+        }, "Expected no exception to be thrown");
+    }
+
+    @Test
+    public void handleImageUploadException_ReturnsMonoWithValueSet() {
+        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
+        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
+
+        String expectedErrorMessage = "Image is bigger than 5Mb or is not PNG, JPEG, or JPG";
+        Mono<String> expectedMono = Mono.just(expectedErrorMessage);
+
+        Assertions.assertEquals(expectedMono.block(), response.map(ResponseEntity::getBody).block());
+    }
 
 //	private ValidationHandler validationHandler;
 //
