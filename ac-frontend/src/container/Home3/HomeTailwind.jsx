@@ -73,37 +73,37 @@ const values = [
       'We are passionate about supporting emerging artists who are striving to make their mark in the art world. Our platform provides a nurturing space where these talented individuals can showcase their work, gain exposure, and connect with potential buyers. By empowering emerging artists, we aim to foster their growth and contribute to the vibrant tapestry of the art community. Together, lets discover the next generation of artistic brilliance.',
   },
 ]
-// const team = [
-//   {
-//     name: 'Mona',
-//     role: 'Web-Developer',
-//     imageUrl: require('../../images/artists1.png')  },
-//   {
-//     name: 'Ronny',
-//     role: 'Project Manager',
-//     imageUrl:require('../../images/image 156ronny.png')},
-//   {
-//     name: 'Sofya',
-//     role: 'Software Developer',
-//     imageUrl: require('../../images/Sofya 1.png')},
-//   {
-//     name: 'Aaron',
-//     role: 'Web-Developer',
-//     imageUrl: require('../../images/artists2.png')
-//   },
-//   {
-//     name: 'Özkan',
-//     role: 'Software Developer',
-//     imageUrl: require('../../images/image 187ozi.png')
-//   },
+ const team = [
+   {
+     name: 'Mona',
+     role: 'Web-Developer',
+     imageUrl: require('../../images/artists1.png')  },
+   {
+     name: 'Ronny',
+     role: 'Project Manager',
+     imageUrl:require('../../images/image 156ronny.png')},
+   {
+     name: 'Sofya',
+     role: 'Software Developer',
+     imageUrl: require('../../images/Sofya 1.png')},
+   {
+     name: 'Aaron',
+     role: 'Web-Developer',
+     imageUrl: require('../../images/artists2.png')
+   },
+   {
+     name: 'Özkan',
+     role: 'Software Developer',
+     imageUrl: require('../../images/image 187ozi.png')
+   },
 
-//   {
-//     name: 'Komola',
-//     role: 'Software Developer',
-//     imageUrl: require('../../images/artists3.png')
-//   },
-//   // More people...
-// ]
+  {
+     name: 'Komola',
+     role: 'Software Developer',
+ imageUrl: require('../../images/artists3.png')
+ },
+
+ ]
 
 const blogPosts = [
   {

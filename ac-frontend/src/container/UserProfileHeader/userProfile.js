@@ -54,11 +54,11 @@ const Profile = () => {
                                 <div
                                     className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">
                                     <button
-                                        onClick ={() =>{navigate("/profil")}}
+                                        onClick ={() =>{navigate("/galerie")}}
                                         type="button"
                                         className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                     >
-                                        <span>Edit</span>
+                                        <span>Back to Galerie</span>
                                     </button>
                                 </div>
                             </div>
@@ -83,8 +83,6 @@ const Profile = () => {
                     </div>
                 </div>
             </div>
-
-
         </>
 
     )

@@ -51,25 +51,29 @@ async function resetRefreshToken(){
 
 async function getLocalStorage() {
     const tokens = JSON.parse(localStorage.getItem("tokens"));
+    console.log("inside localstorage:" + tokens.accessToken);
     return tokens;
 }
 
 async function logout() {
     await localStorage.removeItem("tokens");
+    await localStorage.removeItem("userObject");
     console.log("logout localStorage");
     return "success";
 }
 
-async function getRemeberMe(){
-localStorage.getItem("rememberMe")
+async function setUser(userObject){
+    return await localStorage.setItem("userObject", userObject);
 }
-async function setRemeberMe(rememberMe){
-    return await localStorage.setItem("rememberMe", rememberMe);
+
+async function getUser() {
+    const user = JSON.stringify(localStorage.getItem("userObject"));
+    return user;
 }
 
 export const storageService = {
-    setRemeberMe,
-    getRemeberMe,
+    setUser,
+    getUser,
     saveToken,
     getTokenInformation,
     getRefreshToken,

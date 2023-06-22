@@ -4,7 +4,8 @@ import { logikService } from "./service"
 
 const REGISTER_URL = "/auth/register";
 const LOGIN_URL = "/auth/login";
-const RESET_PASSWORD = "/reset-password"
+const RESET_PASSWORD = "/reset-password";
+
 async function postRegister(payload) {
     try {
         var _headers = {
@@ -57,7 +58,6 @@ async function postResetPassword(payload) {
         }
     }
 }
-
 async function postLogin(payload) {
         try {
             var _headers = {
@@ -67,7 +67,10 @@ async function postLogin(payload) {
             };
             let result = await axios.post(LOGIN_URL, JSON.stringify(payload), _headers);
             const saveToken = await storageService.saveToken(result);
-            return saveToken;
+
+            //speichert die Email in den Localstorage
+            await storageService.setUser(payload.email);
+            return "success";
             }catch (err) {
             if (err.response?.status === 403) {
                 return "Please confirm the Registration Email, we send to you";
@@ -85,6 +88,7 @@ async function getDataSecured(url, payload) {
     if(!tokenInfo) return null;
     try{
         const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
+        console.log("getDataSecured - payload: "+ payload );
         var _headers = {
             headers: {
                 Authorization: "Bearer " + tokenInfo.accessToken,
@@ -98,8 +102,35 @@ async function getDataSecured(url, payload) {
             }
             return result;
     }catch(error){
+        console.log("securedData Error");
         //Logged den User bei einem Error aus
-        storageService.logout();
+        return null;
+    }
+}
+
+async function getDataSecuredWithParameter(url,param) {
+    //relative URL und Body mit JSON
+    const tokenInfo = await storageService.getTokenInformation();
+    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
+    if(!tokenInfo) return null;
+    try{
+        const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
+        console.log("getDataSecured - payload: "+ param );
+        var _headers = {
+            headers: {
+                Authorization: "Bearer " + tokenInfo.accessToken,
+            },
+        };
+        let result;
+        if (!param) {
+            result = await axios.get(url, _headers);
+        } else {
+            result = await axios.get(url, _headers);
+        }
+        return result;
+    }catch(error){
+        console.log("securedData Error");
+        //Logged den User bei einem Error aus
         return null;
     }
 }
@@ -159,6 +190,7 @@ async function sendImage( payload) {
 
 
 export const ApiService = {
+    getDataSecuredWithParameter,
     postRegister,
     postLogin,
     getDataSecured,
