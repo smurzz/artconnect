@@ -26,6 +26,7 @@ import static org.mockito.Mockito.*;
 import com.artconnect.backend.controller.response.UserResponse;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
