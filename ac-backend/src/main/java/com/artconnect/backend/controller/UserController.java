@@ -1,6 +1,7 @@
 package com.artconnect.backend.controller;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -70,8 +71,26 @@ public class UserController {
 	}
 
 	@PostMapping("/")
+	@PreAuthorize("hasRole('ADMIN')")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Mono<User> createUser(@RequestBody User user) {
+	public Mono<User> createUser(@RequestBody UserRequest userRequest) {
+		User user = User.builder()
+				.id(userRequest.getId())
+				.firstname(userRequest.getFirstname())
+				.lastname(userRequest.getLastname())
+				.email(userRequest.getEmail())
+				.password(userRequest.getPassword())
+				.role(userRequest.getRole())
+				.profilePhoto(userRequest.getProfilePhoto())
+				.isAccountEnabled(userRequest.getIsAccountEnabled())
+				.createdAt(new Date())
+				.dateOfBirthday(userRequest.getDateOfBirthday())
+				.isDateOfBirthVisible(userRequest.getIsDateOfBirthVisible())
+				.biography(userRequest.getBiography())
+				.exhibitions(userRequest.getExhibitions())
+				.contacts(userRequest.getContacts())
+				.socialMedias(userRequest.getSocialMedias())
+				.build();
 		return userService.create(user);
 	}
 	
@@ -98,8 +117,25 @@ public class UserController {
 	@PreAuthorize("hasRole('ADMIN')")
 	public Mono<User> updateUserByAdmin(
 			@PathVariable("id") String id, 
-			@RequestBody User user,
+			@RequestBody UserRequest userRequest,
 			@RequestHeader("Authorization") String authorization) {
+		User user = User.builder()
+				.id(userRequest.getId())
+				.firstname(userRequest.getFirstname())
+				.lastname(userRequest.getLastname())
+				.email(userRequest.getEmail())
+				.password(userRequest.getPassword())
+				.role(userRequest.getRole())
+				.profilePhoto(userRequest.getProfilePhoto())
+				.isAccountEnabled(userRequest.getIsAccountEnabled())
+				.createdAt(new Date())
+				.dateOfBirthday(userRequest.getDateOfBirthday())
+				.isDateOfBirthVisible(userRequest.getIsDateOfBirthVisible())
+				.biography(userRequest.getBiography())
+				.exhibitions(userRequest.getExhibitions())
+				.contacts(userRequest.getContacts())
+				.socialMedias(userRequest.getSocialMedias())
+				.build();
 		return userService.update(id, user, authorization);
 	}
 
