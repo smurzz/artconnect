@@ -21,11 +21,15 @@ import com.artconnect.backend.controller.request.UserRequest;
 public class UserRequestTest {
 
     private UserRequest userRequest;
+    private UserRequest userRequest1;
+    private UserRequest userRequest2;
 
     @BeforeEach
     void setUp() {
         // Create a sample UserRequest object before each test
         userRequest = new UserRequest();
+        userRequest1 = new UserRequest();
+        userRequest2 = new UserRequest();
     }
 
     @Test
@@ -364,5 +368,108 @@ public class UserRequestTest {
 
         // Verify that the social medias are set correctly
         assertNull(userRequest.getSocialMedias());
+    }
+
+    @Test
+    void testEquals_WhenObjectsAreEqual_ShouldReturnTrue() {
+        // Set the same values for both UserRequest objects
+        userRequest1.setId("123");
+        userRequest2.setId("123");
+
+        // Verify that the objects are considered equal
+        assertEquals(userRequest1, userRequest2);
+    }
+
+    @Test
+    void testEquals_WhenObjectsAreNotEqual_ShouldReturnFalse() {
+        // Set different values for the UserRequest objects
+        userRequest1.setId("123");
+        userRequest2.setId("456");
+
+        // Verify that the objects are not considered equal
+        assertNotEquals(userRequest1, userRequest2);
+    }
+
+    @Test
+    void testHashCode_WhenObjectsAreEqual_ShouldReturnSameHashCode() {
+        // Set the same values for both UserRequest objects
+        userRequest1.setId("123");
+        userRequest2.setId("123");
+
+        // Verify that the hash codes are the same
+        assertEquals(userRequest1.hashCode(), userRequest2.hashCode());
+    }
+
+    @Test
+    void testHashCode_WhenObjectsAreNotEqual_ShouldReturnDifferentHashCode() {
+        // Set different values for the UserRequest objects
+        userRequest1.setId("123");
+        userRequest2.setId("456");
+
+        // Verify that the hash codes are different
+        assertNotEquals(userRequest1.hashCode(), userRequest2.hashCode());
+    }
+
+    @Test
+    void testNoArgsConstructor_WhenCalled_ShouldSetFieldsToNull() {
+        // Verify that the no-args constructor sets all fields to null
+        assertNull(userRequest1.getId());
+        assertNull(userRequest1.getFirstname());
+        assertNull(userRequest1.getLastname());
+    }
+
+    @Test
+    void testNoArgsConstructor_WhenAllFieldsProvided_ShouldSetFields() {
+        // Create a new UserRequest object using the no-args constructor
+        UserRequest userRequest = new UserRequest();
+
+        // Set the fields using setter methods
+        userRequest.setId("123");
+        userRequest.setFirstname("John");
+        userRequest.setLastname("Doe");
+
+        // Verify that the fields are set correctly
+        assertEquals("123", userRequest.getId());
+        assertEquals("John", userRequest.getFirstname());
+        assertEquals("Doe", userRequest.getLastname());
+    }
+
+    @Test
+    void testEquals_WhenSameObject_ShouldReturnTrue() {
+        // Verify that the object is considered equal to itself
+        assertEquals(userRequest, userRequest);
+    }
+
+    @Test
+    void testEquals_WhenNullObject_ShouldReturnFalse() {
+        // Verify that the object is not considered equal to null
+        assertFalse(userRequest.equals(null));
+    }
+
+    @Test
+    void testSetterMethods_WhenSomeFieldsNull_ShouldSetFieldsToNull() {
+        // Create a new UserRequest object
+        UserRequest userRequest = new UserRequest();
+
+        // Set the fields using setter methods
+        userRequest.setId("123");
+        userRequest.setFirstname(null);
+        userRequest.setLastname("Doe");
+
+        // Verify that the null fields are set correctly
+        assertEquals("123", userRequest.getId());
+        assertNull(userRequest.getFirstname());
+        assertEquals("Doe", userRequest.getLastname());
+    }
+
+    @Test
+    void testToString_WhenNoFieldsSet_ShouldReturnStringRepresentation() {
+        // Verify that the toString() method returns the expected string representation
+        assertEquals("UserRequest(id=null, firstname=null, lastname=null, email=null, password=null, dateOfBirthday=null, isDateOfBirthVisible=null, isAccountEnabled=null, role=null, profilePhoto=null, biography=null, exhibitions=null, contacts=null, socialMedias=null)", userRequest.toString());
+    }
+    @Test
+    void testNoArgsConstructor_WhenCalled_ShouldCreateObject() {
+        // Verify that the no-args constructor creates a non-null object
+        assertNotNull(userRequest);
     }
 }
