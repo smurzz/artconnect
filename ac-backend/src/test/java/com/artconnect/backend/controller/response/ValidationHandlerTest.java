@@ -2,16 +2,20 @@ package com.artconnect.backend.controller.response;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.core.MethodParameter;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -35,15 +39,17 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import reactor.core.publisher.Mono;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 //NEED TO BE CORRECTED
 public class ValidationHandlerTest {
 
+    @InjectMocks
     private ValidationHandler validationHandler;
+
 
     @BeforeEach
     public void setup() {
@@ -107,6 +113,47 @@ public class ValidationHandlerTest {
 
         Assertions.assertEquals(expectedMono.block(), response.map(ResponseEntity::getBody).block());
     }
+
+    @Test
+    void handleDuplicateKeyException_emailExists() {
+        ValidationHandler validationHandler = new ValidationHandler();
+        DuplicateKeyException exception = new DuplicateKeyException("Duplicate key error: email already exists");
+
+        Mono<ResponseEntity<String>> result = validationHandler.handleDuplicateKeyException(exception);
+
+        assertTrue(result instanceof Mono);
+        result.subscribe(
+                response -> {
+                    assertTrue(response instanceof ResponseEntity);
+                    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+                    assertEquals("Email already exists", response.getBody());
+                },
+                error -> {
+                    throw new AssertionError("Unexpected error: " + error.getMessage());
+                }
+        );
+    }
+
+    @Test
+    void handleDuplicateKeyException_generic() {
+        ValidationHandler validationHandler = new ValidationHandler();
+        DuplicateKeyException exception = new DuplicateKeyException("Duplicate key error: some other key");
+
+        Mono<ResponseEntity<String>> result = validationHandler.handleDuplicateKeyException(exception);
+
+        assertTrue(result instanceof Mono);
+        result.subscribe(
+                response -> {
+                    assertTrue(response instanceof ResponseEntity);
+                    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+                    assertEquals("Duplicate key error", response.getBody());
+                },
+                error -> {
+                    throw new AssertionError("Unexpected error: " + error.getMessage());
+                }
+        );
+    }
+
 
 //	private ValidationHandler validationHandler;
 //
