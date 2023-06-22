@@ -1,12 +1,12 @@
 package com.artconnect.backend.controller.request;
 import static com.mongodb.assertions.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,6 @@ public class UserRequestTest {
         assertEquals("John", userRequest.getFirstname());
     }
 
-    // Add tests for other properties following a similar pattern
 
     @Test
     void testSetAndGetExhibitions() {
@@ -153,7 +152,6 @@ public class UserRequestTest {
 
         // Verify the profile photo is set correctly
         assertNotNull(userRequest.getProfilePhoto());
-        // Add additional assertions if needed
     }
 
     @Test
@@ -177,4 +175,194 @@ public class UserRequestTest {
         assertNull(userRequest.getIsAccountEnabled());
     }
 
+    @Test
+    void testAllArgsConstructor() {
+        // Create sample objects for the constructor
+        String id = "123";
+        String firstname = "John";
+        String lastname = "Doe";
+        String email = "john.doe@example.com";
+        String password = "password123";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        String isDateOfBirthVisible = "PUBLIC"; // Update the enum value here
+        String isAccountEnabled = "PUBLIC"; // Update the enum value here
+        Role role = Role.ADMIN;
+        Image profilePhoto = new Image();
+        String biography = "Lorem ipsum dolor sit amet";
+        List<Exhibition> exhibitions = new ArrayList<>();
+        Contacts contacts = new Contacts();
+        List<SocialMedia> socialMedias = new ArrayList<>();
+
+        // Create a UserRequest object using the @AllArgsConstructor
+        UserRequest userRequest = new UserRequest(id, firstname, lastname, email, password, dateOfBirth,
+                com.artconnect.backend.model.user.Status.valueOf(isDateOfBirthVisible),
+                com.artconnect.backend.model.user.Status.valueOf(isAccountEnabled),
+                role, profilePhoto, biography, exhibitions, contacts, socialMedias);
+
+        // Verify that the values are set correctly
+        assertEquals(id, userRequest.getId());
+        assertEquals(firstname, userRequest.getFirstname());
+        assertEquals(lastname, userRequest.getLastname());
+        assertEquals(email, userRequest.getEmail());
+        assertEquals(password, userRequest.getPassword());
+        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
+        assertEquals(com.artconnect.backend.model.user.Status.PUBLIC, userRequest.getIsDateOfBirthVisible());
+        assertEquals(com.artconnect.backend.model.user.Status.PUBLIC, userRequest.getIsAccountEnabled());
+        assertEquals(role, userRequest.getRole());
+        assertEquals(profilePhoto, userRequest.getProfilePhoto());
+        assertEquals(biography, userRequest.getBiography());
+        assertEquals(exhibitions, userRequest.getExhibitions());
+        assertEquals(contacts, userRequest.getContacts());
+        assertEquals(socialMedias, userRequest.getSocialMedias());
+    }
+
+    @Test
+    void testNoArgsConstructor() {
+        // Create a UserRequest object using the no-args constructor
+        UserRequest userRequest = new UserRequest();
+
+        // Verify that the object is not null
+        assertNotNull(userRequest);
+    }
+
+    @Test
+    void testSetters() {
+        // Create a sample UserRequest object
+        UserRequest userRequest = new UserRequest();
+
+        // Use setters to set the values
+        String id = "123";
+        String firstname = "John";
+        String lastname = "Doe";
+        String email = "john.doe@example.com";
+        String password = "password123";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Status isDateOfBirthVisible = Status.PUBLIC;
+        Status isAccountEnabled = Status.PUBLIC;
+        Role role = Role.ADMIN;
+        Image profilePhoto = new Image();
+        String biography = "Lorem ipsum dolor sit amet";
+        List<Exhibition> exhibitions = new ArrayList<>();
+        Contacts contacts = new Contacts();
+        List<SocialMedia> socialMedias = new ArrayList<>();
+
+        userRequest.setId(id);
+        userRequest.setFirstname(firstname);
+        userRequest.setLastname(lastname);
+        userRequest.setEmail(email);
+        userRequest.setPassword(password);
+        userRequest.setDateOfBirthday(dateOfBirth);
+        userRequest.setIsDateOfBirthVisible(isDateOfBirthVisible);
+        userRequest.setIsAccountEnabled(isAccountEnabled);
+        userRequest.setRole(role);
+        userRequest.setProfilePhoto(profilePhoto);
+        userRequest.setBiography(biography);
+        userRequest.setExhibitions(exhibitions);
+        userRequest.setContacts(contacts);
+        userRequest.setSocialMedias(socialMedias);
+
+        // Verify that the values are set correctly
+        assertEquals(id, userRequest.getId());
+        assertEquals(firstname, userRequest.getFirstname());
+        assertEquals(lastname, userRequest.getLastname());
+        assertEquals(email, userRequest.getEmail());
+        assertEquals(password, userRequest.getPassword());
+        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
+        assertEquals(isDateOfBirthVisible, userRequest.getIsDateOfBirthVisible());
+        assertEquals(isAccountEnabled, userRequest.getIsAccountEnabled());
+        assertEquals(role, userRequest.getRole());
+        assertSame(profilePhoto, userRequest.getProfilePhoto());
+        assertEquals(biography, userRequest.getBiography());
+        assertSame(exhibitions, userRequest.getExhibitions());
+        assertSame(contacts, userRequest.getContacts());
+        assertSame(socialMedias, userRequest.getSocialMedias());
+    }
+
+
+    @Test
+    void testSettersAndGetters() {
+        String id = "123";
+        String firstname = "John";
+        String lastname = "Doe";
+        String email = "john.doe@example.com";
+        String password = "password123";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Status isDateOfBirthVisible = Status.PUBLIC;
+        Status isAccountEnabled = Status.PUBLIC;
+        Role role = Role.ADMIN;
+        Image profilePhoto = new Image();
+        String biography = "Lorem ipsum dolor sit amet";
+        List<Exhibition> exhibitions = new ArrayList<>();
+        Contacts contacts = new Contacts();
+        List<SocialMedia> socialMedias = new ArrayList<>();
+
+        // Use setters to set the values
+        userRequest.setId(id);
+        userRequest.setFirstname(firstname);
+        userRequest.setLastname(lastname);
+        userRequest.setEmail(email);
+        userRequest.setPassword(password);
+        userRequest.setDateOfBirthday(dateOfBirth);
+        userRequest.setIsDateOfBirthVisible(isDateOfBirthVisible);
+        userRequest.setIsAccountEnabled(isAccountEnabled);
+        userRequest.setRole(role);
+        userRequest.setProfilePhoto(profilePhoto);
+        userRequest.setBiography(biography);
+        userRequest.setExhibitions(exhibitions);
+        userRequest.setContacts(contacts);
+        userRequest.setSocialMedias(socialMedias);
+
+        // Verify that the values are set correctly using getters
+        assertEquals(id, userRequest.getId());
+        assertEquals(firstname, userRequest.getFirstname());
+        assertEquals(lastname, userRequest.getLastname());
+        assertEquals(email, userRequest.getEmail());
+        assertEquals(password, userRequest.getPassword());
+        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
+        assertEquals(isDateOfBirthVisible, userRequest.getIsDateOfBirthVisible());
+        assertEquals(isAccountEnabled, userRequest.getIsAccountEnabled());
+        assertEquals(role, userRequest.getRole());
+        assertSame(profilePhoto, userRequest.getProfilePhoto());
+        assertEquals(biography, userRequest.getBiography());
+        assertSame(exhibitions, userRequest.getExhibitions());
+        assertSame(contacts, userRequest.getContacts());
+        assertSame(socialMedias, userRequest.getSocialMedias());
+    }
+
+    @Test
+    void testToString() {
+        String expectedToString = "UserRequest(id=null, firstname=null, lastname=null, email=null, password=null, dateOfBirthday=null, " +
+                "isDateOfBirthVisible=null, isAccountEnabled=null, role=null, profilePhoto=null, biography=null, exhibitions=null, " +
+                "contacts=null, socialMedias=null)";
+        assertEquals(expectedToString, userRequest.toString());
+    }
+
+    @Test
+    void testToString_WithNullValues_ShouldReturnCorrectStringRepresentation() {
+        // Set null values for the UserRequest object
+
+        // Verify the correct string representation
+        String expectedToString = "UserRequest(id=null, firstname=null, lastname=null, email=null, password=null, " +
+                "dateOfBirthday=null, isDateOfBirthVisible=null, isAccountEnabled=null, role=null, profilePhoto=null, " +
+                "biography=null, exhibitions=null, contacts=null, socialMedias=null)";
+        assertEquals(expectedToString, userRequest.toString());
+    }
+
+    @Test
+    void testSetAndGetExhibitions_WhenExhibitionsIsNull_ShouldSetAndGetExhibitionsCorrectly() {
+        // Set the exhibitions to null
+        userRequest.setExhibitions(null);
+
+        // Verify that the exhibitions are set correctly
+        assertNull(userRequest.getExhibitions());
+    }
+
+    @Test
+    void testSetAndGetSocialMedias_WhenSocialMediasIsNull_ShouldSetAndGetSocialMediasCorrectly() {
+        // Set the social medias to null
+        userRequest.setSocialMedias(null);
+
+        // Verify that the social medias are set correctly
+        assertNull(userRequest.getSocialMedias());
+    }
 }
