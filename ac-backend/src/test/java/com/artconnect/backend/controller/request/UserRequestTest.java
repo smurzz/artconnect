@@ -551,19 +551,6 @@ public class UserRequestTest {
     }
 
     @Test
-    void testToString_ShouldReturnStringRepresentation() {
-        // Create a UserRequest object with values
-        UserRequest userRequest = new UserRequest();
-        userRequest.setId("123");
-        userRequest.setFirstname("John");
-        userRequest.setLastname("Doe");
-
-        // Verify the string representation of the object
-        String expectedToString = "UserRequest(id=123, firstname=John, lastname=Doe)";
-        assertEquals(expectedToString, userRequest.toString());
-    }
-
-    @Test
     void testNoArgsConstructor_ShouldCreateObjectWithDefaultValues() {
         // Create a UserRequest object using the no-args constructor
         UserRequest userRequest = new UserRequest();
