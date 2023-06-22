@@ -472,4 +472,223 @@ public class UserRequestTest {
         // Verify that the no-args constructor creates a non-null object
         assertNotNull(userRequest);
     }
+
+    @Test
+    void testAllArgsConstructor_WhenCalled_ShouldSetAllFields() {
+        // Create sample values for the constructor
+        String id = "123";
+        String firstname = "John";
+        String lastname = "Doe";
+        String email = "john.doe@example.com";
+        String password = "password123";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Status isDateOfBirthVisible = Status.PUBLIC;
+        Status isAccountEnabled = Status.PUBLIC;
+        Role role = Role.ADMIN;
+        Image profilePhoto = new Image();
+        String biography = "Lorem ipsum dolor sit amet";
+        List<Exhibition> exhibitions = new ArrayList<>();
+        Contacts contacts = new Contacts();
+        List<SocialMedia> socialMedias = new ArrayList<>();
+
+        // Create a UserRequest object using the @AllArgsConstructor
+        UserRequest userRequest = new UserRequest(id, firstname, lastname, email, password, dateOfBirth,
+                isDateOfBirthVisible, isAccountEnabled, role, profilePhoto, biography, exhibitions, contacts, socialMedias);
+
+        // Verify that the values are set correctly
+        assertEquals(id, userRequest.getId());
+        assertEquals(firstname, userRequest.getFirstname());
+        assertEquals(lastname, userRequest.getLastname());
+        assertEquals(email, userRequest.getEmail());
+        assertEquals(password, userRequest.getPassword());
+        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
+        assertEquals(isDateOfBirthVisible, userRequest.getIsDateOfBirthVisible());
+        assertEquals(isAccountEnabled, userRequest.getIsAccountEnabled());
+        assertEquals(role, userRequest.getRole());
+        assertEquals(profilePhoto, userRequest.getProfilePhoto());
+        assertEquals(biography, userRequest.getBiography());
+        assertEquals(exhibitions, userRequest.getExhibitions());
+        assertEquals(contacts, userRequest.getContacts());
+        assertEquals(socialMedias, userRequest.getSocialMedias());
+    }
+
+    @Test
+    void testNoArgsConstructor_WhenCalled_ShouldSetFieldsToDefaultValues() {
+        // Create a UserRequest object using the no-args constructor
+        UserRequest userRequest = new UserRequest();
+
+        // Verify that the fields are set to their default values
+        assertNull(userRequest.getId());
+        assertNull(userRequest.getFirstname());
+        assertNull(userRequest.getLastname());
+        assertNull(userRequest.getEmail());
+        assertNull(userRequest.getPassword());
+        assertNull(userRequest.getDateOfBirthday());
+        assertNull(userRequest.getIsDateOfBirthVisible());
+        assertNull(userRequest.getIsAccountEnabled());
+        assertNull(userRequest.getRole());
+        assertNull(userRequest.getProfilePhoto());
+        assertNull(userRequest.getBiography());
+        assertNull(userRequest.getExhibitions());
+        assertNull(userRequest.getContacts());
+        assertNull(userRequest.getSocialMedias());
+    }
+    @Test
+    void testHashCode_WhenObjectsAreNotEqual_ShouldReturnDifferentHashCodes() {
+        // Create two UserRequest objects with different values
+        UserRequest userRequest1 = new UserRequest();
+        UserRequest userRequest2 = new UserRequest();
+
+        userRequest1.setId("123");
+        userRequest2.setId("456");
+        userRequest1.setFirstname("John");
+        userRequest2.setFirstname("Jane");
+        userRequest1.setLastname("Doe");
+        userRequest2.setLastname("Smith");
+
+        // Verify that the hash codes are different
+        assertNotEquals(userRequest1.hashCode(), userRequest2.hashCode());
+    }
+
+    @Test
+    void testToString_ShouldReturnStringRepresentation() {
+        // Create a UserRequest object with values
+        UserRequest userRequest = new UserRequest();
+        userRequest.setId("123");
+        userRequest.setFirstname("John");
+        userRequest.setLastname("Doe");
+
+        // Verify the string representation of the object
+        String expectedToString = "UserRequest(id=123, firstname=John, lastname=Doe)";
+        assertEquals(expectedToString, userRequest.toString());
+    }
+
+    @Test
+    void testNoArgsConstructor_ShouldCreateObjectWithDefaultValues() {
+        // Create a UserRequest object using the no-args constructor
+        UserRequest userRequest = new UserRequest();
+
+        // Verify that the object is not null and has default values
+        assertNotNull(userRequest);
+        assertNull(userRequest.getId());
+        assertNull(userRequest.getFirstname());
+        assertNull(userRequest.getLastname());
+    }
+    @Test
+    void testSetterAndGetters_ShouldSetAndRetrievePropertyValues() {
+        // Create a UserRequest object
+        UserRequest userRequest = new UserRequest();
+
+        // Set property values using setters
+        userRequest.setId("123");
+        userRequest.setFirstname("John");
+        userRequest.setLastname("Doe");
+
+        // Verify that the property values are correctly set
+        assertEquals("123", userRequest.getId());
+        assertEquals("John", userRequest.getFirstname());
+        assertEquals("Doe", userRequest.getLastname());
+    }
+
+    @Test
+    void testAllArgsConstructor_WithAllFields_ShouldSetFieldsCorrectly() {
+        // Arrange
+        String id = "123";
+        String firstname = "John";
+        String lastname = "Doe";
+        String email = "john.doe@example.com";
+        String password = "password123";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Status isDateOfBirthVisible = Status.PUBLIC;
+        Status isAccountEnabled = Status.PUBLIC;
+        Role role = Role.ADMIN;
+        Image profilePhoto = new Image();
+        String biography = "Lorem ipsum dolor sit amet";
+        List<Exhibition> exhibitions = new ArrayList<>();
+        Contacts contacts = new Contacts();
+        List<SocialMedia> socialMedias = new ArrayList<>();
+
+        // Act
+        UserRequest userRequest = new UserRequest(id, firstname, lastname, email, password, dateOfBirth,
+                isDateOfBirthVisible, isAccountEnabled, role, profilePhoto, biography, exhibitions, contacts,
+                socialMedias);
+
+        // Assert
+        assertEquals(id, userRequest.getId());
+        assertEquals(firstname, userRequest.getFirstname());
+        assertEquals(lastname, userRequest.getLastname());
+        assertEquals(email, userRequest.getEmail());
+        assertEquals(password, userRequest.getPassword());
+        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
+        assertEquals(isDateOfBirthVisible, userRequest.getIsDateOfBirthVisible());
+        assertEquals(isAccountEnabled, userRequest.getIsAccountEnabled());
+        assertEquals(role, userRequest.getRole());
+        assertEquals(profilePhoto, userRequest.getProfilePhoto());
+        assertEquals(biography, userRequest.getBiography());
+        assertEquals(exhibitions, userRequest.getExhibitions());
+        assertEquals(contacts, userRequest.getContacts());
+        assertEquals(socialMedias, userRequest.getSocialMedias());
+    }
+
+    @Test
+    void testAllArgsConstructor_WithRequiredFields_ShouldSetFieldsCorrectly() {
+        // Arrange
+        String id = "123";
+        String firstname = "John";
+        String lastname = "Doe";
+        String email = "john.doe@example.com";
+        String password = "password123";
+        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
+        Status isDateOfBirthVisible = null;
+        Status isAccountEnabled = null;
+        Role role = null;
+        Image profilePhoto = null;
+        String biography = null;
+        List<Exhibition> exhibitions = null;
+        Contacts contacts = null;
+        List<SocialMedia> socialMedias = null;
+
+        // Act
+        UserRequest userRequest = new UserRequest(id, firstname, lastname, email, password, dateOfBirth,
+                isDateOfBirthVisible, isAccountEnabled, role, profilePhoto, biography, exhibitions, contacts,
+                socialMedias);
+
+        // Assert
+        assertEquals(id, userRequest.getId());
+        assertEquals(firstname, userRequest.getFirstname());
+        assertEquals(lastname, userRequest.getLastname());
+        assertEquals(email, userRequest.getEmail());
+        assertEquals(password, userRequest.getPassword());
+        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
+        assertNull(userRequest.getIsDateOfBirthVisible());
+        assertNull(userRequest.getIsAccountEnabled());
+        assertNull(userRequest.getRole());
+        assertNull(userRequest.getProfilePhoto());
+        assertNull(userRequest.getBiography());
+        assertNull(userRequest.getExhibitions());
+        assertNull(userRequest.getContacts());
+        assertNull(userRequest.getSocialMedias());
+    }
+
+    @Test
+    void testNoArgsConstructor_ShouldInitializeFieldsWithDefaultValues() {
+        // Act
+        UserRequest userRequest = new UserRequest();
+
+        // Assert
+        assertNull(userRequest.getId());
+        assertNull(userRequest.getFirstname());
+        assertNull(userRequest.getLastname());
+        assertNull(userRequest.getEmail());
+        assertNull(userRequest.getPassword());
+        assertNull(userRequest.getDateOfBirthday());
+        assertNull(userRequest.getIsDateOfBirthVisible());
+        assertNull(userRequest.getIsAccountEnabled());
+        assertNull(userRequest.getRole());
+        assertNull(userRequest.getProfilePhoto());
+        assertNull(userRequest.getBiography());
+        assertNull(userRequest.getExhibitions());
+        assertNull(userRequest.getContacts());
+        assertNull(userRequest.getSocialMedias());
+    }
 }
