@@ -94,7 +94,7 @@ const values = [
    {
      name: 'Özkan',
      role: 'Software Developer',
-     imageUrl: require('../../images/image 187ozi.png')
+    //  imageUrl: require('../../images/image 187ozi.png')
    },
 
   {

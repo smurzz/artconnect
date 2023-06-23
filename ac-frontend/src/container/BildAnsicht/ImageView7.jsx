@@ -18,17 +18,17 @@ import { Disclosure, RadioGroup, Tab } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
-import Image1 from './../Galerie/imgSlides/original.jpg';
+import Image8 from './../Galerie/imgSlides/original8.jpg';
 
 
 const product = {
-  name: 'Olivia Montague',
+  name: 'Lucas Beaumont',
   rating: 4,
   images: [
     {
       id: 1,
       name: 'Angled view',
-      src: Image1,
+      src: Image8,
       alt: 'Angled front view with bag zipped and handles upright.',
     },
     // More images...
@@ -40,9 +40,7 @@ const product = {
   ],
   description: `
     <p>
-        I painted this Image in 1986, I paid attention to detail, capturing the subtle play of light and shadow.
-        The use of pencil medium adds a delicate and precise quality to the artwork, 
-        showcasing shading. Overall, the artwork conveys a sense of nostalgia and evokes a feeling of calmness.
+    This artwork, created in 1982, showcases the artist's love for nature and their keen observation of wildlife. The use of mixed media, including collage elements, adds depth and texture to the composition. The artwork invites viewers to appreciate the beauty and intricacy of the natural world, reminding us of the delicate balance of ecosystems.
     </p>
   `,
   details: [

@@ -18,17 +18,17 @@ import { Disclosure, RadioGroup, Tab } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
-import Image1 from './../Galerie/imgSlides/original.jpg';
+import Image7 from './../Galerie/imgSlides/original7.jpg';
 
 
 const product = {
-  name: 'Olivia Montague',
+  name: 'Sophia Davenport',
   rating: 4,
   images: [
     {
       id: 1,
       name: 'Angled view',
-      src: Image1,
+      src: Image7,
       alt: 'Angled front view with bag zipped and handles upright.',
     },
     // More images...
@@ -40,9 +40,7 @@ const product = {
   ],
   description: `
     <p>
-        I painted this Image in 1986, I paid attention to detail, capturing the subtle play of light and shadow.
-        The use of pencil medium adds a delicate and precise quality to the artwork, 
-        showcasing shading. Overall, the artwork conveys a sense of nostalgia and evokes a feeling of calmness.
+    Painted in 2006, this artwork captures the vibrant energy of a bustling city street. The artist employed bold brushstrokes and a vibrant color palette to depict the movement and vitality of urban life. The overall composition conveys a sense of excitement and invites viewers to immerse themselves in the dynamic atmosphere.
     </p>
   `,
   details: [

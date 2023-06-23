@@ -156,7 +156,7 @@ export default function ResponsiveAppBar() {
                                                     <button
 
                                                         onClick ={() =>{logout()}}
-                                                        href="#"
+                                                        href="/login"
                                                         className={classNames(active ? 'link bg-gray-100 fullwidth' : '', 'link block px-4 py-2 text-sm text-gray-700 fullwidth')}
                                                     >
                                                         Sign out
@@ -212,7 +212,7 @@ export default function ResponsiveAppBar() {
                             <div className="mt-3 space-y-1">
                                 <Disclosure.Button
                                     as="a"
-                                    href="#"
+                                    href="/galerie"
                                     onClick ={() =>{navigate("/galerie")}}
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                                 >
@@ -228,7 +228,7 @@ export default function ResponsiveAppBar() {
                                 </Disclosure.Button>
                                 <Disclosure.Button
                                     as="a"
-                                    href="#"
+                                    href="/login"
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                                     onClick ={() =>{logout()}}
                                 >

@@ -18,17 +18,17 @@ import { Disclosure, RadioGroup, Tab } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
-import Image1 from './../Galerie/imgSlides/original.jpg';
+import Image2 from './../Galerie/imgSlides/original2.jpg';
 
 
 const product = {
-  name: 'Olivia Montague',
+  name: 'Sebastian Wolfe',
   rating: 4,
   images: [
     {
       id: 1,
       name: 'Angled view',
-      src: Image1,
+      src: Image2,
       alt: 'Angled front view with bag zipped and handles upright.',
     },
     // More images...
@@ -40,9 +40,7 @@ const product = {
   ],
   description: `
     <p>
-        I painted this Image in 1986, I paid attention to detail, capturing the subtle play of light and shadow.
-        The use of pencil medium adds a delicate and precise quality to the artwork, 
-        showcasing shading. Overall, the artwork conveys a sense of nostalgia and evokes a feeling of calmness.
+    I created this artwork in 2003, focusing on intricate details to capture the intricate patterns found in nature. The vibrant colors and use of acrylic medium bring a sense of energy and liveliness to the piece, showcasing the artist's bold style. Overall, the artwork exudes a sense of vibrancy and captures the beauty of the natural world.
     </p>
   `,
   details: [

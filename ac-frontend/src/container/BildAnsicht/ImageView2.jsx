@@ -18,17 +18,17 @@ import { Disclosure, RadioGroup, Tab } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
-import Image1 from './../Galerie/imgSlides/original.jpg';
+import Image3 from './../Galerie/imgSlides/original3.jpg';
 
 
 const product = {
-  name: 'Olivia Montague',
+  name: 'Isabella Marchand',
   rating: 4,
   images: [
     {
       id: 1,
       name: 'Angled view',
-      src: Image1,
+      src: Image3,
       alt: 'Angled front view with bag zipped and handles upright.',
     },
     // More images...
@@ -40,9 +40,7 @@ const product = {
   ],
   description: `
     <p>
-        I painted this Image in 1986, I paid attention to detail, capturing the subtle play of light and shadow.
-        The use of pencil medium adds a delicate and precise quality to the artwork, 
-        showcasing shading. Overall, the artwork conveys a sense of nostalgia and evokes a feeling of calmness.
+    This artwork was completed in 1998, with meticulous attention to detail to depict the serene beauty of a coastal landscape. The artist employed oil paints to achieve a rich texture and depth, capturing the interplay of light and reflections on the water. The overall composition evokes a sense of tranquility and invites viewers to immerse themselves in the peaceful atmosphere.
     </p>
   `,
   details: [

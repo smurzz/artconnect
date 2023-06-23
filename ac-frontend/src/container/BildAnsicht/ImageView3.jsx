@@ -18,17 +18,17 @@ import { Disclosure, RadioGroup, Tab } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
-import Image1 from './../Galerie/imgSlides/original.jpg';
+import Image4 from './../Galerie/imgSlides/original4.jpg';
 
 
 const product = {
-  name: 'Olivia Montague',
+  name: 'Alexander Hartmann',
   rating: 4,
   images: [
     {
       id: 1,
       name: 'Angled view',
-      src: Image1,
+      src: Image4,
       alt: 'Angled front view with bag zipped and handles upright.',
     },
     // More images...
@@ -40,9 +40,7 @@ const product = {
   ],
   description: `
     <p>
-        I painted this Image in 1986, I paid attention to detail, capturing the subtle play of light and shadow.
-        The use of pencil medium adds a delicate and precise quality to the artwork, 
-        showcasing shading. Overall, the artwork conveys a sense of nostalgia and evokes a feeling of calmness.
+    Painted in 1975, this artwork showcases the artist's skillful use of watercolor medium to depict a charming cityscape. The delicate brushstrokes and subtle washes of color create a dreamlike quality, capturing the essence of a bustling urban scene. The artwork conveys a sense of nostalgia and invites viewers to explore the intricate details of the city.
     </p>
   `,
   details: [

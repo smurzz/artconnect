@@ -18,17 +18,17 @@ import { Disclosure, RadioGroup, Tab } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
-import Image1 from './../Galerie/imgSlides/original.jpg';
+import Image9 from './../Galerie/imgSlides/original9.jpg';
 
 
 const product = {
-  name: 'Olivia Montague',
+  name: 'Amelia Rousseau',
   rating: 4,
   images: [
     {
       id: 1,
       name: 'Angled view',
-      src: Image1,
+      src: Image9,
       alt: 'Angled front view with bag zipped and handles upright.',
     },
     // More images...
@@ -40,9 +40,7 @@ const product = {
   ],
   description: `
     <p>
-        I painted this Image in 1986, I paid attention to detail, capturing the subtle play of light and shadow.
-        The use of pencil medium adds a delicate and precise quality to the artwork, 
-        showcasing shading. Overall, the artwork conveys a sense of nostalgia and evokes a feeling of calmness.
+    Completed in 1995, this artwork is a study of light and shadow in a serene landscape. The artist's use of oil paints brings a richness and depth to the scene, capturing the subtle nuances of sunlight filtering through the trees. The overall composition conveys a sense of tranquility and invites viewers to immerse themselves in the peaceful ambiance of the natural setting.
     </p>
   `,
   details: [

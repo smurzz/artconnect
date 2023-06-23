@@ -9,7 +9,17 @@ import Galerie2 from "./container/Galerie/Galerie2";
 import Login from "./container/Login/Login";
 import ResetPasswortSuccess from "./container/ForgotPassword/ForgetPasswordSuccess"
 import NotFound from "./container/404/404";
+
 import DetailImage from "./container/BildAnsicht/ImageView"
+import DetailImage1 from "./container/BildAnsicht/ImageView1"
+import DetailImage2 from "./container/BildAnsicht/ImageView2"
+import DetailImage3 from "./container/BildAnsicht/ImageView3"
+import DetailImage4 from "./container/BildAnsicht/ImageView4"
+import DetailImage5 from "./container/BildAnsicht/ImageView5"
+import DetailImage6 from "./container/BildAnsicht/ImageView6"
+import DetailImage7 from "./container/BildAnsicht/ImageView7"
+import DetailImage8 from "./container/BildAnsicht/ImageView8"
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import Bearbeiten from "./container/bearbeiten"
@@ -27,7 +37,15 @@ function App() {
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
           {/*Galerie*/}
           <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
-          <Route path="/galerie/DetailImage" element={<DetailImage/>}></Route>
+          <Route path="/galerie/DetailImage/1" element={<DetailImage/>}></Route>
+          <Route path="/galerie/DetailImage/2" element={<DetailImage1/>}></Route>
+          <Route path="/galerie/DetailImage/3" element={<DetailImage2/>}></Route>
+          <Route path="/galerie/DetailImage/4" element={<DetailImage3/>}></Route>
+          <Route path="/galerie/DetailImage/5" element={<DetailImage4/>}></Route>
+          <Route path="/galerie/DetailImage/6" element={<DetailImage5/>}></Route>
+          <Route path="/galerie/DetailImage/7" element={<DetailImage6/>}></Route>
+          <Route path="/galerie/DetailImage/8" element={<DetailImage7/>}></Route>
+          <Route path="/galerie/DetailImage/9" element={<DetailImage8/>}></Route>
           {/*User bearbeiten*/}
             <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
           <Route  element={<ProtectedRoutes />}>

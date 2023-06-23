@@ -18,17 +18,17 @@ import { Disclosure, RadioGroup, Tab } from '@headlessui/react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
-import Image1 from './../Galerie/imgSlides/original.jpg';
+import Image6 from './../Galerie/imgSlides/original6.jpg';
 
 
 const product = {
-  name: 'Olivia Montague',
+  name: 'Gabriel Delacroix',
   rating: 4,
   images: [
     {
       id: 1,
       name: 'Angled view',
-      src: Image1,
+      src: Image6,
       alt: 'Angled front view with bag zipped and handles upright.',
     },
     // More images...
@@ -40,9 +40,7 @@ const product = {
   ],
   description: `
     <p>
-        I painted this Image in 1986, I paid attention to detail, capturing the subtle play of light and shadow.
-        The use of pencil medium adds a delicate and precise quality to the artwork, 
-        showcasing shading. Overall, the artwork conveys a sense of nostalgia and evokes a feeling of calmness.
+    Completed in 1989, this artwork showcases the artist's fascination with the interplay of light and shadow in a still life composition. The meticulous use of pastel medium creates a soft and ethereal atmosphere, enhancing the delicate textures of the objects. Overall, the artwork exudes a sense of tranquility and invites viewers to appreciate the beauty of everyday objects.
     </p>
   `,
   details: [
