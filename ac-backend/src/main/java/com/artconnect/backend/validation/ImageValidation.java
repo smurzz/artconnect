@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class ImageValidation {
 	
-	private final static long MAX_SIZE = 10485760;
+	private final static long MAX_SIZE = 5242880;
 	
 	private final static List<String> EXTENSIONS = List.of("png", "jpg", "jpeg");
 	
