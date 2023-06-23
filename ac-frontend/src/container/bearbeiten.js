@@ -46,54 +46,8 @@ function Bearbeiten(props) {
 
     //load all Userdata from BE hier werden die User aus dem backend über
     const [users, setUsers] = useState([]);
-    const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirthday ? new Date(user.dateOfBirthday) :  new Date());
+    const [dateOfBirth, setDateOfBirth] = useState( new Date());
     const [imageUrl, setImageUrl] = useState('');
-
-    //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
-    useEffect(() => {
-        console.log("bearbeiten: "+ JSON.stringify(user))
-        async function getUserData (){
-            console.log("Users Image: "+ JSON.stringify(user.profilePhoto.image.data));
-            const result = await ApiService.getDataSecured("/users/");
-            setUsers(result.data);
-            console.log("Users Image: "+ JSON.stringify(result.data[0].profilePhoto.image.data));
-           /* const updatedUsers = result.data.map(user => {
-                if(user.profilePhoto && user.profilePhoto.image.data){
-                    const byteCharacters = atob(result.data[0].profilePhoto.image.data);
-                    const byteNumbers = new Array(byteCharacters.length);
-                    for (let i = 0; i < byteCharacters.length; i++) {
-                        byteNumbers[i] = byteCharacters.charCodeAt(i);
-                    }
-                    const byteArray = new Uint8Array(byteNumbers);
-
-                    // Create URL for the binary image data
-                    const blob = new Blob([byteArray], { type: 'image/png' }); // Adjust the 'type' according to the actual image format
-                    const url = URL.createObjectURL(blob);
-                    setUsers({ ...user, imageUrl: url });
-                }
-            }*/
-            const byteCharacters = atob(result.data[0].profilePhoto.image.data);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-
-            // Create URL for the binary image data
-            const blob = new Blob([byteArray], { type: 'image/png' }); // Adjust the 'type' according to the actual image format
-            const url = URL.createObjectURL(blob);
-            setImageUrl(url);
-            console.log("url: "+ url);
-
-            // Clean up the URL when the component is unmounted
-            return () => {
-                URL.revokeObjectURL(url);
-            };
-        }
-       getUserData();
-        //Convert Base64-encoded image data to binary form
-
-    }, [])
 
 
     //edit userdata from BE
@@ -117,6 +71,7 @@ function Bearbeiten(props) {
     })
     //add ExhibitionValues
     const [exhibitionValues, setExhibitionValues] = useState([{title: "", location: "", year: "", description: ""}])
+
     let handleExhibition = (i, e) => {
         let newExhibition = [...exhibitionValues];
         newExhibition[i][e.target.name] = e.target.value;
@@ -132,6 +87,8 @@ function Bearbeiten(props) {
     }
     //add Social Media
     const [socialMedia, setSocailMedia] = useState([{title: "", link: ""}])
+
+
     let handleSocailMedia = (i, e) => {
         let newSocial = [...socialMedia];
         newSocial[i][e.target.name] = e.target.value;
@@ -145,6 +102,56 @@ function Bearbeiten(props) {
         newSocialMedia.splice(i, 1);
         setSocailMedia(newSocialMedia)
     }
+
+    //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
+    useEffect(() => {
+        if(user.socialMedias != undefined){
+            setSocailMedia([...socialMedia, ...user.socialMedias])
+            console.log("socialMedias: 1"+ JSON.stringify(socialMedia))
+        }
+        if(user.exhibitions != undefined){
+            setExhibitionValues([...exhibitionValues, ...user.exhibitions])
+            console.log("socialMedias: 1"+ JSON.stringify(socialMedia))
+        }
+        async function getUserData (){
+            const result = await ApiService.getDataSecured("/users/");
+            setUsers(result.data);
+            /* const updatedUsers = result.data.map(user => {
+                 if(user.profilePhoto && user.profilePhoto.image.data){
+                     const byteCharacters = atob(result.data[0].profilePhoto.image.data);
+                     const byteNumbers = new Array(byteCharacters.length);
+                     for (let i = 0; i < byteCharacters.length; i++) {
+                         byteNumbers[i] = byteCharacters.charCodeAt(i);
+                     }
+                     const byteArray = new Uint8Array(byteNumbers);
+
+                     // Create URL for the binary image data
+                     const blob = new Blob([byteArray], { type: 'image/png' }); // Adjust the 'type' according to the actual image format
+                     const url = URL.createObjectURL(blob);
+                     setUsers({ ...user, imageUrl: url });
+                 }
+             }*/
+            const byteCharacters = atob(result.data[0].profilePhoto.image.data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+
+            // Create URL for the binary image data
+            const blob = new Blob([byteArray], { type: 'image/png' }); // Adjust the 'type' according to the actual image format
+            const url = URL.createObjectURL(blob);
+            setImageUrl(url);
+
+            // Clean up the URL when the component is unmounted
+            return () => {
+                URL.revokeObjectURL(url);
+            };
+        }
+        getUserData();
+        //Convert Base64-encoded image data to binary form
+
+    }, [])
 
     //file Upload
     const [selectedFile, setSelectedFile] = useState(null);
@@ -164,7 +171,6 @@ function Bearbeiten(props) {
 
             if (fileSize <= 5 && allowedFormats.includes(file.type)) {
                 setSelectedFile(file);
-                console.log("Fileupload: "+ selectedFile)
                 setErrorMessage('');
             } else {
                 setSelectedFile(null);
@@ -178,13 +184,13 @@ function Bearbeiten(props) {
 
     const handleFileUpload = async (event) => {
         event.preventDefault();
-        console.log("bearbeiten: handleFileUpload")
+
         if (selectedFile) {
             const formData = new FormData();
             formData.append('file', selectedFile);
             const imageUploadSuccessfull =await ApiService.sendImage(formData);
             if(imageUploadSuccessfull == null){
-                console.log("bearbeiten - handleFileUpload not successful: "+ imageUploadSuccessfull)
+
 
                 setErrorMessage(true);
                 seterrAlert("We couldnt Upload your Image! Please try again");
@@ -203,18 +209,8 @@ const handleSubmit = async (event) => {
         requestBody.firstname = userBearbeiten.firstname;
     }
 
-    if (dateOfBirth instanceof Date) {
-        console.log("handleSubmit - Birthday: "+dateOfBirth.toISOString())
-
-        const dateOfBirthKonst = dateOfBirth instanceof Date
-            ? `${dateOfBirth.getFullYear()}-${(dateOfBirth.getMonth() + 1)
-                .toString()
-                .padStart(2, '0')}-${dateOfBirth.getDate().toString().padStart(2, '0')}`
-            : null;
-        console.log("HandleSubmit Birthday: "+ dateOfBirthKonst)
-        requestBody.dateOfBirthday = dateOfBirthKonst;
-
-    }
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().split('T')[0];
 
     if (userBearbeiten.lastname !== "") {
         requestBody.lastname = userBearbeiten.lastname;
@@ -239,12 +235,14 @@ const handleSubmit = async (event) => {
     if (socialMedias.length > 0) {
         requestBody.socialMedias = socialMedias;
     }
-    console.log("Request Body: ", requestBody);
+console.log("requestBody: "+ requestBody);
     const result = await ApiService.patchdataSecured("/users/" + user.id, requestBody);
     if(result == null){
-        console.log("bearbeiten - handleFileUpload not successful: ")
+        navigate("/galerie");
         setErrorMessage(true);
         seterrAlert("We couldnt Upload your Image! Please try again");
+    }else{
+        navigate("/galerie");
     }
 }
 
@@ -363,7 +361,7 @@ return (
                 />
               </div>
             </div>
-
+              {/*date of birth*/}
             <div className="sm:col-span-4">
                 <label htmlFor="birthday" className="block text-sm font-medium leading-6 text-gray-900">
                     Date of Birth
@@ -379,165 +377,8 @@ return (
                     />
                 </div>
             </div>
-            <div className="sm:col-span-4">
-              <label htmlFor="telefonNumber" className="block text-sm font-medium leading-6 text-gray-900">
-                Telefonnummer
-              </label>
-              <div className="mt-2">
-                <input
-                  id="telefonNumber"
-                  name="telefonNumber"
-                  type="text"
-                  autoComplete="telefonnummer"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={constact.telefonNumber || ""}
-                           onChange={async (e) => {
-                               setContacts({...constact, telefonNumber: e.target.value})
-                           }}
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-4">
-              <label htmlFor="webseite" className="block text-sm font-medium leading-6 text-gray-900">
-                Webseite
-              </label>
-              <div className="mt-2">
-                <input
-                  id="webseite"
-                  name="webseite"
-                  type="text"
-                  autoComplete="webseite"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={constact.address.website}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   website: e.target.value
-                               });
-                           }}
-                />
-              </div>
-            </div>
+              {/*telefon number*/}
 
-            <div className="sm:col-span-3">
-              <label htmlFor="country" className="block text-sm font-medium leading-6 text-gray-900">
-                Land
-              </label>
-              <div className="mt-2">
-                <select
-                  id="country"
-                  name="country"
-                  autoComplete="country-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                  value={constact.address.country}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   address: {
-                                       ...constact.address,
-                                       country: e.target.value
-                                   }
-                               });
-                           }}
-                >
-                  <option>United States</option>
-                  <option>Canada</option>
-                  <option>Mexico</option>
-                  <option>Germany</option>
-                  <option>United Kingdoms</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="col-span-full">
-              <label htmlFor="street-address" className="block text-sm font-medium leading-6 text-gray-900">
-                Addresse
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="street"
-                  id="street-address"
-                  autoComplete="street-address"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={constact.address.street}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   address: {
-                                       ...constact.address,
-                                       street: e.target.value
-                                   }
-                               });
-                           }}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2 sm:col-start-1">
-              <label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
-                Stadt
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="city"
-                  id="city"
-                  autoComplete="address-level2"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={constact.address.city}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   address: {
-                                       ...constact.address,
-                                       city: e.target.value
-                                   }
-                               });
-                           }}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label htmlFor="region" className="block text-sm font-medium leading-6 text-gray-900">
-                Bundesstat
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="region"
-                  id="region"
-                  autoComplete="address-level1"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label htmlFor="postalCode" className="block text-sm font-medium leading-6 text-gray-900">
-                ZIP / Postal code
-              </label>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="postalCode"
-                  id="postalCode"
-                  autoComplete="postalCode"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={constact.address.postalCode}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   address: {
-                                       ...constact.address,
-                                       postalCode: e.target.value
-                                   }
-                               });
-                           }}
-                />
-              </div>
-            </div>
           </div>
         </div>
 
@@ -655,7 +496,7 @@ return (
                             id="title"
                             autoComplete="address-level2"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            value={element.title || ""}
+                            defaultValue={element.title || " "}
                                    onChange={e => handleSocailMedia(index, e)}
                             />
                         </div>
@@ -709,195 +550,6 @@ return (
     </div>
     </div>
     {/* tailwind ui */}
-
-        <p>
-            <Container sx={{py: 8}} maxWidth="md">
-                {/*user map*/}
-                <Grid container spacing={4}>
-                    {users.length > 0 && (
-                        users.map((card) => (
-                            <Grid>
-                                <Card
-                                    sx={{height: '100%', display: 'flex', flexDirection: 'column'}}
-                                >
-                                    <CardMedia
-                                        component="div"
-                                        sx={{
-                                            // 16:9
-                                            pt: '56.25%',
-                                        }}
-                                        image={card.image  != undefined && card.image}
-                                    />
-                                    <CardContent sx={{flexGrow: 1}}>
-                                        <Typography gutterBottom variant="h5" component="h2">
-                                            <p>{card.firstname + " " + card.lastname} </p>
-                                            <p>{card.email + " " + card.biography} </p>
-                                            <p>{JSON.stringify(card.exhibitions) + " " + JSON.stringify(card.contacts)} </p>
-                                            <p>{JSON.stringify(card.socialMedias) + " "} </p>
-                                        </Typography>
-                                    </CardContent>
-                                </Card>
-                            </Grid>
-                        ))
-                    )}
-
-                </Grid>
-            </Container>
-        </p>
-        <Container component="main">
-            <CssBaseline/>
-            <form onSubmit={handleSubmit}>
-                <div className="button-section">
-                    <br/>
-                    <br/>
-
-                    <p className="underline">User Credentials</p>
-                    <label className="inputField">firstname</label>
-                    <input className="inputField" type="text" name="firstname" value={userBearbeiten.firstname}
-                           onChange={async (e) => {
-                               setUserBearbeiten({...userBearbeiten, firstname: e.target.value})
-                           }}/>
-                    <label className="inputField">lastname</label>
-                    <input className="inputField" type="text" name="lastname" value={userBearbeiten.lastname}
-                           onChange={async (e) => {
-                               setUserBearbeiten({...userBearbeiten, lastname: e.target.value})
-                           }}/>
-                    <label className="inputField">email</label>
-                    <input className="inputField" type="text" name="email" value={userBearbeiten.email}
-                           onChange={async (e) => {
-                               setUserBearbeiten({...userBearbeiten, email: e.target.value})
-                           }}/>
-                    <label className="inputField">biography</label>
-                    <input className="inputField" type="text" name="biography" value={userBearbeiten.biography}
-                           onChange={async (e) => {
-                               setUserBearbeiten({...userBearbeiten, biography: e.target.value})
-                           }}/>
-
-                    <p className="underline">Exhibitions</p>
-                    {exhibitionValues.map((element, index) => (
-
-                        <div className="form-inline" key={index}>
-                            {
-                                index ?
-                                    <Button type="button" className="button inputField remove"
-                                            onClick={() => removeExhibitionFields(index)}>Remove</Button>
-                                    : null
-                            }
-                            <label className="inputField">Titel</label>
-                            <input className="inputField" type="text" name="title" value={element.title || ""}
-                                   onChange={e => handleExhibition(index, e)}/>
-                            <label className="inputField">location</label>
-                            <input className="inputField" type="text" name="location" value={element.location || ""}
-                                   onChange={e => handleExhibition(index, e)}/>
-                            <label className="inputField">year</label>
-                            <input className="inputField" type="text" name="year" value={element.year || ""}
-                                   onChange={e => handleExhibition(index, e)}/>
-                            <label className="inputField">description</label>
-                            <input className="inputField" type="text" name="description"
-                                   value={element.description || ""} onChange={e => handleExhibition(index, e)}/>
-                        </div>
-                    ))}
-
-                    <Button className="button add" type="button" onClick={() => addExhibitionFields()}>Add</Button>
-                    <br/>
-
-                    <p className="underline">Telefonnummer</p>
-                    <label className="inputField">telefonNumber</label>
-                    <input className="inputField" type="text" name="telefonNumber" value={constact.telefonNumber || ""}
-                           onChange={async (e) => {
-                               setContacts({...constact, telefonNumber: e.target.value})
-                           }}/>
-
-                    <p className="underline">Adresss</p>
-                    <label className="inputField">street</label>
-                    <input className="inputField" type="text" name="street" value={constact.address.street}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   address: {
-                                       ...constact.address,
-                                       street: e.target.value
-                                   }
-                               });
-                           }}/>
-
-                    <label className="inputField">postalCode</label>
-                    <input className="inputField" type="text" name="postalCode" value={constact.address.postalCode}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   address: {
-                                       ...constact.address,
-                                       postalCode: e.target.value
-                                   }
-                               });
-                           }}/>
-                    <label className="inputField">city</label>
-                    <input className="inputField" type="text" name="city" value={constact.address.city}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   address: {
-                                       ...constact.address,
-                                       city: e.target.value
-                                   }
-                               });
-                           }}/>
-
-                    <label className="inputField">country</label>
-                    <input className="inputField" type="text" name="country" value={constact.address.country}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   address: {
-                                       ...constact.address,
-                                       country: e.target.value
-                                   }
-                               });
-                           }}
-                    />
-
-                    <label className="inputField">website</label>
-                    <input className="inputField" type="text" name="country" value={constact.address.website}
-                           onChange={(e) => {
-                               setContacts({
-                                   ...constact,
-                                   website: e.target.value
-                               });
-                           }}
-                    />
-                    <br/>
-                    <p className="underline">Social Media</p>
-                    {socialMedia.map((element, index) => (
-
-                        <div className="form-inline" key={index}>
-                            {
-                                index ?
-                                    <Button type="button" className="button inputField remove"
-                                            onClick={() => removeSocialMediaFields(index)}>Remove</Button>
-                                    : null
-                            }
-                            <label className="inputField">Title</label>
-                            <input className="inputField" type="text" name="title" value={element.title || ""}
-                                   onChange={e => handleSocailMedia(index, e)}/>
-                            <label className="inputField">location</label>
-                            <input className="inputField" type="text" name="link" value={element.link || ""}
-                                   onChange={e => handleSocailMedia(index, e)}/>
-                        </div>
-                    ))}
-                    <Button className="button add" type="button" onClick={() => addSocialMediaField()}>Add</Button>
-                </div>
-                <Button className="button submit" type="submit">Submit</Button>
-            </form>
-            <form>
-                <p className="underline">Upload Image</p>
-                <div>
-                    <input type="file" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
-                    {errorMessage && <p>{errorMessage}</p>}
-                    <button onClick={handleFileUpload}>Upload</button>
-                </div>
-            </form>
-        </Container>
     </>
 );
 }

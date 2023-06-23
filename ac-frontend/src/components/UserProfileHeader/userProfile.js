@@ -102,6 +102,41 @@ const Profile = () => {
 {(user.biography ? user.biography + " " : " ")}
               </span>
                     </div>
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <p className="bold-text">Exhibitions</p>
+                        {user.exhibitions && user.exhibitions.length > 0 ? (
+                            <ul style={{ listStyleType: 'disc' }}>
+                                {user.exhibitions.map((exhibitions, index) => (
+                                    <li key={index}>
+                                        <p>{exhibitions.title}</p>
+                                        <ul>
+                                            <li>
+                                                <p><p>{exhibitions.location} | {exhibitions.year} | {exhibitions.description}</p></p>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No social media accounts found.</p>
+                        )}
+                    </div>
+
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <p className="bold-text">Social Media</p>
+                        {user.socialMedias && user.socialMedias.length > 0 ? (
+                            <ul style={{ listStyleType: 'disc' }}>
+                                {user.socialMedias.map((socialMedia, index) => (
+                                    <li key={index}>
+                                        <a href={socialMedia.link} target="_blank">{socialMedia.title}</a>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p>No social media accounts found.</p>
+                        )}
+                    </div>
+
                 </div>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-3xl">

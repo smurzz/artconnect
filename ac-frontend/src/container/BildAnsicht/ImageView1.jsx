@@ -19,6 +19,7 @@ import { StarIcon } from '@heroicons/react/20/solid'
 import { HeartIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 
 import Image2 from './../Galerie/imgSlides/original2.jpg';
+import Header from "../../components/headerComponent/headerLogedIn"
 
 
 const product = {
@@ -67,6 +68,7 @@ export default function Example() {
   return (
 
     <div className="bg-white">
+      <Header></Header>
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
           {/* Image gallery */}
