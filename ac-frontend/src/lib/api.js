@@ -152,7 +152,7 @@ async function patchdataSecured(url, payload) {
             console.log("inside patch data secured: ");
             let result = await axios.put(url,payload, _headers);
         }
-        return result;
+        return "success";
     }catch(error){
         return null;
     }
@@ -171,6 +171,7 @@ async function sendImage( payload) {
         };
         let result;
         if (!payload) {
+            console.log("Api Service - sendImage: no Token")
             return null;
         } else {
             axios.post('/users/profile-photo', payload, _headers)
@@ -182,8 +183,10 @@ async function sendImage( payload) {
                     const imageUrl = `data:${contentType};base64,${photoData}`;
                 })
         }
-        return result;
+        console.log("Api Service - sendImage: success")
+        return "success";
     }catch(error){
+        console.log("Api Service - sendImage: error")
         return null;
     }
 }

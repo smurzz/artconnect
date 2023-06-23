@@ -19,7 +19,11 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import "./bearbeiten.css"
+import "./bearbeiten.css";
+import Header from "../components/headerComponent/headerLogedIn"
+import { useLocation } from 'react-router-dom';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';
@@ -29,25 +33,27 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 //redux
 import {useDispatch} from "react-redux";
 import {connect} from 'react-redux';
-
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 
 function Bearbeiten(props) {
-    //triggers Statechanges so the component reloads
     const navigate = useNavigate();
+
+    //triggers Statechanges so the component reloads
+    const location = useLocation();
+    const { user, imageProps } = location.state;
 
     const [image, setImage] = useState("");
 
-
     //load all Userdata from BE hier werden die User aus dem backend über
     const [users, setUsers] = useState([]);
-
-
+    const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirthday ? new Date(user.dateOfBirthday) :  new Date());
     const [imageUrl, setImageUrl] = useState('');
 
     //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
     useEffect(() => {
+        console.log("bearbeiten: "+ JSON.stringify(user))
         async function getUserData (){
+            console.log("Users Image: "+ JSON.stringify(user.profilePhoto.image.data));
             const result = await ApiService.getDataSecured("/users/");
             setUsers(result.data);
             console.log("Users Image: "+ JSON.stringify(result.data[0].profilePhoto.image.data));
@@ -142,7 +148,13 @@ function Bearbeiten(props) {
 
     //file Upload
     const [selectedFile, setSelectedFile] = useState(null);
-    const [errorMessage, setErrorMessage] = useState('');
+
+    const [errAlert, seterrAlert] = React.useState("");
+    const [errorMessage, setErrorMessage] = useState(false);
+
+    const [successMessage, setSuccessMessage] = React.useState("");
+    const [success, setSuccess] = useState(false);
+
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -156,7 +168,8 @@ function Bearbeiten(props) {
                 setErrorMessage('');
             } else {
                 setSelectedFile(null);
-                setErrorMessage('Invalid file format or size exceeds 5MB.');
+                setErrorMessage(true);
+                seterrAlert('Invalid file format or size exceeds 5MB.');
             }
         }
     };
@@ -165,29 +178,46 @@ function Bearbeiten(props) {
 
     const handleFileUpload = async (event) => {
         event.preventDefault();
-        console.log("inside handleFileUpload")
+        console.log("bearbeiten: handleFileUpload")
         if (selectedFile) {
             const formData = new FormData();
             formData.append('file', selectedFile);
-            console.log("inside handle FileUpload: "+JSON.stringify( users[0]));
-            await ApiService.sendImage(formData);
+            const imageUploadSuccessfull =await ApiService.sendImage(formData);
+            if(imageUploadSuccessfull == null){
+                console.log("bearbeiten - handleFileUpload not successful: "+ imageUploadSuccessfull)
+
+                setErrorMessage(true);
+                seterrAlert("We couldnt Upload your Image! Please try again");
+            }else{
+                setSuccess(true);
+                setSuccessMessage("You Uploaded a new Profil Picture");
+            }
         }
     }
     
 const handleSubmit = async (event) => {
     event.preventDefault();
-    //build the request Body:
-    // Create the request body object
     const requestBody = {};
     // Add userBearbeiten fields
     if (userBearbeiten.firstname !== "") {
         requestBody.firstname = userBearbeiten.firstname;
     }
+
+    if (dateOfBirth instanceof Date) {
+        console.log("handleSubmit - Birthday: "+dateOfBirth.toISOString())
+
+        const dateOfBirthKonst = dateOfBirth instanceof Date
+            ? `${dateOfBirth.getFullYear()}-${(dateOfBirth.getMonth() + 1)
+                .toString()
+                .padStart(2, '0')}-${dateOfBirth.getDate().toString().padStart(2, '0')}`
+            : null;
+        console.log("HandleSubmit Birthday: "+ dateOfBirthKonst)
+        requestBody.dateOfBirthday = dateOfBirthKonst;
+
+    }
+
     if (userBearbeiten.lastname !== "") {
         requestBody.lastname = userBearbeiten.lastname;
-    }
-    if (userBearbeiten.email !== "") {
-        requestBody.email = userBearbeiten.email;
     }
     if (userBearbeiten.biography !== "") {
         requestBody.biography = userBearbeiten.biography;
@@ -197,13 +227,9 @@ const handleSubmit = async (event) => {
     if (exhibitions.length > 0) {
         requestBody.exhibitions = exhibitions;
     }
-    // Add constact fields
-    if (constact.telefonNumber !== "") {
-        requestBody.telefonNumber = constact.telefonNumber;
-    }
-    const addressFields = Object.values(constact.address);
+    const addressFields = Object.values(constact.telefonNumber);
     if (addressFields.some((field) => field !== "")) {
-        requestBody.address = constact.address;
+        requestBody.contacts.telefonNumber = constact.telefonNumber;
     }
     if (constact.website !== "") {
         requestBody.website = constact.website;
@@ -214,11 +240,17 @@ const handleSubmit = async (event) => {
         requestBody.socialMedias = socialMedias;
     }
     console.log("Request Body: ", requestBody);
-    const result = await ApiService.patchdataSecured("/users/" + users[0].id, requestBody);
+    const result = await ApiService.patchdataSecured("/users/" + user.id, requestBody);
+    if(result == null){
+        console.log("bearbeiten - handleFileUpload not successful: ")
+        setErrorMessage(true);
+        seterrAlert("We couldnt Upload your Image! Please try again");
+    }
 }
 
 return (
     <>
+        <Header/>
     {/* tailwind ui */}
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}
@@ -226,7 +258,24 @@ return (
     <form onSubmit={handleSubmit}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Profile</h2>
+            <div>
+                <p className="text-base font-semibold leading-7 text-gray-900">Profile</p>
+                <div className="marginBottom">
+                <button
+                    onClick={() => {
+                        navigate("/galerie", { state: { user: user, imageProps: image } });
+                    }}
+                    type="button"
+                    className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                >
+                    <span>Back to Profile</span>
+                </button>
+                </div>
+                {errorMessage && <div className="alert alert-danger" role="alert">
+                    {errAlert}
+                </div>}
+            </div>
+
           <p className="mt-1 text-sm leading-6 text-gray-600">
             Diese Informationen werden öffentlich dargestellt. Sei also Vorsichtig welche Informationen du preis gibst!
           </p>
@@ -243,8 +292,7 @@ return (
                   name="biography"
                   rows={3}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue={''}
-                  value={userBearbeiten.biography}
+                  defaultValue= {user.biography? user.biography : " " }
                            onChange={async (e) => {
                                setUserBearbeiten({...userBearbeiten, biography: e.target.value})
                            }}
@@ -257,41 +305,20 @@ return (
               <label htmlFor="photo" className="block text-sm font-medium leading-6 text-gray-900">
                 Profil Bild
               </label>
-
+                {success && <div className="alert alert-primary" role="alert">
+                    {successMessage}
+                </div>}
               <form>
 
                 <div className="mt-2 flex items-center gap-x-3">
                     <UserCircleIcon className="h-12 w-12 text-gray-300" aria-hidden="true" />
                     <input type="file" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
-                    {errorMessage && <p>{errorMessage}</p>}
+
                     <button onClick={handleFileUpload}>Upload</button>
                 </div>
               </form>
             </div>
 
-            <div className="col-span-full">
-              <label htmlFor="cover-photo" className="block text-sm font-medium leading-6 text-gray-900">
-                Banner
-              </label>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                <div className="text-center">
-                  <PhotoIcon className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                    >
-                      <span>Lade ein Bild hoch</span>
-                      <input id="file-upload" name="file-upload" type="file" accept=".jpg, .jpeg, .png" className="sr-only" onChange={handleFileChange} />
-                    </label>
-                      {errorMessage && <p>{errorMessage}</p>}
-                    {/* <p className="pl-1">or drag and drop</p> */}
-                  </div>
-                      <button onClick={handleFileUpload}>Upload</button>
-                  <p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF up to 10MB</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -310,7 +337,7 @@ return (
                   id="firstname"
                   autoComplete="given-name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={userBearbeiten.firstname}
+                  defaultValue= {user.firstname? user.firstname : " " }
                            onChange={async (e) => {
                                setUserBearbeiten({...userBearbeiten, firstname: e.target.value})
                            }}
@@ -329,7 +356,7 @@ return (
                   id="lastname"
                   autoComplete="family-name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={userBearbeiten.lastname}
+                  defaultValue= {user.lastname? user.lastname : " " }
                            onChange={async (e) => {
                                setUserBearbeiten({...userBearbeiten, lastname: e.target.value})
                            }}
@@ -338,22 +365,19 @@ return (
             </div>
 
             <div className="sm:col-span-4">
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                Email Addresse
-              </label>
-              <div className="mt-2">
-                <input
-                  id="email"
-                  name="email"
-                  type="text"
-                  autoComplete="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={userBearbeiten.email}
-                           onChange={async (e) => {
-                               setUserBearbeiten({...userBearbeiten, email: e.target.value})
-                           }}
-                />
-              </div>
+                <label htmlFor="birthday" className="block text-sm font-medium leading-6 text-gray-900">
+                    Date of Birth
+                </label>
+                <div className="mt-2">
+                    <DatePicker
+                        id="birthday"
+                        name="birthday"
+                        autoComplete="birthday"
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        selected={dateOfBirth}
+                        onChange={(date) => setDateOfBirth(date)}
+                    />
+                </div>
             </div>
             <div className="sm:col-span-4">
               <label htmlFor="telefonNumber" className="block text-sm font-medium leading-6 text-gray-900">
@@ -368,7 +392,7 @@ return (
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   value={constact.telefonNumber || ""}
                            onChange={async (e) => {
-                               setContacts({...constact, telefonNumber: e.target.value})
+                               setContacts({..., telefonNumber: e.target.value})
                            }}
                 />
               </div>
