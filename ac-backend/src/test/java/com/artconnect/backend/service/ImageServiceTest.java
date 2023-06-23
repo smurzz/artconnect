@@ -28,6 +28,8 @@ import com.artconnect.backend.repository.ImageRepository;
 import java.io.IOException;
 import java.util.Collections;
 
+import javax.management.loading.PrivateClassLoader;
+
 
 public class ImageServiceTest {
 
@@ -102,11 +104,11 @@ public class ImageServiceTest {
     }
 
     @Test
-    void addPhoto_ValidImage_ReturnsSavedImage() throws IOException {
+    void addPhoto_ValidImage_ReturnsSavedImage() {
         FilePart filePart = mock(FilePart.class);
         DataBuffer dataBuffer = mock(DataBuffer.class);
         DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
-        Long sizeFile = 7345874L;
+        Long sizeFile = 4718592L;
         HttpHeaders headers = mock(HttpHeaders.class);
 
         when(dataBuffer.factory()).thenReturn(dataBufferUtils);
@@ -139,11 +141,11 @@ public class ImageServiceTest {
     }
 
     @Test
-    void addPhoto_InvalidContentType_ReturnsError() throws IOException {
+    void addPhoto_InvalidContentType_ReturnsBadRequestError() {
         FilePart filePart = mock(FilePart.class);
         DataBuffer dataBuffer = mock(DataBuffer.class);
         DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
-        Long sizeFile = 7345874L;
+        Long sizeFile = 4718592L;
         HttpHeaders headers = mock(HttpHeaders.class);
 
         when(dataBuffer.factory()).thenReturn(dataBufferUtils);
@@ -162,5 +164,31 @@ public class ImageServiceTest {
                         throwable instanceof ResponseStatusException
                                 && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST)
                 .verify();
+    }
+    
+    @Test
+    void addPhoto_InvalidContentSize_ReturnsBadRequestError()  {
+    	 FilePart filePart = mock(FilePart.class);
+         DataBuffer dataBuffer = mock(DataBuffer.class);
+         DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
+         Long sizeFile = 15728640L;	// Invalid content size 15728640
+         HttpHeaders headers = mock(HttpHeaders.class);
+
+         when(dataBuffer.factory()).thenReturn(dataBufferUtils);
+         when(filePart.content()).thenReturn(Flux.fromIterable(Collections.singletonList(dataBuffer)));
+         when(dataBufferUtils.join(Collections.singletonList(dataBuffer))).thenReturn(dataBuffer);
+         when(filePart.headers()).thenReturn(headers);
+         when(filePart.headers().getContentType()).thenReturn(MediaType.IMAGE_JPEG); 
+         when(filePart.filename()).thenReturn("ImageFile.jpeg");
+
+         when(imageValidation.validFile()).thenReturn(false); // Invalid file validation
+
+         Mono<Image> result = imageService.addPhoto(Mono.just(filePart), sizeFile);
+
+         StepVerifier.create(result)
+	         .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
+	                 && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST
+	                 /* && ((ResponseStatusException) throwable).getMessage().equals("Image is not saved") */ )
+	         .verify();
     }
 }
