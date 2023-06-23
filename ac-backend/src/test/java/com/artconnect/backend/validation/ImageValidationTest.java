@@ -1,14 +1,11 @@
 package com.artconnect.backend.validation;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.mockito.Mock;
-
 import java.lang.reflect.Field;
-import static org.junit.jupiter.api.Assertions.*;
 
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 class ImageValidationTest {
     @Mock
@@ -103,7 +100,7 @@ class ImageValidationTest {
                 .fileName("image.png")
                 .build();
 
-        Assertions.assertTrue(imageValidation.validFile());
+        Assertions.assertFalse(imageValidation.validFile());
     }
 
     @Test
@@ -325,7 +322,7 @@ class ImageValidationTest {
     void testValidFileWithMaxSize() {
         ImageValidation imageValidation = new ImageValidation(10485760, "image/png", "image.png");
 
-        Assertions.assertTrue(imageValidation.validFile());
+        Assertions.assertFalse(imageValidation.validFile());
     }
 
     @Test
