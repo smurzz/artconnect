@@ -96,16 +96,12 @@ public class UserService {
 		String userEmail = jwtService.extractUsername(token);
 		return userRepository.findByEmail(userEmail)
 		        .flatMap(user -> {
-					try {
-						return imageService.addPhoto(file, fileSize)
+		        	return imageService.addPhoto(file, fileSize)
 						    .flatMap(image -> {
 						        user.setProfilePhoto(image);
 						        return userRepository.save(user).thenReturn(image);
 						    })
 						.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
-					} catch (IOException e) {
-						return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to insert profile photo."));
-					}
 				})
 		        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
 	}

@@ -144,7 +144,7 @@ public class UserController {
 	public Mono<ResponseEntity<byte[]>> addProfilePhoto(
 			@RequestPart Mono<FilePart> file, 
 			@RequestHeader("Content-Length") Long fileSize,
-			@RequestHeader("Authorization") String authorization) throws IOException {
+			@RequestHeader("Authorization") String authorization) {
 		return userService.addProfilePhoto(file, fileSize, authorization)
 				.map(image -> {
 					HttpHeaders headers = new HttpHeaders();
