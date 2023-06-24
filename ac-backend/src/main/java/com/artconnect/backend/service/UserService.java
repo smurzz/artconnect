@@ -39,16 +39,15 @@ public class UserService {
 	
 	public Mono<User> findById(String id) {
 		return userRepository.findById(id)
-				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not found.")));
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
 	
 	public Mono<User> findByEmail(String email) {
 		return userRepository.findByEmail(email)
-				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not found.")));
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
 
 	public Mono<User> create(User user) {
-		user.setCreatedAt(new Date());
 		return userRepository.save(user).onErrorResume(IllegalArgumentException.class, error -> Mono
 				.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error by creating user")));
 	}
@@ -131,7 +130,7 @@ public class UserService {
 	                    return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to delete this account."));
 	                }
 	            })
-	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not found.")));
+	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
 
 	public Mono<Void> deleteAll() {
