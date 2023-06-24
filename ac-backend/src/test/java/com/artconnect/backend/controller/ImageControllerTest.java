@@ -1,230 +1,227 @@
 package com.artconnect.backend.controller;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
-import com.artconnect.backend.model.Image;
+import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DefaultDataBuffer;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.web.server.ServerWebExchange;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.artconnect.backend.config.ApplicationConfig;
+import com.artconnect.backend.config.SecurityConfig;
+import com.artconnect.backend.config.jwt.JwtService;
+import com.artconnect.backend.model.Image;
+import com.artconnect.backend.repository.UserRepository;
+import com.artconnect.backend.service.ImageService;
+
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import com.artconnect.backend.service.ImageService;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.util.AssertionErrors.fail;
-import static org.mockito.Mockito.never;
-
+@WebFluxTest(controllers = ImageController.class)
+@Import({ SecurityConfig.class, ApplicationConfig.class })
 public class ImageControllerTest {
-
+	
+	@MockBean
+    private JwtService jwtService;
+	
+	@MockBean
+	private UserRepository userRepository;
+	
+	@MockBean
     private ImageService imageService;
+    
+    @InjectMocks
     private ImageController imageController;
+    
+    @Autowired
+    private WebTestClient webTestClient;
 
     @BeforeEach
     public void setup() {
-        imageService = mock(ImageService.class);
-        imageController = new ImageController(imageService);
+    	MockitoAnnotations.openMocks(this);
+    	imageController = new ImageController(imageService);
+    }
+
+	@Test
+	@WithMockUser
+	public void testAddPhoto() {
+		// Mock file part
+	    FilePart filePart = mock(FilePart.class);
+
+	    // Prepare image data
+	    byte[] imageData = "test".getBytes(StandardCharsets.UTF_8);
+	    DefaultDataBuffer dataBuffer = DefaultDataBufferFactory.sharedInstance.wrap(ByteBuffer.wrap(imageData));
+	    Flux<DataBuffer> body = Flux.just(dataBuffer);
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.IMAGE_JPEG);
+
+	    // Mock image response
+	    Image image = new Image();
+	    image.setContentType(MediaType.IMAGE_JPEG_VALUE);
+	    image.setTitle("test.jpg");
+	    image.setImage(new Binary(imageData));
+
+	    // Mock image service
+	    when(filePart.headers()).thenReturn(headers);
+	    when(filePart.filename()).thenReturn("test.jpg");
+	    when(filePart.content()).thenReturn(body);
+	    when(imageService.addPhoto(any(Mono.class), anyLong())).thenReturn(Mono.just(image));
+
+	    // Send request and verify response
+	    webTestClient = WebTestClient.bindToController(imageController).build();
+
+	    webTestClient.post()
+	            .uri("/images/add")
+	            .header("Content-Length", String.valueOf(imageData.length))
+	            .contentType(MediaType.MULTIPART_FORM_DATA)
+	            .body(BodyInserters.fromMultipartData("file", filePart))
+	            .exchange()
+	            .expectStatus().isOk()
+	            .expectHeader().contentType(MediaType.IMAGE_JPEG)
+	            .expectHeader().contentDisposition(ContentDisposition.builder("attachment")
+	                    .filename("test.jpg").build())
+	            .expectBody(byte[].class)
+	            .value(response -> assertArrayEquals(response, image.getImage().getData()));
+	}
+	
+
+    @Test
+    @WithMockUser
+    public void testAddPhotoImageExtensionIsFalse() {
+    	// Mock file part
+	    FilePart filePart = mock(FilePart.class);
+
+	    // Prepare image data
+	    byte[] imageData = "test".getBytes(StandardCharsets.UTF_8);
+	    DefaultDataBuffer dataBuffer = DefaultDataBufferFactory.sharedInstance.wrap(ByteBuffer.wrap(imageData));
+	    Flux<DataBuffer> body = Flux.just(dataBuffer);
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.APPLICATION_PDF);
+
+	    // Mock image service
+	    when(filePart.headers()).thenReturn(headers);
+	    when(filePart.filename()).thenReturn("test.pdf");
+	    when(filePart.content()).thenReturn(body);
+	    when(imageService.addPhoto(any(Mono.class), anyLong())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is not valid")));
+
+	    // Send request and verify response
+	    webTestClient = WebTestClient.bindToController(imageController).build();
+
+	    webTestClient.post()
+	            .uri("/images/add")
+	            .header("Content-Length", "4545565")
+	            .contentType(MediaType.MULTIPART_FORM_DATA)
+	            .body(BodyInserters.fromMultipartData("file", filePart))
+	            .exchange()
+	            .expectStatus().isBadRequest();
+    }
+    
+    @Test
+    @WithMockUser
+    public void testAddPhotoImageSizeIsTooBig() {
+    	// Mock file part
+	    FilePart filePart = mock(FilePart.class);
+	    
+	    // Prepare image data
+	    byte[] imageData = "test".getBytes(StandardCharsets.UTF_8);
+	    DefaultDataBuffer dataBuffer = DefaultDataBufferFactory.sharedInstance.wrap(ByteBuffer.wrap(imageData));
+	    Flux<DataBuffer> body = Flux.just(dataBuffer);
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.setContentType(MediaType.IMAGE_PNG);
+	    headers.setContentLength(4545545665L);
+
+	    // Mock image service
+	    when(filePart.headers()).thenReturn(headers);
+	    when(filePart.filename()).thenReturn("test.png");
+	    when(filePart.content()).thenReturn(body);
+	    when(imageService.addPhoto(any(Mono.class), anyLong())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is not valid")));
+
+	    // Send request and verify response
+	    webTestClient = WebTestClient.bindToController(imageController).build();
+
+	    webTestClient.post()
+	            .uri("/images/add")
+	            .header("Content-Length", "4545545665")
+	            .contentType(MediaType.MULTIPART_FORM_DATA)
+	            .body(BodyInserters.fromMultipartData("file", filePart))
+	            .exchange()
+	            .expectStatus().isBadRequest();
+    }
+    
+
+    @Test
+    @WithMockUser
+    public void testGetPhotoReturnsImage() {
+        // Mock the image service
+        Image image = Image.builder()
+	        .id("imageId")
+	        .title("image.jpg")
+	        .contentType("image/jpeg")
+	        .image(new Binary(new byte[]{}))
+	        .build();
+        
+        when(imageService.getPhoto(anyString())).thenReturn(Mono.just(image));
+
+        // Perform the request and verify the response
+        webTestClient.get()
+                .uri("/images/{id}", "imageId")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.valueOf("image/jpeg"))
+                .expectHeader().valueEquals("Content-Disposition", "attachment; filename=image.jpg")
+                .expectBody(byte[].class).isEqualTo(image.getImage().getData());
     }
 
     @Test
-    public void testAddPhoto() throws IOException {
-        // Mock file and file size
-        FilePart filePart = mock(FilePart.class);
-        Mono<FilePart> filePartMono = Mono.just(filePart);
-        Long fileSize = 1000L;
+    @WithMockUser
+    public void testGetPhotoReturnsNotFound() {
+        // Mock the image service to return an empty Mono
+        when(imageService.getPhoto(anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
 
-        // Mock image response
-        Image image = new Image();
-        image.setContentType("image/jpeg");
-        image.setTitle("test.jpg");
-
-        // Mock image service
-        when(imageService.addPhoto(filePartMono, fileSize)).thenReturn(Mono.just(image));
-
-        // Invoke controller method
-        Mono<ResponseEntity<byte[]>> result = imageController.addPhoto(filePartMono, fileSize);
-
-        // Verify the response
-        result.subscribe(responseEntity -> {
-            HttpHeaders headers = responseEntity.getHeaders();
-            MediaType contentType = headers.getContentType();
-            String contentDisposition = headers.getFirst("Content-Disposition");
-
-            // Add assertions based on your requirements
-            // Example assertions:
-            assertEquals(MediaType.IMAGE_JPEG, contentType);
-            assertEquals("attachment; filename=test.jpg", contentDisposition);
-        });
+        // Perform the request and verify the response
+        webTestClient.get()
+                .uri("/images/{id}", "nonExistentId")
+                .exchange()
+                .expectStatus().isNotFound();
     }
-
+    
     @Test
-    public void testGetPhoto() {
-        // Mock image ID
-        String id = "123";
-
-        // Mock image response
-        Image image = new Image();
-        image.setContentType("image/jpeg");
-        image.setTitle("test.jpg");
-
-        // Mock image service
-        when(imageService.getPhoto(id)).thenReturn(Mono.just(image));
-
-        // Invoke controller method
-        Mono<ResponseEntity<byte[]>> result = imageController.getPhoto(id);
-
-        // Verify the response
-        result.subscribe(responseEntity -> {
-            HttpHeaders headers = responseEntity.getHeaders();
-            MediaType contentType = headers.getContentType();
-            String contentDisposition = headers.getFirst("Content-Disposition");
-
-            // Add assertions based on your requirements
-            // Example assertions:
-            assertEquals(MediaType.IMAGE_JPEG, contentType);
-            assertEquals("attachment; filename=test.jpg", contentDisposition);
-        });
-    }
-
-    @Test
-    public void testGetPhotoNotFound() {
-        // Mock image ID
-        String id = "456";
-
-        // Mock empty image response (image not found)
-        when(imageService.getPhoto(id)).thenReturn(Mono.empty());
-
-        // Invoke controller method
-        Mono<ResponseEntity<byte[]>> result = imageController.getPhoto(id);
-
-        // Verify the error response
-        result.subscribe(responseEntity -> {
-            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        });
-    }
-
-    @Test
-    public void testAddPhotoThrowsIOException() throws IOException {
-        // Mock file and file size
-        FilePart filePart = mock(FilePart.class);
-        Mono<FilePart> filePartMono = Mono.just(filePart);
-        Long fileSize = 1000L;
-
-        // Mock IOException from the service
-        when(imageService.addPhoto(filePartMono, fileSize)).thenReturn(Mono.error(new IOException("Failed to add photo.")));
-
-        // Invoke controller method
-        Mono<ResponseEntity<byte[]>> result = imageController.addPhoto(filePartMono, fileSize);
-
-        // Verify the error response
-        result.subscribe(responseEntity -> {
-            fail("Expected an IOException.");
-        }, error -> {
-            assertTrue(error instanceof IOException);
-            assertEquals("Failed to add photo.", error.getMessage());
-        });
-    }
-
-    @Test
+    @WithMockUser
     public void testGetPhotoThrowsException() {
-        // Mock image ID
-        String id = "123";
+        // Mock the image service to throw an exception
+        when(imageService.getPhoto(anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR)));
 
-        // Mock RuntimeException from the service
-        when(imageService.getPhoto(id)).thenReturn(Mono.error(new RuntimeException("Failed to get photo.")));
-
-        // Invoke controller method
-        Mono<ResponseEntity<byte[]>> result = imageController.getPhoto(id);
-
-        // Verify the error response
-        result.subscribe(responseEntity -> {
-            fail("Expected a RuntimeException.");
-        }, error -> {
-            assertTrue(error instanceof RuntimeException);
-            assertEquals("Failed to get photo.", error.getMessage());
-        });
+        // Perform the request and verify the response
+        webTestClient.get()
+                .uri("/images/{id}", "imageId")
+                .exchange()
+                .expectStatus().is5xxServerError();
     }
 
-    @Test
-    public void testAddPhotoResponseEntity() throws IOException {
-        // Mock file and file size
-        FilePart filePart = mock(FilePart.class);
-        Mono<FilePart> filePartMono = Mono.just(filePart);
-        Long fileSize = 1000L;
 
-        // Mock image response
-        Image image = new Image();
-        image.setContentType("image/jpeg");
-        image.setTitle("test.jpg");
-        byte[] imageData = { 1, 2, 3 }; // Mock image data
 
-        // Mock image service
-        when(imageService.addPhoto(filePartMono, fileSize)).thenReturn(Mono.just(image));
-
-        // Invoke controller method
-        Mono<ResponseEntity<byte[]>> result = imageController.addPhoto(filePartMono, fileSize);
-
-        // Verify the response
-        result.subscribe(responseEntity -> {
-            HttpHeaders headers = responseEntity.getHeaders();
-            MediaType contentType = headers.getContentType();
-            String contentDisposition = headers.getFirst("Content-Disposition");
-            byte[] responseBody = responseEntity.getBody();
-
-            // Add assertions based on your requirements
-            // Example assertions:
-            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-            assertEquals(MediaType.IMAGE_JPEG, contentType);
-            assertEquals("attachment; filename=test.jpg", contentDisposition);
-            assertArrayEquals(imageData, responseBody);
-        });
-
-        // Verify that the image service was called
-        verify(imageService).addPhoto(filePartMono, fileSize);
-    }
-
-    @Test
-    public void testAddPhotoResponseEntityAddPhoto() throws IOException {
-        // Mock file and file size
-        FilePart filePart = mock(FilePart.class);
-        Mono<FilePart> filePartMono = Mono.just(filePart);
-        Long fileSize = 1000L;
-
-        // Mock image response
-        Image image = new Image();
-        image.setContentType("image/jpeg");
-        image.setTitle("test.jpg");
-        byte[] imageData = { 1, 2, 3 }; // Mock image data
-
-        // Mock image service
-        when(imageService.addPhoto(filePartMono, fileSize)).thenReturn(Mono.just(image));
-
-        // Invoke controller method
-        Mono<ResponseEntity<byte[]>> result = imageController.addPhoto(filePartMono, fileSize);
-
-        // Verify the response
-        result.subscribe(responseEntity -> {
-            HttpHeaders headers = responseEntity.getHeaders();
-            MediaType contentType = headers.getContentType();
-            String contentDisposition = headers.getFirst("Content-Disposition");
-            byte[] responseBody = responseEntity.getBody();
-
-            // Add assertions based on your requirements
-            // Example assertions:
-            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-            assertEquals(MediaType.IMAGE_JPEG, contentType);
-            assertEquals("attachment; filename=test.jpg", contentDisposition);
-            assertArrayEquals(imageData, responseBody);
-        });
-
-        // Verify that the image service was called
-        verify(imageService).addPhoto(filePartMono, fileSize);
-    }
 }
