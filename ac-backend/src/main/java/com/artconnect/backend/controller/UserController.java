@@ -1,6 +1,5 @@
 package com.artconnect.backend.controller;
 
-import java.io.IOException;
 import java.util.Date;
 
 import org.springframework.http.HttpHeaders;
@@ -39,13 +38,28 @@ import reactor.core.publisher.Mono;
 public class UserController {
 
 	private final UserService userService;
-
-	@GetMapping("/")
+	
+	@GetMapping
 	public Flux<UserResponse> getAllUsers() {
 		return userService.findAll()
 				.map(user -> UserResponse.fromUser(user));
 	}
 	
+	@GetMapping("/search")
+	public Flux<UserResponse> getUsersByFirstnameAndOrLastname(
+	        @RequestParam(required = false, value = "firstname") String firstname,
+	        @RequestParam(required = false, value = "lastname") String lastname) {
+	    if (firstname != null && lastname != null) {
+	        return userService.findByFirstnameAndLastname(firstname, lastname).map(UserResponse::fromUser);
+	    } else if (firstname != null) {
+	        return userService.findByFirstname(firstname).map(UserResponse::fromUser);
+	    } else if (lastname != null) {
+	        return userService.findByLastname(lastname).map(UserResponse::fromUser);
+	    } else {
+	        return Flux.empty();
+	    }
+	}
+
 	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/admin")
     public Flux<User> getUsersForAdmin() {
@@ -64,13 +78,12 @@ public class UserController {
 		return userService.findById(id);
 	}
 	
-	@GetMapping
-	public Mono<UserResponse> getUserByEmail(@RequestParam(value="email") String email) {
-		return userService.findByEmail(email)
-				.map(user -> UserResponse.fromUser(user));
+	@GetMapping(params = "email")
+	public Mono<UserResponse> getUserByEmail(@RequestParam("email") String email) {
+	    return userService.findByEmail(email).map(UserResponse::fromUser);
 	}
 
-	@PostMapping("/")
+	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<User> createUser(@RequestBody UserRequest userRequest) {
@@ -172,7 +185,7 @@ public class UserController {
 	    return userService.delete(id, authorization);
 	}
 
-	@DeleteMapping("/")
+	@DeleteMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public Mono<Void> deleteAllUsers() {

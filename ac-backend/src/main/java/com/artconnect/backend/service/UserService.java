@@ -36,6 +36,18 @@ public class UserService {
 		return userRepository.findAll();
 	}
 	
+	public Flux<User> findByFirstname(String firstname) {
+		return userRepository.findByFirstnameIgnoreCase(firstname);
+	}
+	
+	public Flux<User> findByLastname(String lastname) {
+		return userRepository.findByLastnameIgnoreCase(lastname);
+	}
+
+	public Flux<User> findByFirstnameAndLastname(String firstname, String lastname) {
+		return userRepository.findByFirstnameIgnoreCaseAndLastnameIgnoreCase(firstname, lastname);
+	}
+	
 	public Mono<User> findById(String id) {
 		return userRepository.findById(id)
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
@@ -134,4 +146,5 @@ public class UserService {
 	public Mono<Void> deleteAll() {
 		return userRepository.deleteAll();
 	}
+
 }
