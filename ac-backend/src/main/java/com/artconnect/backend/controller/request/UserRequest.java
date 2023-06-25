@@ -11,12 +11,15 @@ import com.artconnect.backend.model.user.SocialMedia;
 import com.artconnect.backend.model.user.Status;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
+
+@Setter
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserRequest {
 	
 	private String id;

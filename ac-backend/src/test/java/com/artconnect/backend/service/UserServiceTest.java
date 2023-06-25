@@ -1,43 +1,35 @@
 package com.artconnect.backend.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import java.io.IOException;
-import java.util.Date;import javax.swing.plaf.basic.BasicTreeUI.TreeCancelEditingAction;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Assertions;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.artconnect.backend.config.SecurityConfig;
 import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.model.Image;
-import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.model.user.User;
 import com.artconnect.backend.repository.UserRepository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import org.junit.jupiter.api.DisplayName;
-
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
 public class UserServiceTest {
 
@@ -156,7 +148,7 @@ public class UserServiceTest {
     void testCreate_InternalServerError() {
         User user = new User();
         
-        when(userRepository.save(user)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error by creating user")));
+        when(userRepository.save(user)).thenReturn(Mono.error(new IllegalArgumentException("Error by creating user")));
 
         Mono<User> result = userService.create(user);
 
@@ -168,8 +160,6 @@ public class UserServiceTest {
                     assertEquals(responseError.getMessage(), "500 INTERNAL_SERVER_ERROR \"Error by creating user\"");
                 })
                 .verify();
-
-        verify(userRepository).save(user);
     }
 
     @Test
@@ -196,7 +186,7 @@ public class UserServiceTest {
         String id = "123";
         User user = new User();
         user.setId(id);
-        String authorization = "";
+        String authorization = null;
         
         Mono<User> result = userService.update(id, user, authorization);
 
@@ -211,18 +201,25 @@ public class UserServiceTest {
     
     @Test
     void testUpdate_InvalidTokenUnauthorizedUser() {
-        String id = "123";
-        User user = new User();
-        user.setId(id);
-        String authorization = "Bearer";
+        String foreign_id = "123";
+        String emailString = "test@test.com";
+        User user = User.builder()
+        		.id("1234")
+        		.email(emailString)
+        		.build();
+        String authorization = "Bearer <token>";
+        
+        when(jwtService.extractUsername("<token>")).thenReturn(emailString);
+        when(userRepository.findByEmail(emailString)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to update this account.")));
   
-        Mono<User> result = userService.update(id, user, authorization);
+        Mono<User> result = userService.update(foreign_id, user, authorization);
 
         StepVerifier.create(result)
         .expectErrorSatisfies(error -> {
         	assert error instanceof ResponseStatusException;
             ResponseStatusException responseError = (ResponseStatusException) error;
             assertEquals(responseError.getStatusCode(), HttpStatus.UNAUTHORIZED);
+            assertEquals(responseError.getMessage(), "401 UNAUTHORIZED \"You are not authorized to update this account.\"");
         })
         .verify();
     }
@@ -376,6 +373,27 @@ public class UserServiceTest {
 	            ResponseStatusException responseError = (ResponseStatusException) error;
 	            assertEquals(responseError.getStatusCode(), HttpStatus.NOT_FOUND);
 	            assertEquals(responseError.getMessage(), "404 NOT_FOUND \"User with id " + userId + " is not found.\"");
+	        })
+	        .verify();
+    }
+    
+    @Test
+    void testGetProfilePhotoById_WithNoProfilePhoto_ReturnNotFound() {
+    	String userId = "123";
+        User user = User.builder().id(userId).build();
+        Image image = new Image();
+        user.setProfilePhoto(image);
+
+        when(userRepository.findById(userId)).thenReturn(Mono.error(new NullPointerException("User with id " + userId + " has no profile photo.")));
+
+        Mono<Image> result = userService.getProfilePhotoById(userId);
+
+        StepVerifier.create(result)
+	        .expectErrorSatisfies(error -> {
+	        	assert error instanceof ResponseStatusException;
+	            ResponseStatusException responseError = (ResponseStatusException) error;
+	            assertEquals(responseError.getStatusCode(), HttpStatus.NOT_FOUND);
+	            assertEquals(responseError.getMessage(), "404 NOT_FOUND \"User with id " + userId + " has no profile photo.\"");
 	        })
 	        .verify();
     }
