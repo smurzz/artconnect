@@ -1,54 +1,46 @@
 import * as React from 'react';
-import CssBaseline from '@mui/material/CssBaseline';
-import axios from "../api/axios";
+import {useState, useEffect, useRef} from "react";
+import {Link, Route, Routes, useNavigate, useLocation} from "react-router-dom";
+import "./bearbeiten.css";
 
+import axios from "../../api/axios";
+import {ApiService} from "../../lib/api";
+import {ExhibitionService} from "./functions/handleExhibitionFunctions";
+import { format } from 'date-fns';
+
+import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-
-import {useState, useEffect, useRef} from "react";
-import {Link, Route, Routes, useNavigate} from "react-router-dom";
-import {ApiService} from "../lib/api";
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import "./bearbeiten.css";
-import Header from "../components/headerComponent/headerLogedIn"
-import { useLocation } from 'react-router-dom';
+import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-//lineaer loading
-import LinearProgress from '@mui/material/LinearProgress';
+import Header from "../../components/headerComponent/headerLogedIn"
 
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min";
-//redux
-import {useDispatch} from "react-redux";
-import {connect} from 'react-redux';
-import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 
 function Bearbeiten(props) {
     const navigate = useNavigate();
 
-    //triggers Statechanges so the component reloads
+    //User und Image Opject von der UserprofilSeite
     const location = useLocation();
     const { user, imageProps } = location.state;
 
-    const [image, setImage] = useState("");
-
-    //load all Userdata from BE hier werden die User aus dem backend über
-    const [users, setUsers] = useState([]);
+    //DateOfBirthday
     const [dateOfBirth, setDateOfBirth] = useState( new Date());
-    const [imageUrl, setImageUrl] = useState('');
+    const [isDateOfBirthVisible, setIsDateOfBirthVisible] = useState(false);
+    //file Upload
+    const [selectedFile, setSelectedFile] = useState(null);
 
+    //Error Handeling fileupload
+    const [errorMessage, setErrorMessage] = useState(false);
+    const [errAlert, seterrAlert] = React.useState("");
+    const [successMessage, setSuccessMessage] = React.useState("");
+    const [success, setSuccess] = useState(false);
+    const [constact, setContacts] = useState(false);
 
     //edit userdata from BE
     const [userBearbeiten, setUserBearbeiten] = useState(
@@ -57,18 +49,16 @@ function Bearbeiten(props) {
             lastname: "",
             email: "",
             biography: "",
+            dateOfBirthday: "",
+            telefonNumber:"",
+            street:"",
+            postCode: "",
+            city:"",
+            country:"",
+            website:""
         }
     )
-    //Contacts
-    const [constact, setContacts] = useState({
-        telefonNumber: "",
-        address: {
-            street: "",
-            postalCode: "",
-            city: "",
-            country: ""
-        },
-    })
+
     //add ExhibitionValues
     const [exhibitionValues, setExhibitionValues] = useState([{title: "", location: "", year: "", description: ""}])
 
@@ -88,7 +78,22 @@ function Bearbeiten(props) {
     //add Social Media
     const [socialMedia, setSocailMedia] = useState([{title: "", link: ""}])
 
-
+    //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
+    useEffect(() => {
+        if(user.dateOfBirthday ) {
+            setIsDateOfBirthVisible(true);
+        }else{
+            setIsDateOfBirthVisible(false);
+        }
+        if(user.socialMedias != undefined){
+            setSocailMedia([...socialMedia, ...user.socialMedias])
+            console.log("socialMedias: 1"+ JSON.stringify(socialMedia))
+        }
+        if(user.exhibitions != undefined){
+            setExhibitionValues([...exhibitionValues, ...user.exhibitions])
+            console.log("socialMedias: 1"+ JSON.stringify(socialMedia))
+        }
+    }, [])
     let handleSocailMedia = (i, e) => {
         let newSocial = [...socialMedia];
         newSocial[i][e.target.name] = e.target.value;
@@ -102,67 +107,7 @@ function Bearbeiten(props) {
         newSocialMedia.splice(i, 1);
         setSocailMedia(newSocialMedia)
     }
-
-    //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
-    useEffect(() => {
-        if(user.socialMedias != undefined){
-            setSocailMedia([...socialMedia, ...user.socialMedias])
-            console.log("socialMedias: 1"+ JSON.stringify(socialMedia))
-        }
-        if(user.exhibitions != undefined){
-            setExhibitionValues([...exhibitionValues, ...user.exhibitions])
-            console.log("socialMedias: 1"+ JSON.stringify(socialMedia))
-        }
-        async function getUserData (){
-            const result = await ApiService.getDataSecured("/users/");
-            setUsers(result.data);
-            /* const updatedUsers = result.data.map(user => {
-                 if(user.profilePhoto && user.profilePhoto.image.data){
-                     const byteCharacters = atob(result.data[0].profilePhoto.image.data);
-                     const byteNumbers = new Array(byteCharacters.length);
-                     for (let i = 0; i < byteCharacters.length; i++) {
-                         byteNumbers[i] = byteCharacters.charCodeAt(i);
-                     }
-                     const byteArray = new Uint8Array(byteNumbers);
-
-                     // Create URL for the binary image data
-                     const blob = new Blob([byteArray], { type: 'image/png' }); // Adjust the 'type' according to the actual image format
-                     const url = URL.createObjectURL(blob);
-                     setUsers({ ...user, imageUrl: url });
-                 }
-             }*/
-            const byteCharacters = atob(result.data[0].profilePhoto.image.data);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-
-            // Create URL for the binary image data
-            const blob = new Blob([byteArray], { type: 'image/png' }); // Adjust the 'type' according to the actual image format
-            const url = URL.createObjectURL(blob);
-            setImageUrl(url);
-
-            // Clean up the URL when the component is unmounted
-            return () => {
-                URL.revokeObjectURL(url);
-            };
-        }
-        getUserData();
-        //Convert Base64-encoded image data to binary form
-
-    }, [])
-
     //file Upload
-    const [selectedFile, setSelectedFile] = useState(null);
-
-    const [errAlert, seterrAlert] = React.useState("");
-    const [errorMessage, setErrorMessage] = useState(false);
-
-    const [successMessage, setSuccessMessage] = React.useState("");
-    const [success, setSuccess] = useState(false);
-
-
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -179,27 +124,29 @@ function Bearbeiten(props) {
             }
         }
     };
-
-
-
     const handleFileUpload = async (event) => {
         event.preventDefault();
-
+        console.log(selectedFile);
         if (selectedFile) {
             const formData = new FormData();
             formData.append('file', selectedFile);
             const imageUploadSuccessfull =await ApiService.sendImage(formData);
             if(imageUploadSuccessfull == null){
-
-
                 setErrorMessage(true);
                 seterrAlert("We couldnt Upload your Image! Please try again");
             }else{
                 setSuccess(true);
                 setSuccessMessage("You Uploaded a new Profil Picture");
             }
+        }else{
+            setErrorMessage(true);
+            seterrAlert("You need to select a foto to upload it");
         }
     }
+    useEffect(()=>{
+        setSuccess(false);
+        setErrorMessage(false);
+    },[selectedFile]);
     
 const handleSubmit = async (event) => {
     event.preventDefault();
@@ -209,33 +156,41 @@ const handleSubmit = async (event) => {
         requestBody.firstname = userBearbeiten.firstname;
     }
 
-        const currentDate = new Date();
-        const formattedDate = currentDate.toISOString().split('T')[0];
-
     if (userBearbeiten.lastname !== "") {
         requestBody.lastname = userBearbeiten.lastname;
     }
     if (userBearbeiten.biography !== "") {
         requestBody.biography = userBearbeiten.biography;
     }
+
+    if(userBearbeiten.dateOfBirthday !==""){
+        console.log("date of Birth: "+ userBearbeiten.dateOfBirthday );
+        requestBody.dateOfBirthday = userBearbeiten.dateOfBirthday;
+    }
+    if(isDateOfBirthVisible){
+        requestBody.isDateOfBirthVisible ="PUBLIC";
+    }else{
+        requestBody.isDateOfBirthVisible ="PRIVATE";
+    }
     // Add exhibitionValues fields
     const exhibitions = exhibitionValues.filter((exhibition) => exhibition.title !== "" && exhibition.link !== "");
     if (exhibitions.length > 0) {
         requestBody.exhibitions = exhibitions;
     }
-    const addressFields = Object.values(constact.telefonNumber);
-    if (addressFields.some((field) => field !== "")) {
-        requestBody.contacts.telefonNumber = constact.telefonNumber;
-    }
-    if (constact.website !== "") {
-        requestBody.website = constact.website;
-    }
+
+    requestBody.contacts = userBearbeiten.telefonNumber;
+    requestBody.contacts = userBearbeiten.website;
+    //requestBody.contacts.address = userBearbeiten.street;
+    //requestBody.contacts.address = userBearbeiten.postCode;
+    //requestBody.contacts.address = userBearbeiten.city;
+    //requestBody.contacts.address = userBearbeiten.country;
+
     // Add socialMedia fields
     const socialMedias = socialMedia.filter((media) => media.title !== "" && media.link !== "");
     if (socialMedias.length > 0) {
         requestBody.socialMedias = socialMedias;
     }
-console.log("requestBody: "+ requestBody);
+console.log("requestBody: "+ JSON.stringify(requestBody));
     const result = await ApiService.patchdataSecured("/users/" + user.id, requestBody);
     if(result == null){
         navigate("/galerie");
@@ -253,80 +208,84 @@ return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}
       <div className="mx-auto max-w-3xl">
+          <div className="border-b border-gray-900/10 pb-12">
+              <div>
+                  <p className="text-base font-semibold leading-7 text-gray-900">Edit Profil</p>
+                  <div className="marginBottom">
+                      <button
+                          onClick={() => {
+                              navigate("/galerie");
+                          }}
+                          type="button"
+                          className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                      >
+                          <span>Back to Profile</span>
+                      </button>
+                  </div>
+                  {errorMessage && <div className="alert alert-danger" role="alert">
+                      {errAlert}
+                  </div>}
+              </div>
+
+              <div className="col-span-full">
+                  <label htmlFor="photo" className="block text-sm font-medium leading-6 text-gray-900">
+                      Profil Bild
+                  </label>
+                  {success && <div className="alert alert-primary" role="alert">
+                      {successMessage}
+                  </div>}
+                  <form>
+
+                      <div className="mt-2 flex items-center gap-x-3">
+                          <UserCircleIcon className="h-12 w-12 text-gray-300" aria-hidden="true" />
+                          <input type="file" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
+
+                          <button onClick={handleFileUpload}
+                                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+
+                          >save</button>
+                      </div>
+                  </form>
+              </div>
+
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Diese Informationen werden öffentlich dargestellt. Sei also Vorsichtig welche Informationen du preis gibst!
+              </p>
+
+
+          </div>
     <form onSubmit={handleSubmit}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
-            <div>
-                <p className="text-base font-semibold leading-7 text-gray-900">Profile</p>
-                <div className="marginBottom">
-                <button
-                    onClick={() => {
-                        navigate("/galerie", { state: { user: user, imageProps: image } });
-                    }}
-                    type="button"
-                    className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                >
-                    <span>Back to Profile</span>
-                </button>
-                </div>
-                {errorMessage && <div className="alert alert-danger" role="alert">
-                    {errAlert}
-                </div>}
-            </div>
-
-          <p className="mt-1 text-sm leading-6 text-gray-600">
-            Diese Informationen werden öffentlich dargestellt. Sei also Vorsichtig welche Informationen du preis gibst!
-          </p>
-
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-
-            <div className="col-span-full">
-              <label htmlFor="biography" className="block text-sm font-medium leading-6 text-gray-900">
-                Biographie
-              </label>
-              <div className="mt-2">
-                <textarea
-                  id="biography"
-                  name="biography"
-                  rows={3}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  defaultValue= {user.biography? user.biography : " " }
-                           onChange={async (e) => {
-                               setUserBearbeiten({...userBearbeiten, biography: e.target.value})
-                           }}
-                />
-              </div>
-              <p className="mt-3 text-sm leading-6 text-gray-600">Schreib ein paar Sätze über dich.</p>
-            </div>
-
-            <div className="col-span-full">
-              <label htmlFor="photo" className="block text-sm font-medium leading-6 text-gray-900">
-                Profil Bild
-              </label>
-                {success && <div className="alert alert-primary" role="alert">
-                    {successMessage}
-                </div>}
-              <form>
-
-                <div className="mt-2 flex items-center gap-x-3">
-                    <UserCircleIcon className="h-12 w-12 text-gray-300" aria-hidden="true" />
-                    <input type="file" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
-
-                    <button onClick={handleFileUpload}>Upload</button>
-                </div>
-              </form>
-            </div>
-
-          </div>
-        </div>
-
-        <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Persönliche Informationen</h2>
+
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+
+                <div className="col-span-full">
+                    <label htmlFor="biography" className="block text-sm font-medium leading-6 text-gray-900">
+                        Biographie
+                    </label>
+                    <div className="mt-2">
+                <textarea
+                    id="biography"
+                    name="biography"
+                    rows={3}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    defaultValue= {user.biography? user.biography : " " }
+                    onChange={async (e) => {
+                        setUserBearbeiten({...userBearbeiten, biography: e.target.value})
+                    }}
+                />
+                    </div>
+                    <p className="mt-3 text-sm leading-6 text-gray-600">Schreib ein paar Sätze über dich.</p>
+                </div>
+
+            </div>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-3">
               <label htmlFor="firstname" className="block text-sm font-medium leading-6 text-gray-900">
-                Vorname
+                Vorname*
               </label>
               <div className="mt-2">
                 <input
@@ -345,7 +304,7 @@ return (
 
             <div className="sm:col-span-3">
               <label htmlFor="lastname" className="block text-sm font-medium leading-6 text-gray-900">
-                Nachname
+                Nachname*
               </label>
               <div className="mt-2">
                 <input
@@ -373,15 +332,88 @@ return (
                         autoComplete="birthday"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         selected={dateOfBirth}
-                        onChange={(date) => setDateOfBirth(date)}
+                        onChange={(date) => {
+                            setDateOfBirth(date);
+
+                            // Convert Date to LocalDate
+                            const localDateString = format(date, 'yyyy-MM-dd');
+
+                            // Update userBearbeiten state
+                            setUserBearbeiten((prevState) => ({
+                                ...prevState,
+                                dateOfBirthday: localDateString
+                            }));
+                        }}
                     />
                 </div>
+                <div className="flex items-center mt-2">
+                    <input
+                        type="checkbox"
+                        id="dateVisibility"
+                        name="dateVisibility"
+                        className="form-checkbox h-4 w-4 text-indigo-600 transition duration-150 ease-in-out"
+                        checked={isDateOfBirthVisible}
+                        onChange={() => setIsDateOfBirthVisible(!isDateOfBirthVisible)}
+                    />
+                    <label htmlFor="dateVisibility" className="ml-2 text-sm text-gray-700">
+                        Should we display your Birthday on your Profil?
+                    </label>
+                </div>
             </div>
-              {/*telefon number*/}
 
+              <div className="sm:col-span-4">
+              <p className="underline">Adresss</p>
+                  <label className="inputField">phoneNumber</label>
+                  <input className="inputField" type="text" name="phoneNUmber"
+                         defaultValue= {user.contacts?.telefonNumber? user.contacts.telefonNumber : "" }
+                         onChange={async (e) => {
+                             setUserBearbeiten({...userBearbeiten, telefonNumber: e.target.value})
+                         }}
+                  />
+
+              <label className="inputField">street</label>
+              <input className="inputField" type="text" name="street"
+                     defaultValue= {user.contacts?.address?.street ? user.contacts.address.street : "" }
+                     onChange={async (e) => {
+                         setUserBearbeiten({...userBearbeiten, street: e.target.value})
+                     }}
+                    />
+
+              <label className="inputField">postalCode</label>
+              <input className="inputField" type="text" name="postalCode"
+                     defaultValue= {user.contacts?.address?.postalCode? user.contacts.address.postalCode : "" }
+                     onChange={async (e) => {
+                         setUserBearbeiten({...userBearbeiten, postalCode: e.target.value})
+                     }}
+                 />
+              <label className="inputField">city</label>
+              <input className="inputField" type="text" name="city"
+                     defaultValue= {user.contacts?.address?.city? user.contacts.address.city : "" }
+                     onChange={async (e) => {
+                         setUserBearbeiten({...userBearbeiten, city: e.target.value})
+                     }}
+                    />
+
+              <label className="inputField">country</label>
+              <input className="inputField" type="text" name="country"
+                     defaultValue= {user.contacts?.address?.country? user.contacts.address.country : "" }
+                     onChange={async (e) => {
+                         setUserBearbeiten({...userBearbeiten, country: e.target.value})
+                     }}
+              />
+
+              <label className="inputField">website</label>
+              <input className="inputField" type="text" name="country"
+                     defaultValue= {user.contacts?.website? user.contacts.website : ""}
+                     onChange={async (e) => {
+                         setUserBearbeiten({...userBearbeiten, website: e.target.value})
+                     }}
+              />
+              <br/>
+                  </div>
           </div>
         </div>
-
+          {/*Exhibitions*/}
         <div className="border-b border-gray-900/10 pb-12">
         <h2 className="text-base font-semibold leading-7 text-gray-900">Ausstellung</h2>
         {
@@ -462,7 +494,7 @@ return (
         }
        <div className='pt-7'>
        <button
-          type="submit"
+          type="button"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           onClick={() => addExhibitionFields()}
         >
@@ -524,7 +556,7 @@ return (
 
        <div className='pt-7'>
        <button
-          type="submit"
+          type="button"
           className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           onClick={() => addSocialMediaField()}
         >

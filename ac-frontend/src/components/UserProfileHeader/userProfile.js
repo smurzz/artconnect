@@ -8,6 +8,9 @@ import {PaperClipIcon} from '@heroicons/react/20/solid'
 import {storageService} from "../../lib/localStorage"
 import {ApiService} from "../../lib/api";
 
+// Hier bitte richtiges User Bild rein
+import Image from '../../images/Logo.png';
+
 
 const profile = {
     name: 'Vyacheslav Thomas',
@@ -30,14 +33,12 @@ const Profile = () => {
         async function getUserData() {
             const result = await storageService.getUser();
             const urlGetUser = `http://localhost:8080/users?email=${result}`.replace(/"/g, '');
-            console.log("userProfile: " + urlGetUser)
             const userProfile = await ApiService.getDataSecuredWithParameter(urlGetUser);
-            console.log("userProfile- userProfile: " + JSON.stringify(userProfile));
             setUser(userProfile.data);
-
+            console.log("user Profile: "+ userProfile.data.dateOfBirthday )
             if (userProfile.data.profilePhoto.image.data == undefined) {
-                const updatedUser = {...user, newAttribute: 'no immage'};
-                setUser(updatedUser);
+                setImage(Image);
+
                 //Blank Picture
                 console.log("user Data undefined.")
             } else {
@@ -51,7 +52,6 @@ const Profile = () => {
                 const blob = new Blob([byteArray], {type: 'image/png'}); // Adjust the 'type' according to the actual image format
                 const url = URL.createObjectURL(blob);
                 setImage(url);
-                console.log("url: " + url);
             }
 
         }
@@ -59,6 +59,13 @@ const Profile = () => {
         getUserData();
 
     }, [])
+
+    //formatiert das Geburtsdatum schöner
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const date = new Date(dateString);
+        return date.toLocaleDateString(undefined, options);
+    };
 
     const navigate = useNavigate();
 
@@ -78,6 +85,7 @@ const Profile = () => {
                                 className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                                 <div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
                                     <h1 className="truncate text-2xl font-bold text-gray-900">{(user.firstname ? user.firstname + " " : " ") + (user.lastname ? user.lastname : " ")}</h1>
+                                    <p className="truncate text-2xl font-bold text-gray-900"> {user.dateOfBirthday ?"Geburtstag:" + formatDate(user.dateOfBirthday) : " "}</p>
                                 </div>
                                 <div
                                     className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-x-4 sm:space-y-0">

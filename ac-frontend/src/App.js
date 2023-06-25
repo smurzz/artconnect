@@ -4,11 +4,12 @@ import Layout from "./components/Layout/Layout";
 import ProtectedRoutes from "./container/protectedRoutes";
 import ForgotPassword from "./container/ForgotPassword/ForgotPassword";
 import ResetPassword from "./container/resetPassword/ResetPassword";
-import Home from "./container/Home3/HomeTailwind";
+import Home from "./container/Home/HomeTailwind";
 import Galerie2 from "./container/Galerie/Galerie2";
 import Login from "./container/Login/Login";
 import ResetPasswortSuccess from "./container/ForgotPassword/ForgetPasswordSuccess"
 import NotFound from "./container/404/404";
+import Bearbeiten from "./container/ProfilBearbeiten/bearbeiten";
 
 import DetailImage from "./container/BildAnsicht/ImageView"
 import DetailImage1 from "./container/BildAnsicht/ImageView1"
@@ -22,7 +23,6 @@ import DetailImage8 from "./container/BildAnsicht/ImageView8"
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import Bearbeiten from "./container/bearbeiten"
 
 function App() {
   return (
