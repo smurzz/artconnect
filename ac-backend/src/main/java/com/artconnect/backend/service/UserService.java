@@ -1,6 +1,5 @@
 package com.artconnect.backend.service;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -39,16 +38,17 @@ public class UserService {
 	
 	public Mono<User> findById(String id) {
 		return userRepository.findById(id)
-				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not found.")));
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
 	
 	public Mono<User> findByEmail(String email) {
 		return userRepository.findByEmail(email)
-				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not found.")));
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
 
 	public Mono<User> create(User user) {
 		user.setCreatedAt(new Date());
+		user.setPassword(pEncoder.encode(user.getPassword()));
 		return userRepository.save(user).onErrorResume(IllegalArgumentException.class, error -> Mono
 				.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error by creating user")));
 	}
@@ -85,8 +85,6 @@ public class UserService {
 	            })
 	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
-	
-	
 
 	public Mono<Image> addProfilePhoto(Mono<FilePart> file, Long fileSize, String authorization) {
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -95,19 +93,14 @@ public class UserService {
 		String token = authorization.substring(7);
 		String userEmail = jwtService.extractUsername(token);
 		return userRepository.findByEmail(userEmail)
-		        .flatMap(user -> {
-					try {
-						return imageService.addPhoto(file, fileSize)
-						    .flatMap(image -> {
-						        user.setProfilePhoto(image);
-						        return userRepository.save(user).thenReturn(image);
-						    })
-						.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
-					} catch (IOException e) {
-						return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to insert profile photo."));
-					}
-				})
-		        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
+				.flatMap(user -> {
+					return imageService.addPhoto(file, fileSize)
+							.flatMap(image -> {
+								user.setProfilePhoto(image);
+								return userRepository.save(user).thenReturn(image);
+							})
+							.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
+				}).switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
 	}
 
 	public Mono<Image> getProfilePhotoById(String id) {
@@ -128,14 +121,14 @@ public class UserService {
 		String userEmail = jwtService.extractUsername(token);
 
 	    return userRepository.findByEmail(userEmail)
+	    		.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")))
 	            .flatMap(foundUser -> {
 	                if (foundUser.getId().equals(id) || foundUser.getRole() == Role.ADMIN) {
 	                    return userRepository.deleteById(id);
 	                } else {
 	                    return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to delete this account."));
 	                }
-	            })
-	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is not found.")));
+	            });
 	}
 
 	public Mono<Void> deleteAll() {

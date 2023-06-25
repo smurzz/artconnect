@@ -3,13 +3,17 @@ package com.artconnect.backend.validation;
 import java.util.List;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Builder
-@Data
+@RequiredArgsConstructor
+@Setter
+@Getter
 public class ImageValidation {
 	
-	private final static long MAX_SIZE = 10485760;
+	private final static long MAX_SIZE = 5242880;
 	
 	private final static List<String> EXTENSIONS = List.of("png", "jpg", "jpeg");
 	

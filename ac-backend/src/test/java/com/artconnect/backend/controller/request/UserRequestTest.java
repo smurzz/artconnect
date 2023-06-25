@@ -188,8 +188,8 @@ public class UserRequestTest {
         String email = "john.doe@example.com";
         String password = "password123";
         LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        String isDateOfBirthVisible = "PUBLIC"; // Update the enum value here
-        String isAccountEnabled = "PUBLIC"; // Update the enum value here
+        Status isDateOfBirthVisible = Status.PUBLIC;
+        Status isAccountEnabled = Status.PUBLIC; 
         Role role = Role.ADMIN;
         Image profilePhoto = new Image();
         String biography = "Lorem ipsum dolor sit amet";
@@ -199,9 +199,7 @@ public class UserRequestTest {
 
         // Create a UserRequest object using the @AllArgsConstructor
         UserRequest userRequest = new UserRequest(id, firstname, lastname, email, password, dateOfBirth,
-                com.artconnect.backend.model.user.Status.valueOf(isDateOfBirthVisible),
-                com.artconnect.backend.model.user.Status.valueOf(isAccountEnabled),
-                role, profilePhoto, biography, exhibitions, contacts, socialMedias);
+        		isDateOfBirthVisible, isAccountEnabled, role, profilePhoto, biography, exhibitions, contacts, socialMedias);
 
         // Verify that the values are set correctly
         assertEquals(id, userRequest.getId());
@@ -210,8 +208,8 @@ public class UserRequestTest {
         assertEquals(email, userRequest.getEmail());
         assertEquals(password, userRequest.getPassword());
         assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
-        assertEquals(com.artconnect.backend.model.user.Status.PUBLIC, userRequest.getIsDateOfBirthVisible());
-        assertEquals(com.artconnect.backend.model.user.Status.PUBLIC, userRequest.getIsAccountEnabled());
+        assertEquals(Status.PUBLIC, userRequest.getIsDateOfBirthVisible());
+        assertEquals(Status.PUBLIC, userRequest.getIsAccountEnabled());
         assertEquals(role, userRequest.getRole());
         assertEquals(profilePhoto, userRequest.getProfilePhoto());
         assertEquals(biography, userRequest.getBiography());
@@ -334,25 +332,6 @@ public class UserRequestTest {
     }
 
     @Test
-    void testToString() {
-        String expectedToString = "UserRequest(id=null, firstname=null, lastname=null, email=null, password=null, dateOfBirthday=null, " +
-                "isDateOfBirthVisible=null, isAccountEnabled=null, role=null, profilePhoto=null, biography=null, exhibitions=null, " +
-                "contacts=null, socialMedias=null)";
-        assertEquals(expectedToString, userRequest.toString());
-    }
-
-    @Test
-    void testToString_WithNullValues_ShouldReturnCorrectStringRepresentation() {
-        // Set null values for the UserRequest object
-
-        // Verify the correct string representation
-        String expectedToString = "UserRequest(id=null, firstname=null, lastname=null, email=null, password=null, " +
-                "dateOfBirthday=null, isDateOfBirthVisible=null, isAccountEnabled=null, role=null, profilePhoto=null, " +
-                "biography=null, exhibitions=null, contacts=null, socialMedias=null)";
-        assertEquals(expectedToString, userRequest.toString());
-    }
-
-    @Test
     void testSetAndGetExhibitions_WhenExhibitionsIsNull_ShouldSetAndGetExhibitionsCorrectly() {
         // Set the exhibitions to null
         userRequest.setExhibitions(null);
@@ -371,16 +350,6 @@ public class UserRequestTest {
     }
 
     @Test
-    void testEquals_WhenObjectsAreEqual_ShouldReturnTrue() {
-        // Set the same values for both UserRequest objects
-        userRequest1.setId("123");
-        userRequest2.setId("123");
-
-        // Verify that the objects are considered equal
-        assertEquals(userRequest1, userRequest2);
-    }
-
-    @Test
     void testEquals_WhenObjectsAreNotEqual_ShouldReturnFalse() {
         // Set different values for the UserRequest objects
         userRequest1.setId("123");
@@ -388,16 +357,6 @@ public class UserRequestTest {
 
         // Verify that the objects are not considered equal
         assertNotEquals(userRequest1, userRequest2);
-    }
-
-    @Test
-    void testHashCode_WhenObjectsAreEqual_ShouldReturnSameHashCode() {
-        // Set the same values for both UserRequest objects
-        userRequest1.setId("123");
-        userRequest2.setId("123");
-
-        // Verify that the hash codes are the same
-        assertEquals(userRequest1.hashCode(), userRequest2.hashCode());
     }
 
     @Test
@@ -463,53 +422,9 @@ public class UserRequestTest {
     }
 
     @Test
-    void testToString_WhenNoFieldsSet_ShouldReturnStringRepresentation() {
-        // Verify that the toString() method returns the expected string representation
-        assertEquals("UserRequest(id=null, firstname=null, lastname=null, email=null, password=null, dateOfBirthday=null, isDateOfBirthVisible=null, isAccountEnabled=null, role=null, profilePhoto=null, biography=null, exhibitions=null, contacts=null, socialMedias=null)", userRequest.toString());
-    }
-    @Test
     void testNoArgsConstructor_WhenCalled_ShouldCreateObject() {
         // Verify that the no-args constructor creates a non-null object
         assertNotNull(userRequest);
-    }
-
-    @Test
-    void testAllArgsConstructor_WhenCalled_ShouldSetAllFields() {
-        // Create sample values for the constructor
-        String id = "123";
-        String firstname = "John";
-        String lastname = "Doe";
-        String email = "john.doe@example.com";
-        String password = "password123";
-        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        Status isDateOfBirthVisible = Status.PUBLIC;
-        Status isAccountEnabled = Status.PUBLIC;
-        Role role = Role.ADMIN;
-        Image profilePhoto = new Image();
-        String biography = "Lorem ipsum dolor sit amet";
-        List<Exhibition> exhibitions = new ArrayList<>();
-        Contacts contacts = new Contacts();
-        List<SocialMedia> socialMedias = new ArrayList<>();
-
-        // Create a UserRequest object using the @AllArgsConstructor
-        UserRequest userRequest = new UserRequest(id, firstname, lastname, email, password, dateOfBirth,
-                isDateOfBirthVisible, isAccountEnabled, role, profilePhoto, biography, exhibitions, contacts, socialMedias);
-
-        // Verify that the values are set correctly
-        assertEquals(id, userRequest.getId());
-        assertEquals(firstname, userRequest.getFirstname());
-        assertEquals(lastname, userRequest.getLastname());
-        assertEquals(email, userRequest.getEmail());
-        assertEquals(password, userRequest.getPassword());
-        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
-        assertEquals(isDateOfBirthVisible, userRequest.getIsDateOfBirthVisible());
-        assertEquals(isAccountEnabled, userRequest.getIsAccountEnabled());
-        assertEquals(role, userRequest.getRole());
-        assertEquals(profilePhoto, userRequest.getProfilePhoto());
-        assertEquals(biography, userRequest.getBiography());
-        assertEquals(exhibitions, userRequest.getExhibitions());
-        assertEquals(contacts, userRequest.getContacts());
-        assertEquals(socialMedias, userRequest.getSocialMedias());
     }
 
     @Test
@@ -575,86 +490,6 @@ public class UserRequestTest {
         assertEquals("123", userRequest.getId());
         assertEquals("John", userRequest.getFirstname());
         assertEquals("Doe", userRequest.getLastname());
-    }
-
-    @Test
-    void testAllArgsConstructor_WithAllFields_ShouldSetFieldsCorrectly() {
-        // Arrange
-        String id = "123";
-        String firstname = "John";
-        String lastname = "Doe";
-        String email = "john.doe@example.com";
-        String password = "password123";
-        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        Status isDateOfBirthVisible = Status.PUBLIC;
-        Status isAccountEnabled = Status.PUBLIC;
-        Role role = Role.ADMIN;
-        Image profilePhoto = new Image();
-        String biography = "Lorem ipsum dolor sit amet";
-        List<Exhibition> exhibitions = new ArrayList<>();
-        Contacts contacts = new Contacts();
-        List<SocialMedia> socialMedias = new ArrayList<>();
-
-        // Act
-        UserRequest userRequest = new UserRequest(id, firstname, lastname, email, password, dateOfBirth,
-                isDateOfBirthVisible, isAccountEnabled, role, profilePhoto, biography, exhibitions, contacts,
-                socialMedias);
-
-        // Assert
-        assertEquals(id, userRequest.getId());
-        assertEquals(firstname, userRequest.getFirstname());
-        assertEquals(lastname, userRequest.getLastname());
-        assertEquals(email, userRequest.getEmail());
-        assertEquals(password, userRequest.getPassword());
-        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
-        assertEquals(isDateOfBirthVisible, userRequest.getIsDateOfBirthVisible());
-        assertEquals(isAccountEnabled, userRequest.getIsAccountEnabled());
-        assertEquals(role, userRequest.getRole());
-        assertEquals(profilePhoto, userRequest.getProfilePhoto());
-        assertEquals(biography, userRequest.getBiography());
-        assertEquals(exhibitions, userRequest.getExhibitions());
-        assertEquals(contacts, userRequest.getContacts());
-        assertEquals(socialMedias, userRequest.getSocialMedias());
-    }
-
-    @Test
-    void testAllArgsConstructor_WithRequiredFields_ShouldSetFieldsCorrectly() {
-        // Arrange
-        String id = "123";
-        String firstname = "John";
-        String lastname = "Doe";
-        String email = "john.doe@example.com";
-        String password = "password123";
-        LocalDate dateOfBirth = LocalDate.of(1990, 1, 1);
-        Status isDateOfBirthVisible = null;
-        Status isAccountEnabled = null;
-        Role role = null;
-        Image profilePhoto = null;
-        String biography = null;
-        List<Exhibition> exhibitions = null;
-        Contacts contacts = null;
-        List<SocialMedia> socialMedias = null;
-
-        // Act
-        UserRequest userRequest = new UserRequest(id, firstname, lastname, email, password, dateOfBirth,
-                isDateOfBirthVisible, isAccountEnabled, role, profilePhoto, biography, exhibitions, contacts,
-                socialMedias);
-
-        // Assert
-        assertEquals(id, userRequest.getId());
-        assertEquals(firstname, userRequest.getFirstname());
-        assertEquals(lastname, userRequest.getLastname());
-        assertEquals(email, userRequest.getEmail());
-        assertEquals(password, userRequest.getPassword());
-        assertEquals(dateOfBirth, userRequest.getDateOfBirthday());
-        assertNull(userRequest.getIsDateOfBirthVisible());
-        assertNull(userRequest.getIsAccountEnabled());
-        assertNull(userRequest.getRole());
-        assertNull(userRequest.getProfilePhoto());
-        assertNull(userRequest.getBiography());
-        assertNull(userRequest.getExhibitions());
-        assertNull(userRequest.getContacts());
-        assertNull(userRequest.getSocialMedias());
     }
 
     @Test

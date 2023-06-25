@@ -1,9 +1,13 @@
 package com.artconnect.backend.service;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 
-import com.artconnect.backend.validation.ImageValidation;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,21 +22,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.server.ResponseStatusException;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
 import com.artconnect.backend.model.Image;
 import com.artconnect.backend.repository.ImageRepository;
+import com.artconnect.backend.validation.ImageValidation;
 
-import java.io.IOException;
-import java.util.Collections;
-
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 public class ImageServiceTest {
 
     @Mock
     private ImageRepository imageRepository;
+    
     @InjectMocks
     private ImageService imageService;
 
@@ -102,11 +105,11 @@ public class ImageServiceTest {
     }
 
     @Test
-    void addPhoto_ValidImage_ReturnsSavedImage() throws IOException {
+    void addPhoto_ValidImage_ReturnsSavedImage() {
         FilePart filePart = mock(FilePart.class);
         DataBuffer dataBuffer = mock(DataBuffer.class);
         DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
-        Long sizeFile = 7345874L;
+        Long sizeFile = 4718592L;
         HttpHeaders headers = mock(HttpHeaders.class);
 
         when(dataBuffer.factory()).thenReturn(dataBufferUtils);
@@ -139,11 +142,11 @@ public class ImageServiceTest {
     }
 
     @Test
-    void addPhoto_InvalidContentType_ReturnsError() throws IOException {
+    void addPhoto_InvalidContentType_ReturnsBadRequestError() {
         FilePart filePart = mock(FilePart.class);
         DataBuffer dataBuffer = mock(DataBuffer.class);
         DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
-        Long sizeFile = 7345874L;
+        Long sizeFile = 4718592L;
         HttpHeaders headers = mock(HttpHeaders.class);
 
         when(dataBuffer.factory()).thenReturn(dataBufferUtils);
@@ -162,5 +165,34 @@ public class ImageServiceTest {
                         throwable instanceof ResponseStatusException
                                 && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST)
                 .verify();
+    }
+    
+    @Test
+    void addPhoto_InvalidContentSize_ReturnsBadRequestError()  {
+    	 FilePart filePart = mock(FilePart.class);
+         DataBuffer dataBuffer = mock(DataBuffer.class);
+         DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
+         Long sizeFile = 15728640L;	// Invalid content size 15728640
+         HttpHeaders headers = mock(HttpHeaders.class);
+
+         when(dataBuffer.factory()).thenReturn(dataBufferUtils);
+         when(filePart.content()).thenReturn(Flux.fromIterable(Collections.singletonList(dataBuffer)));
+         when(dataBufferUtils.join(Collections.singletonList(dataBuffer))).thenReturn(dataBuffer);
+         when(filePart.headers()).thenReturn(headers);
+         when(filePart.headers().getContentType()).thenReturn(MediaType.IMAGE_JPEG); 
+         when(filePart.filename()).thenReturn("ImageFile.jpeg");
+
+         when(imageValidation.validFile()).thenReturn(false); // Invalid file validation
+
+         Mono<Image> result = imageService.addPhoto(Mono.just(filePart), sizeFile);
+         
+         StepVerifier.create(result)
+         .expectErrorSatisfies(error -> {
+         	assert error instanceof ResponseStatusException;
+             ResponseStatusException responseError = (ResponseStatusException) error;
+             assertEquals(responseError.getStatusCode(), HttpStatus.BAD_REQUEST);
+             assertEquals(responseError.getMessage(), "400 BAD_REQUEST \"Image is not valid\"");
+         })
+         .verify();
     }
 }
