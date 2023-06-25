@@ -1,7 +1,5 @@
 package com.artconnect.backend.controller;
 
-import java.io.IOException;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,7 @@ public class ImageController {
 	@PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public Mono<ResponseEntity<byte[]>> addPhoto(
 			@RequestPart Mono<FilePart> file, 
-			@RequestHeader("Content-Length") Long fileSize) throws IOException {
+			@RequestHeader("Content-Length") Long fileSize) {
 		return imageService.addPhoto(file, fileSize)
 				.map(image -> {
 					HttpHeaders headers = new HttpHeaders();

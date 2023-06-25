@@ -1,4 +1,4 @@
-package com.artconnect.backend.model;
+package com.artconnect.backend.model.user;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 

@@ -261,28 +261,32 @@ class AuthenticationServiceTest {
     void testLogin() {
         AuthenticationRequest request = new AuthenticationRequest("test@example.com", "password");
         User user = mock(User.class);
-        when(user.isEnabled()).thenReturn(true);
+        when(user.getIsAccountEnabled()).thenReturn(Status.PUBLIC);
         when(jwtService.generateToken(user)).thenReturn("jwtToken");
         when(jwtService.generateRefreshToken(user)).thenReturn("refreshToken");
         when(authenticationManager.authenticate(any())).thenReturn(Mono.empty());
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Mono.just(user));
 
-        AuthenticationResponse result = authenticationService.login(request).block();
-        assertEquals("jwtToken", result.getAccessToken());
-        assertEquals("refreshToken", result.getRefreshToken());
+        Mono<AuthenticationResponse> result = authenticationService.login(request);
+
+        StepVerifier.create(result)
+	        .expectNextMatches(authResponse -> 
+	        	authResponse.getAccessToken().equals("jwtToken") && 
+	        	authResponse.getRefreshToken().equals("refreshToken"))
+	        .verifyComplete();
     }
     
     @Test
     void testLoginUserIsNotEnable() {
         AuthenticationRequest request = new AuthenticationRequest("test@example.com", "password");
         User user = mock(User.class);
-        
+
         when(authenticationManager.authenticate(any())).thenReturn(Mono.empty());
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Mono.just(user));
-        when(user.isEnabled()).thenReturn(false);
+        when(user.getIsAccountEnabled()).thenReturn(Status.RESTRICTED);
 
         Mono<AuthenticationResponse> result = authenticationService.login(request);
-        
+
         StepVerifier.create(result)
         .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
                 && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.FORBIDDEN
