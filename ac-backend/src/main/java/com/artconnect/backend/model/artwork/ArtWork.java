@@ -1,17 +1,18 @@
 package com.artconnect.backend.model.artwork;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import org.bson.types.Binary;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.artconnect.backend.model.Image;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,15 +20,22 @@ import lombok.NoArgsConstructor;
 @Document(collection = "artwork")
 public class ArtWork {
 	
+	@Id
+	private String id;
+	
+	private String ownerId;
+	
+	private String galleryId;
+	
 	private String title;
 	
-	private List<Image> images;
+	private List<String> imagesIds;
     
     private String description;
     
     private int yearOfCreation;
     
-    private int likes;
+    private Set<String> likedByUsers;
     
     private List<String> materials;
     
@@ -40,5 +48,23 @@ public class ArtWork {
     private String location;
     
     private Date createdAt;
+    
+	private List<Comment> comments;
+
+	public void setLike(String userEmail) {
+		if (likedByUsers == null) {
+			likedByUsers = new HashSet<>();
+		}
+
+		if (likedByUsers.contains(userEmail)) {
+			likedByUsers.remove(userEmail);
+		} else {
+			likedByUsers.add(userEmail);
+		}
+	}
+	
+	public Integer getLikes() {
+		return likedByUsers.size();
+	}
 
 }
