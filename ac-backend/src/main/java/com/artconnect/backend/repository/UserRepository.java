@@ -13,5 +13,11 @@ public interface UserRepository extends ReactiveMongoRepository<User, String>{
 	 Mono<User> findByEmail(String email);
 	 
 	 Flux<User> findByisAccountEnabled(Status isAccountEnabled);
+	 
+	 Flux<User> findByFirstnameIgnoreCase(String firstname);
+	 
+	 Flux<User> findByLastnameIgnoreCase(String lastname);
+	 
+	 Flux<User> findByFirstnameIgnoreCaseAndLastnameIgnoreCase(String firstname, String lastname);
 
 }
