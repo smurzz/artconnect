@@ -15,7 +15,7 @@ public class Exhibition {
 	
 	private String location;
 	
-	private int year;
+	private Integer year;
 	
 	private String description;
 }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Contacts {
 
-	private int telefonNumber;
+	private Integer telefonNumber;
 	
     private Address address;
     
