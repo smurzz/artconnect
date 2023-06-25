@@ -83,7 +83,6 @@ public class UserController {
 				.role(userRequest.getRole())
 				.profilePhoto(userRequest.getProfilePhoto())
 				.isAccountEnabled(userRequest.getIsAccountEnabled())
-				.createdAt(new Date())
 				.dateOfBirthday(userRequest.getDateOfBirthday())
 				.isDateOfBirthVisible(userRequest.getIsDateOfBirthVisible())
 				.biography(userRequest.getBiography())
