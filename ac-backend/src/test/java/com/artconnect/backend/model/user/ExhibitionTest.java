@@ -116,7 +116,7 @@ public class ExhibitionTest {
 
         Assertions.assertNull(exhibition.getTitle());
         Assertions.assertNull(exhibition.getLocation());
-        Assertions.assertEquals(0, exhibition.getYear());
+        Assertions.assertNull(exhibition.getYear());
         Assertions.assertNull(exhibition.getDescription());
     }
 
@@ -276,7 +276,7 @@ public class ExhibitionTest {
     public void testExhibitionToStringWithEmptyValues() {
         Exhibition exhibition = Exhibition.builder().build();
 
-        String expectedToString = "Exhibition(title=null, location=null, year=0, description=null)";
+        String expectedToString = "Exhibition(title=null, location=null, year=null, description=null)";
         Assertions.assertEquals(expectedToString, exhibition.toString());
     }
 
@@ -298,7 +298,7 @@ public class ExhibitionTest {
 
         Assertions.assertNull(exhibition.getTitle());
         Assertions.assertNull(exhibition.getLocation());
-        Assertions.assertEquals(0, exhibition.getYear());
+        Assertions.assertNull(exhibition.getYear());
         Assertions.assertNull(exhibition.getDescription());
     }
 
@@ -485,5 +485,4 @@ public class ExhibitionTest {
     }
 
 }
-
 

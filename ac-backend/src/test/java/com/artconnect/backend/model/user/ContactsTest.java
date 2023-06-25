@@ -113,7 +113,7 @@ public class ContactsTest {
     @Test
     public void testNoArgsConstructor() {
         Contacts emptyContacts = new Contacts();
-        assertEquals(0, emptyContacts.getTelefonNumber());
+        assertEquals(null, emptyContacts.getTelefonNumber());
         assertEquals(null, emptyContacts.getAddress());
         assertEquals(null, emptyContacts.getWebsite());
     }
@@ -196,7 +196,7 @@ public class ContactsTest {
         Contacts allArgsWithDefaultsContacts = new Contacts();
 
         // Verify the default values
-        assertEquals(0, allArgsWithDefaultsContacts.getTelefonNumber());
+        assertEquals(null, allArgsWithDefaultsContacts.getTelefonNumber());
         assertEquals(null, allArgsWithDefaultsContacts.getAddress());
         assertEquals(null, allArgsWithDefaultsContacts.getWebsite());
     }
@@ -207,7 +207,7 @@ public class ContactsTest {
         Contacts noArgsConstructorContacts = new Contacts();
 
         // Verify the default values
-        assertEquals(0, noArgsConstructorContacts.getTelefonNumber());
+        assertEquals(null, noArgsConstructorContacts.getTelefonNumber());
         assertEquals(null, noArgsConstructorContacts.getAddress());
         assertEquals(null, noArgsConstructorContacts.getWebsite());
     }
@@ -368,7 +368,7 @@ public class ContactsTest {
         Contacts noArgsConstructorWithDefaultsContacts = new Contacts();
 
         // Create an instance using the all-args constructor with default values
-        Contacts allArgsConstructorWithDefaultsContacts = new Contacts(0, null, null);
+        Contacts allArgsConstructorWithDefaultsContacts = new Contacts(null, null, null);
 
         // The contacts objects created with the no-args constructor and the all-args constructor with default values should be equal and have the same hash code
         assertEquals(noArgsConstructorWithDefaultsContacts, allArgsConstructorWithDefaultsContacts);
@@ -457,7 +457,7 @@ public class ContactsTest {
         Contacts noArgsConstructorContacts = new Contacts();
 
         // Verify the string representation of the contacts object
-        String expectedString = "Contacts(telefonNumber=0, address=null, website=null)";
+        String expectedString = "Contacts(telefonNumber=null, address=null, website=null)";
         assertEquals(expectedString, noArgsConstructorContacts.toString());
     }
 
