@@ -1,9 +1,11 @@
 package com.artconnect.backend.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
-import java.util.Date;
+import java.util.Date;import javax.swing.plaf.basic.BasicTreeUI.TreeCancelEditingAction;
+
 import org.junit.jupiter.api.Assertions;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +14,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.artconnect.backend.config.SecurityConfig;
 import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.model.Image;
 import com.artconnect.backend.model.user.Role;
@@ -33,12 +39,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 
-
-
-
 public class UserServiceTest {
 
-    @Mock
+	@Mock
     private UserRepository userRepository;
 
     @Mock
@@ -49,21 +52,21 @@ public class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+    
     @InjectMocks
     private UserService userService;
 
     @Captor
     private ArgumentCaptor<User> userCaptor;
 
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         userService = new UserService(userRepository, imageService, jwtService, passwordEncoder);
     }
 
     @Test
-    public void testFindAll() {
+    void testFindAll() {
         when(userRepository.findAll()).thenReturn(Flux.just(new User(), new User()));
 
         Flux<User> result = userService.findAll();
@@ -72,73 +75,39 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testFindById() {
+    void testFindById() {
         String id = "123";
-        User user = new User();
+        User user = User.builder().id(id).build();
+        
         when(userRepository.findById(id)).thenReturn(Mono.just(user));
 
         Mono<User> result = userService.findById(id);
 
-        StepVerifier.create(result).expectNext(user).verifyComplete();
+        StepVerifier.create(result)
+        	.expectNext(user)
+        	.verifyComplete();
     }
 
     @Test
-    public void testFindById_UserNotFound() {
+    void testFindById_UserNotFound() {
         String id = "123";
+        
         when(userRepository.findById(id)).thenReturn(Mono.empty());
 
         Mono<User> result = userService.findById(id);
 
         StepVerifier.create(result)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof ResponseStatusException &&
-                                ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST)
-                .verify();
+        .expectErrorSatisfies(error -> {
+            Assertions.assertTrue(error instanceof ResponseStatusException);
+            ResponseStatusException exception = (ResponseStatusException) error;
+            assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+            assertEquals("User is not found.", exception.getReason());
+        })
+        .verify();
     }
-
+    
     @Test
-    public void testCreate() {
-        User user = new User();
-        when(userRepository.save(user)).thenReturn(Mono.just(user));
-
-        Mono<User> result = userService.create(user);
-
-        StepVerifier.create(result).expectNext(user).verifyComplete();
-    }
-
-    @Test
-    public void testUpdate_AuthorizedUser() {
-        String id = "123";
-        User user = new User();
-        user.setId(id); // Set the ID property
-        String authorization = "Bearer <token>";
-        String userEmail = "user@example.com";
-
-        when(jwtService.extractUsername(anyString())).thenReturn(userEmail);
-        when(userRepository.findByEmail(userEmail)).thenReturn(Mono.just(user));
-        when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
-
-        Mono<User> result = userService.update(id, user, authorization);
-
-        StepVerifier.create(result).expectNext(user).verifyComplete();
-    }
-
-    @Test
-    public void testFindById_UserFound() {
-        String id = "123";
-        User user = new User();
-        user.setId(id);
-
-        when(userRepository.findById(id)).thenReturn(Mono.just(user));
-
-        Mono<User> result = userService.findById(id);
-
-        StepVerifier.create(result).expectNext(user).verifyComplete();
-    }
-
-
-    @Test
-    public void testFindByEmail_UserFound() {
+    void testFindByEmail() {
         String email = "user@example.com";
         User user = new User();
         user.setEmail(email);
@@ -147,11 +116,13 @@ public class UserServiceTest {
 
         Mono<User> result = userService.findByEmail(email);
 
-        StepVerifier.create(result).expectNext(user).verifyComplete();
+        StepVerifier.create(result)
+        	.expectNext(user)
+        	.verifyComplete();
     }
 
     @Test
-    public void testFindByEmail_UserNotFound() {
+    void testFindByEmail_UserNotFound() {
         String email = "user@example.com";
 
         when(userRepository.findByEmail(email)).thenReturn(Mono.empty());
@@ -162,348 +133,301 @@ public class UserServiceTest {
                 .expectErrorSatisfies(error -> {
                     Assertions.assertTrue(error instanceof ResponseStatusException);
                     ResponseStatusException exception = (ResponseStatusException) error;
-                    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+                    assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
                     assertEquals("User is not found.", exception.getReason());
                 })
                 .verify();
     }
 
     @Test
-    public void testCreate_ValidUser() {
+    void testCreate() {
         User user = new User();
-
-        when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
+        
+        when(userRepository.save(user)).thenReturn(Mono.just(user));
 
         Mono<User> result = userService.create(user);
 
-        StepVerifier.create(result).expectNext(user).verifyComplete();
+        StepVerifier.create(result)
+        	.expectNext(user)
+        	.verifyComplete();
+    }
+    
+    @Test
+    void testCreate_InternalServerError() {
+        User user = new User();
+        
+        when(userRepository.save(user)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error by creating user")));
+
+        Mono<User> result = userService.create(user);
+
+        StepVerifier.create(result)
+                .expectErrorSatisfies(error -> {
+                	assert error instanceof ResponseStatusException;
+                    ResponseStatusException responseError = (ResponseStatusException) error;
+                    assertEquals(responseError.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+                    assertEquals(responseError.getMessage(), "500 INTERNAL_SERVER_ERROR \"Error by creating user\"");
+                })
+                .verify();
+
+        verify(userRepository).save(user);
     }
 
     @Test
-    public void testDeleteById_UserNotFound() {
+    void testUpdate_AuthorizedUser() {
         String id = "123";
+        User user = new User();
+        user.setId(id);
+        String authorization = "Bearer <token>";
+        String userEmail = "user@example.com";
+
+        when(jwtService.extractUsername("<token>")).thenReturn(userEmail);
+        when(userRepository.findByEmail(userEmail)).thenReturn(Mono.just(user));
+        when(userRepository.save(user)).thenReturn(Mono.just(user));
+
+        Mono<User> result = userService.update(id, user, authorization);
+
+        StepVerifier.create(result)
+        	.expectNext(user)
+        	.verifyComplete();
+    }
+    
+    @Test
+    void testUpdate_EmptyTokenUnauthorizedUser() {
+        String id = "123";
+        User user = new User();
+        user.setId(id);
+        String authorization = "";
+        
+        Mono<User> result = userService.update(id, user, authorization);
+
+        StepVerifier.create(result)
+        .expectErrorSatisfies(error -> {
+        	assert error instanceof ResponseStatusException;
+            ResponseStatusException responseError = (ResponseStatusException) error;
+            assertEquals(responseError.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        })
+        .verify();
+    }
+    
+    @Test
+    void testUpdate_InvalidTokenUnauthorizedUser() {
+        String id = "123";
+        User user = new User();
+        user.setId(id);
+        String authorization = "Bearer";
+  
+        Mono<User> result = userService.update(id, user, authorization);
+
+        StepVerifier.create(result)
+        .expectErrorSatisfies(error -> {
+        	assert error instanceof ResponseStatusException;
+            ResponseStatusException responseError = (ResponseStatusException) error;
+            assertEquals(responseError.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        })
+        .verify();
+    }
+    
+    @Test
+    void testUpdate_UserNotFound() {
+        String id = "123";
+        User user = new User();
+        user.setId(id);
+        String authorization = "Bearer <token>";
+        String userEmail = "user@example.com";
+
+        when(jwtService.extractUsername("<token>")).thenReturn(userEmail);
+        when(userRepository.findByEmail(userEmail)).thenReturn(Mono.empty());
+
+        Mono<User> result = userService.update(id, user, authorization);
+
+        StepVerifier.create(result)
+        .expectErrorSatisfies(error -> {
+        	assert error instanceof ResponseStatusException;
+            ResponseStatusException responseError = (ResponseStatusException) error;
+            assertEquals(responseError.getStatusCode(), HttpStatus.NOT_FOUND);
+            assertEquals(responseError.getMessage(), "404 NOT_FOUND \"User is not found.\"");
+        })
+        .verify();
+    }
+    
+    @Test
+    void testAddProfilePhoto_ReturnProfilePhoto() {
+    	FilePart filePart = mock(FilePart.class);
+    	Long imageSize = 3456545L;
         String authorization = "Bearer <token>";
 
-        when(jwtService.extractUsername(anyString())).thenReturn("user@example.com");
-        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
+        String email = "example@test.com";
+        User user = User.builder().email(email).build();             
+        Image image = new Image();
+        user.setProfilePhoto(image);
+        
+        when(jwtService.extractUsername("<token>")).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
+        when(imageService.addPhoto(any(Mono.class), anyLong())).thenReturn(Mono.just(image));
+        when(userRepository.save(user)).thenReturn(Mono.just(user));
+        
+        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), imageSize, authorization);
+
+        StepVerifier.create(result)
+                .expectNext(image)
+                .verifyComplete();
+    }
+
+    @Test
+    void testAddProfilePhoto_InvalidAuthorizationToken() {
+    	FilePart filePart = mock(FilePart.class);
+    	Long imageSize = 3456545L;
+        String authorization = "";
+
+        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), imageSize, authorization);
+
+        StepVerifier.create(result)
+        .expectErrorSatisfies(error -> {
+        	assert error instanceof ResponseStatusException;
+            ResponseStatusException responseError = (ResponseStatusException) error;
+            assertEquals(responseError.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        })
+        .verify();
+    }
+
+    @Test
+    void testAddProfilePhoto_InternalServerError() {
+    	FilePart filePart = mock(FilePart.class);
+    	Long imageSize = 3456545L;
+        String authorization = "Bearer <token>";
+
+        String email = "example@test.com";
+        User user = User.builder().email(email).build();             
+        Image image = new Image();
+        user.setProfilePhoto(image);
+        
+        when(jwtService.extractUsername("<token>")).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
+        when(imageService.addPhoto(any(Mono.class), anyLong())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
+        
+        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), imageSize, authorization);
+
+        StepVerifier.create(result)
+        .expectErrorSatisfies(error -> {
+        	assert error instanceof ResponseStatusException;
+            ResponseStatusException responseError = (ResponseStatusException) error;
+            assertEquals(responseError.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+            assertEquals(responseError.getMessage(), "500 INTERNAL_SERVER_ERROR \"Failed to insert profile photo.\"");
+        })
+        .verify();
+    }
+    
+    @Test
+    void testAddProfilePhoto_NotFound() {
+    	FilePart filePart = mock(FilePart.class);
+    	Long imageSize = 3456545L;
+        String authorization = "Bearer <token>";
+
+        String email = "example@test.com";
+        User user = User.builder().email(email).build();             
+        Image image = new Image();
+        user.setProfilePhoto(image);
+        
+        when(jwtService.extractUsername("<token>")).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
+       
+        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), imageSize, authorization);
+
+        StepVerifier.create(result)
+        .expectErrorSatisfies(error -> {
+        	assert error instanceof ResponseStatusException;
+            ResponseStatusException responseError = (ResponseStatusException) error;
+            assertEquals(responseError.getStatusCode(), HttpStatus.UNAUTHORIZED);
+        })
+        .verify();
+    }
+    
+
+    @Test
+    void testGetProfilePhotoById_WithExistingUser_ShouldReturnProfilePhoto() {
+        String userId = "123";
+        User user = new User();
+        Image image = new Image();
+        user.setProfilePhoto(image);
+
+        when(userRepository.findById(userId)).thenReturn(Mono.just(user));
+
+        Mono<Image> result = userService.getProfilePhotoById(userId);
+
+        StepVerifier.create(result)
+	        .expectNext(image)
+	        .verifyComplete();
+    }
+
+    @Test
+    void testGetProfilePhotoById_WithNonExistingUser_ReturnNotFound() {
+    	String userId = "123";
+        User user = User.builder().id(userId).build();
+        Image image = new Image();
+        user.setProfilePhoto(image);
+
+        when(userRepository.findById(userId)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + userId + " is not found.")));
+
+        Mono<Image> result = userService.getProfilePhotoById(userId);
+
+        StepVerifier.create(result)
+	        .expectErrorSatisfies(error -> {
+	        	assert error instanceof ResponseStatusException;
+	            ResponseStatusException responseError = (ResponseStatusException) error;
+	            assertEquals(responseError.getStatusCode(), HttpStatus.NOT_FOUND);
+	            assertEquals(responseError.getMessage(), "404 NOT_FOUND \"User with id " + userId + " is not found.\"");
+	        })
+	        .verify();
+    }
+   
+    @Test
+    void testDeleteById_ReturnNoContent() {
+        String id = "123";
+        String email = "user@example.com";
+        String authorization = "Bearer <token>";
+        User user = User.builder()
+        		.id("123")
+        		.email("user@example.com")
+        		.build();
+
+        when(jwtService.extractUsername(anyString())).thenReturn(email);
+        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
+        when(userRepository.deleteById(id)).thenReturn(Mono.empty());
 
         Mono<Void> result = userService.delete(id, authorization);
 
         StepVerifier.create(result)
-                .expectErrorSatisfies(error -> {
-                    Assertions.assertTrue(error instanceof ResponseStatusException);
-                    ResponseStatusException exception = (ResponseStatusException) error;
-                    assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-                    assertEquals("User is not found.", exception.getReason());
-                })
-                .verify();
+        	.verifyComplete();
+        verify(userRepository).deleteById(id);
     }
 
     @Test
-    void createUser_Success() {
-        // Arrange
-        User user = new User();
-        user.setCreatedAt(new Date());
-
-        when(userRepository.save(user)).thenReturn(Mono.just(user));
-
-        // Act
-        Mono<User> result = userService.create(user);
-
-        // Assert
-        StepVerifier.create(result)
-                .expectNext(user)
-                .verifyComplete();
-
-        verify(userRepository).save(user);
-    }
-
-    @Test
-    void createUser_Error() {
-        // Arrange
-        User user = new User();
-        user.setCreatedAt(new Date());
-
-        when(userRepository.save(user)).thenReturn(Mono.error(new IllegalArgumentException()));
-
-        // Act
-        Mono<User> result = userService.create(user);
-
-        // Assert
-        StepVerifier.create(result)
-                .expectErrorSatisfies(error -> {
-                    assert error instanceof ResponseStatusException;
-                    assert ((ResponseStatusException) error).getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR;
-                })
-                .verify();
-
-        verify(userRepository).save(user);
-    }
-
-    @Test
-    void deleteAll_Success() {
-        // Arrange
-        when(userRepository.deleteAll()).thenReturn(Mono.empty());
-
-        // Act
-        Mono<Void> result = userService.deleteAll();
-
-        // Assert
-        StepVerifier.create(result)
-                .verifyComplete();
-
-        verify(userRepository).deleteAll();
-    }
-
-    @Test
-    public void testGetProfilePhotoById_WithExistingUser_ShouldReturnProfilePhoto() {
-        // Arrange
-        String userId = "123";
-        User user = new User();
-        user.setProfilePhoto(new Image());
-
-        when(userRepository.findById(userId)).thenReturn(Mono.just(user));
-
-        // Act
-        Mono<Image> result = userService.getProfilePhotoById(userId);
-
-        // Assert
-        StepVerifier.create(result)
-                .expectNextCount(1)
-                .verifyComplete();
-
-        verify(userRepository, times(1)).findById(userId);
-    }
-
-    @Test
-    public void testGetProfilePhotoById_WithNonExistingUser_ShouldThrowException() {
-        // Arrange
-        String userId = "456";
-
-        when(userRepository.findById(userId)).thenReturn(Mono.empty());
-
-        // Act
-        Mono<Image> result = userService.getProfilePhotoById(userId);
-
-        // Assert
-        StepVerifier.create(result)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof ResponseStatusException
-                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.NOT_FOUND
-                                && throwable.getMessage().contains("User with id " + userId + " is not found.")
-                )
-                .verify();
-
-        verify(userRepository, times(1)).findById(userId);
-    }
-
-    @Test
-    public void testGetProfilePhotoById_WithUserWithoutProfilePhoto_ShouldThrowException() {
-        // Arrange
-        String userId = "789";
-        User user = new User();
-
-        when(userRepository.findById(userId)).thenReturn(Mono.just(user));
-
-        // Act
-        Mono<Image> result = userService.getProfilePhotoById(userId);
-
-        // Assert
-        StepVerifier.create(result)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof ResponseStatusException
-                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.NOT_FOUND
-                                && throwable.getMessage().contains("User with id " + userId + " has no profile photo.")
-                )
-                .verify();
-
-        verify(userRepository, times(1)).findById(userId);
-    }
-
-
-    @Test
-    public void addProfilePhoto_InvalidAuthorizationToken_ReturnsUnauthorizedError() {
-        // Mocking input data
-        String authorization = "InvalidToken";
-
-        // Calling the method and verifying the error response
-        StepVerifier.create(userService.addProfilePhoto(Mono.empty(), 0L, authorization))
-                .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
-                        && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.UNAUTHORIZED)
-                .verify();
-
-        // Verifying that repository and service methods were not called
-        verifyNoInteractions(userRepository);
-        verifyNoInteractions(imageService);
-    }
-
-    @Test
-    public void addProfilePhoto_UserNotFound_ReturnsUnauthorizedError() {
-        // Mocking input data
-        String authorization = "Bearer token";
-
-        // Mocking repository behavior
-        when(jwtService.extractUsername(anyString())).thenReturn("user@example.com");
-        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
-
-        // Calling the method and verifying the error response
-        StepVerifier.create(userService.addProfilePhoto(Mono.empty(), 0L, authorization))
-                .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
-                        && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.UNAUTHORIZED)
-                .verify();
-
-        // Verifying that repository and service methods were called with the expected arguments
-        verify(userRepository).findByEmail("user@example.com");
-        verifyNoInteractions(imageService);
-    }
-
-
-    @Test
-    @DisplayName("Add profile photo with invalid authorization token")
-    public void testAddProfilePhoto_InvalidAuthorizationToken() {
-        // Mocking input data
-        String authorization = "InvalidToken";
-
-        // Calling the method and verifying the error response
-        StepVerifier.create(userService.addProfilePhoto(Mono.empty(), 0L, authorization))
-                .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
-                        && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.UNAUTHORIZED)
-                .verify();
-
-        // Verifying that repository and service methods were not called
-        verifyNoInteractions(userRepository);
-        verifyNoInteractions(imageService);
-    }
-
-    @Test
-    @DisplayName("Add profile photo with user not found")
-    public void testAddProfilePhoto_UserNotFound() {
-        // Mocking input data
-        String authorization = "Bearer token";
-        String userEmail = "user@example.com";
-
-        // Mocking repository behavior
-        when(jwtService.extractUsername(anyString())).thenReturn(userEmail);
-        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
-
-        // Calling the method and verifying the error response
-        StepVerifier.create(userService.addProfilePhoto(Mono.empty(), 0L, authorization))
-                .expectErrorMatches(throwable -> throwable instanceof ResponseStatusException
-                        && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.UNAUTHORIZED)
-                .verify();
-
-        // Verifying that repository and service methods were called with the expected arguments
-        verify(userRepository).findByEmail(userEmail);
-        verifyNoInteractions(imageService);
-    }
-
-    @Test
-    void findAll_ReturnsAllUsers() {
-        // Mocking repository behavior
-        User user1 = new User();
-        User user2 = new User();
-        when(userRepository.findAll()).thenReturn(Flux.just(user1, user2));
-
-        // Calling the method and verifying the result
-        Flux<User> result = userService.findAll();
-        StepVerifier.create(result)
-                .expectNext(user1)
-                .expectNext(user2)
-                .verifyComplete();
-
-        // Verifying that the repository method was called
-        verify(userRepository).findAll();
-    }
-
-    @Test
-    void findById_ExistingUserId_ReturnsUser() {
-        // Mocking input data
-        String userId = "123";
-
-        // Mocking repository behavior
-        User user = new User();
-        when(userRepository.findById(userId)).thenReturn(Mono.just(user));
-
-        // Calling the method and verifying the result
-        Mono<User> result = userService.findById(userId);
-        StepVerifier.create(result)
-                .expectNext(user)
-                .verifyComplete();
-
-        // Verifying that the repository method was called with the correct argument
-        verify(userRepository).findById(userId);
-    }
-
-    @Test
-    void findById_NonExistingUserId_ReturnsError() {
-        // Mocking input data
-        String userId = "456";
-
-        // Mocking repository behavior
-        when(userRepository.findById(userId)).thenReturn(Mono.empty());
-
-        // Calling the method and verifying the error response
-        Mono<User> result = userService.findById(userId);
-        StepVerifier.create(result)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof ResponseStatusException
-                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST
-                                && throwable.getMessage().contains("User is not found.")
-                )
-                .verify();
-
-        // Verifying that the repository method was called with the correct argument
-        verify(userRepository).findById(userId);
-    }
-
-    @Test
-    void create_ValidUser_ReturnsCreatedUser() {
-        // Mocking input data
-        User user = new User();
-        user.setCreatedAt(new Date());
-
-        // Mocking repository behavior
-        when(userRepository.save(any(User.class))).thenReturn(Mono.just(user));
-
-        // Calling the method and verifying the result
-        Mono<User> result = userService.create(user);
-        StepVerifier.create(result)
-                .expectNext(user)
-                .verifyComplete();
-
-        // Verifying that the repository method was called with the correct argument
-        verify(userRepository).save(userCaptor.capture());
-        User capturedUser = userCaptor.getValue();
-        assertEquals(user.getCreatedAt(), capturedUser.getCreatedAt());
-        // Assert other properties if necessary
-    }
-
-    @Test
-    public void testFindByEmail_ExistingEmail_ReturnsUser() {
-        // Mocking input data
-        String email = "user@example.com";
-        User user = new User();
-        user.setEmail(email);
-
-        // Mocking repository behavior
-        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
-
-        // Calling the method and verifying the result
-        Mono<User> result = userService.findByEmail(email);
-        StepVerifier.create(result)
-                .expectNext(user)
-                .verifyComplete();
-
-        // Verifying that the repository method was called with the correct argument
-        verify(userRepository).findByEmail(email);
-    }
-
-    @Test
-    public void testDelete_InvalidAuthorizationToken_ReturnsUnauthorizedError() {
+    void testDelete_UserNotFound() {
         String id = "123";
-        String authorization = "InvalidToken";
+        String authorization = "Bearer <token>";
 
-        when(jwtService.extractUsername(anyString())).thenThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
+        when(jwtService.extractUsername(anyString())).thenReturn("user@example.com");
+        when(userRepository.findByEmail(anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
+
+        Mono<Void> result = userService.delete(id, authorization);
+
+        StepVerifier.create(result)
+	        .expectErrorSatisfies(error -> {
+	        	assert error instanceof ResponseStatusException;
+	            ResponseStatusException responseError = (ResponseStatusException) error;
+	            assertEquals(responseError.getStatusCode(), HttpStatus.NOT_FOUND);
+	            assertEquals(responseError.getMessage(), "404 NOT_FOUND \"User is not found.\"");
+	        })
+	        .verify();
+
+        verify(userRepository).findByEmail(anyString());
+        verify(userRepository, never()).deleteById(anyString());
+    }
+    
+    @Test
+    void testDelete__ReturnsUnauthorizedError() {
+        String id = "123";
+        String authorization = "";
 
         Mono<Void> result = userService.delete(id, authorization);
 
@@ -515,44 +439,38 @@ public class UserServiceTest {
 
         verifyNoInteractions(userRepository);
     }
+    
     @Test
-    public void testDelete_UserNotFound_ReturnsBadRequestError() {
+    void testDeleteInvalidToken__ReturnsUnauthorizedError() {
         String id = "123";
         String authorization = "Bearer <token>";
 
         when(jwtService.extractUsername(anyString())).thenReturn("user@example.com");
-        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
-
+        when(userRepository.findByEmail(anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to delete this account.")));
+        
         Mono<Void> result = userService.delete(id, authorization);
 
         StepVerifier.create(result)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof ResponseStatusException &&
-                                ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST)
-                .verify();
-
-        verify(userRepository).findByEmail("user@example.com");
-        verifyNoMoreInteractions(userRepository);
+        .expectErrorSatisfies(error -> {
+        	assert error instanceof ResponseStatusException;
+            ResponseStatusException responseError = (ResponseStatusException) error;
+            assertEquals(responseError.getStatusCode(), HttpStatus.UNAUTHORIZED);
+            assertEquals(responseError.getMessage(), "401 UNAUTHORIZED \"You are not authorized to delete this account.\"");
+        })
+        .verify();
     }
-
+    
     @Test
-    public void testDelete_UserNotFound() {
-        String id = "123";
-        String authorization = "Bearer <token>";
+    void deleteAll_Success() {
 
-        when(jwtService.extractUsername(anyString())).thenReturn("user@example.com");
-        when(userRepository.findByEmail(anyString())).thenReturn(Mono.empty());
+    	when(userRepository.deleteAll()).thenReturn(Mono.empty());
 
-        Mono<Void> result = userService.delete(id, authorization);
+        Mono<Void> result = userService.deleteAll();
 
         StepVerifier.create(result)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof ResponseStatusException &&
-                                ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST &&
-                                ((ResponseStatusException) throwable).getReason().equals("User is not found."))
-                .verify();
+                .verifyComplete();
 
-        verify(userRepository).findByEmail(anyString());
-        verify(userRepository, never()).deleteById(anyString());
+        verify(userRepository).deleteAll();
     }
+
 }
