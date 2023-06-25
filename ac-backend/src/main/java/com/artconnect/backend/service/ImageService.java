@@ -1,7 +1,5 @@
 package com.artconnect.backend.service;
 
-import java.io.IOException;
-
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -24,7 +22,7 @@ public class ImageService {
 	
 	private final ImageRepository imageRepository;
 	
-	public Mono<Image> addPhoto(Mono<FilePart> file, Long sizeFile) throws IOException {
+	public Mono<Image> addPhoto(Mono<FilePart> file, Long sizeFile)  {
 		return Mono
 	            .zip(file, file.flatMap(filePart -> DataBufferUtils.join(filePart.content())))
 	            .flatMap(tuple -> {
@@ -54,9 +52,7 @@ public class ImageService {
 	                } else {
 	                    return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is not valid"));
 	                }
-	            })
-	            .onErrorResume(IOException.class, error ->
-	                    Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Image is not saved")));
+	            });
     }
 	
 	public Mono<Image> getPhoto(String id) { 
