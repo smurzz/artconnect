@@ -110,4 +110,112 @@ class UserRepositoryTests {
                 .expectComplete()
                 .verify();
     }
+    
+    @Test
+    void testFindByFirstnameSuccessOne() {
+        // Given
+        String firstname = "Anna";
+        User user = User.builder().firstname(firstname).build();
+        when(userRepository.findByFirstnameIgnoreCase(firstname)).thenReturn(Flux.just(user));
+
+        // When
+        Flux<User> foundUserFlux = userRepository.findByFirstnameIgnoreCase(firstname);
+
+        // Then
+        StepVerifier.create(foundUserFlux)
+        		.expectNext(user)
+                .expectComplete()
+                .verify();
+    }
+    
+    @Test
+    void testFindByLastnameSuccessOne() {
+    	// Given
+    	String lastname = "Black";
+    	User user = User.builder().lastname(lastname).build();
+    	when(userRepository.findByLastnameIgnoreCase(lastname)).thenReturn(Flux.just(user));
+    	
+    	// When
+    	Flux<User> foundUserFlux = userRepository.findByLastnameIgnoreCase(lastname);
+
+    	// Then
+    	StepVerifier.create(foundUserFlux)
+    	        .expectNext(user)
+    	        .expectComplete()
+    	        .verify();
+    }
+    
+    @Test
+    void testFindByFirstnameAndLastnameSuccessOne() {
+    	// Given
+    	String firstname = "Anna";
+    	String lastname = "Black";
+    	User user = User.builder().firstname(firstname).lastname(lastname).build();
+    	when(userRepository.findByFirstnameIgnoreCaseAndLastnameIgnoreCase(firstname, lastname)).thenReturn(Flux.just(user));
+    	
+    	// When
+    	Flux<User> foundUserFlux = userRepository.findByFirstnameIgnoreCaseAndLastnameIgnoreCase(firstname, lastname);
+
+    	// Then
+    	StepVerifier.create(foundUserFlux)
+    	        .expectNext(user)
+    	        .expectComplete()
+    	        .verify();
+    }
+    
+    @Test
+    void testFindByFirstnameSuccessMultiple() {
+        // Given
+        String firstname = "Anna";
+        User user1 = User.builder().firstname(firstname).build();
+        User user2 = User.builder().firstname(firstname).build();
+        when(userRepository.findByFirstnameIgnoreCase(firstname)).thenReturn(Flux.just(user1, user2));
+
+        // When
+        Flux<User> foundUserFlux = userRepository.findByFirstnameIgnoreCase(firstname);
+
+        // Then
+        StepVerifier.create(foundUserFlux)
+                .expectNext(user1, user2)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void testFindByLastnameSuccessMultiple() {
+        // Given
+        String lastname = "Black";
+        User user1 = User.builder().lastname(lastname).build();
+        User user2 = User.builder().lastname(lastname).build();
+        when(userRepository.findByLastnameIgnoreCase(lastname)).thenReturn(Flux.just(user1, user2));
+
+        // When
+        Flux<User> foundUserFlux = userRepository.findByLastnameIgnoreCase(lastname);
+
+        // Then
+        StepVerifier.create(foundUserFlux)
+                .expectNext(user1, user2)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void testFindByFirstnameAndLastnameSuccessMultiple() {
+        // Given
+        String firstname = "Anna";
+        String lastname = "Black";
+        User user1 = User.builder().firstname(firstname).lastname(lastname).build();
+        User user2 = User.builder().firstname(firstname).lastname(lastname).build();
+        when(userRepository.findByFirstnameIgnoreCaseAndLastnameIgnoreCase(firstname, lastname))
+                .thenReturn(Flux.just(user1, user2));
+
+        // When
+        Flux<User> foundUserFlux = userRepository.findByFirstnameIgnoreCaseAndLastnameIgnoreCase(firstname, lastname);
+
+        // Then
+        StepVerifier.create(foundUserFlux)
+                .expectNext(user1, user2)
+                .expectComplete()
+                .verify();
+    }
 }

@@ -65,6 +65,42 @@ public class UserServiceTest {
 
         StepVerifier.create(result).expectNextCount(2).verifyComplete();
     }
+    
+    @Test
+    void testFindByFirstname() {
+    	User user = User.builder().firstname("Anna").build();
+    	User user2 = User.builder().firstname("Anna").build();
+    	
+        when(userRepository.findByFirstnameIgnoreCase(anyString())).thenReturn(Flux.just(user, user2));
+
+        Flux<User> result = userService.findByFirstname("anna");
+
+        StepVerifier.create(result).expectNextCount(2).verifyComplete();
+    }
+    
+    @Test
+    void testFindByLastname() {
+    	User user = User.builder().lastname("Black").build();
+    	User user2 = User.builder().lastname("Black").build();
+    	
+        when(userRepository.findByLastnameIgnoreCase(anyString())).thenReturn(Flux.just(user, user2));
+
+        Flux<User> result = userService.findByLastname("BLACK");
+
+        StepVerifier.create(result).expectNextCount(2).verifyComplete();
+    }
+    
+    @Test
+    void testFindByFirstnameAndOrLastname() {
+    	User user = User.builder().firstname("Anna").lastname("Black").build();
+    	User user2 = User.builder().firstname("Anna").lastname("Black").build();
+    	
+        when(userRepository.findByFirstnameIgnoreCaseAndLastnameIgnoreCase(anyString(), anyString())).thenReturn(Flux.just(user, user2));
+
+        Flux<User> result = userService.findByFirstnameAndLastname("aNna", "BLACK");
+
+        StepVerifier.create(result).expectNextCount(2).verifyComplete();
+    }
 
     @Test
     void testFindById() {

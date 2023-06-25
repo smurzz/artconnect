@@ -92,7 +92,7 @@ class UserControllerTest {
 		when(userService.findAll()).thenReturn(Flux.just(user1, user2));
 
 		webTestClient.get()
-				.uri("/users/")
+				.uri("/users")
 				.exchange()
 				.expectStatus().isOk()
 				.expectBodyList(UserResponse.class)
@@ -100,6 +100,93 @@ class UserControllerTest {
 					List<UserResponse> userResponses = response.getResponseBody();
 					assertThat(userResponses).isNotNull();
 					assertThat(userResponses).contains(UserResponse.fromUser(user1));
+					assertThat(userResponses).contains(UserResponse.fromUser(user2));
+				});
+	}
+	
+	@Test
+	void getUsersByFirstnameAndOrLastname_shouldReturnUsersByFirstname() {
+		User user2 = new User();
+		user2.setFirstname("Jane");
+		user2.setLastname("Smith");
+		user2.setEmail("jane@example.com");
+
+		when(userService.findByFirstname("Jane")).thenReturn(Flux.just(user2));
+
+		webTestClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.path("/users/search")
+						.queryParam("firstname", "Jane")
+						.build())
+				.exchange()
+				.expectStatus().isOk()
+				.expectBodyList(UserResponse.class)
+				.consumeWith(response -> {
+					List<UserResponse> userResponses = response.getResponseBody();
+					assertThat(userResponses).isNotNull();
+					assertThat(userResponses).contains(UserResponse.fromUser(user2));
+				});
+	}
+	
+	@Test
+	void getUsersByFirstnameAndOrLastname_shouldReturnUsersByLastname() {
+		User user = new User();
+		user.setFirstname("Jane");
+		user.setLastname("Smith");
+		user.setEmail("jane@example.com");
+		
+		User user2 = new User();
+		user.setFirstname("Kate");
+		user.setLastname("Smith");
+		user.setEmail("kate@example.com");
+
+
+		when(userService.findByLastname(anyString())).thenReturn(Flux.just(user, user2));
+
+		webTestClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.path("/users/search")
+						.queryParam("lastname", "smith")
+						.build())
+				.exchange()
+				.expectStatus().isOk()
+				.expectBodyList(UserResponse.class)
+				.consumeWith(response -> {
+					List<UserResponse> userResponses = response.getResponseBody();
+					assertThat(userResponses).isNotNull();
+					assertThat(userResponses).contains(UserResponse.fromUser(user));
+					assertThat(userResponses).contains(UserResponse.fromUser(user2));
+				});
+	}
+	
+	@Test
+	void getUsersByLastnameAndOrLastname_shouldReturnUsers() {
+		User user = new User();
+		user.setFirstname("Kate");
+		user.setLastname("Smith");
+		user.setEmail("kate2@example.com");
+		
+		User user2 = new User();
+		user.setFirstname("Kate");
+		user.setLastname("Smith");
+		user.setEmail("kate@example.com");
+
+
+		when(userService.findByFirstnameAndLastname(anyString(), anyString())).thenReturn(Flux.just(user, user2));
+
+		webTestClient.get()
+				.uri(uriBuilder -> uriBuilder
+						.path("/users/search")
+						.queryParam("firstname", "kate")
+						.queryParam("lastname", "smith")
+						.build())
+				.exchange()
+				.expectStatus().isOk()
+				.expectBodyList(UserResponse.class)
+				.consumeWith(response -> {
+					List<UserResponse> userResponses = response.getResponseBody();
+					assertThat(userResponses).isNotNull();
+					assertThat(userResponses).contains(UserResponse.fromUser(user));
 					assertThat(userResponses).contains(UserResponse.fromUser(user2));
 				});
 	}
@@ -297,7 +384,7 @@ class UserControllerTest {
 
 		webTestClient
 			.post()
-			.uri("/users/")
+			.uri("/users")
 			.contentType(MediaType.APPLICATION_JSON)
 	        .body(Mono.just(userRequest), UserRequest.class)
 			.exchange()
@@ -315,7 +402,7 @@ class UserControllerTest {
 
 		webTestClient
 			.post()
-			.uri("/users/")
+			.uri("/users")
 			.contentType(MediaType.APPLICATION_JSON)
 	        .body(Mono.just(userRequest), UserRequest.class)
 			.exchange()
@@ -327,7 +414,7 @@ class UserControllerTest {
 	void createUser_shouldReturnForbitten() {
 		webTestClient
 				.post()
-				.uri("/users/")
+				.uri("/users")
 				.contentType(MediaType.APPLICATION_JSON)
 		        .body(Mono.just(new UserRequest()), UserRequest.class)
 				.exchange()
@@ -727,7 +814,7 @@ class UserControllerTest {
         when(userService.deleteAll()).thenReturn(Mono.empty());
 
         webTestClient.delete()
-			.uri("/users/")
+			.uri("/users")
 			.exchange()
 			.expectStatus().isNoContent();
     }
@@ -735,7 +822,7 @@ class UserControllerTest {
 	@Test
     void deleteAllUsers_shouldReturnNotFound() {
         webTestClient.delete()
-			.uri("/users/")
+			.uri("/users")
 			.exchange()
 			.expectStatus().isUnauthorized();
     }
@@ -744,7 +831,7 @@ class UserControllerTest {
 	@WithMockUser
     void deleteAllUsers_shouldReturnForbitten() {
         webTestClient.delete()
-			.uri("/users/")
+			.uri("/users")
 			.exchange()
 			.expectStatus().isForbidden();
     }
