@@ -5,7 +5,6 @@ import "./bearbeiten.css";
 
 import axios from "../../api/axios";
 import {ApiService} from "../../lib/api";
-import {ExhibitionService} from "./functions/handleExhibitionFunctions";
 import { format } from 'date-fns';
 
 import CssBaseline from '@mui/material/CssBaseline';
@@ -50,8 +49,8 @@ function Bearbeiten(props) {
             email: "",
             biography: "",
             dateOfBirthday: "",
-            telefonNumber:"",
-            street:"",
+            telefonNumber: "",
+            street: "",
             postCode: "",
             city:"",
             country:"",
@@ -80,7 +79,7 @@ function Bearbeiten(props) {
 
     //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
     useEffect(() => {
-        if(user.dateOfBirthday ) {
+        if(user.dateOfBirthday) {
             setIsDateOfBirthVisible(true);
         }else{
             setIsDateOfBirthVisible(false);
@@ -147,7 +146,7 @@ function Bearbeiten(props) {
         setSuccess(false);
         setErrorMessage(false);
     },[selectedFile]);
-    
+
 const handleSubmit = async (event) => {
     event.preventDefault();
     const requestBody = {};
@@ -159,9 +158,9 @@ const handleSubmit = async (event) => {
     if (userBearbeiten.lastname !== "") {
         requestBody.lastname = userBearbeiten.lastname;
     }
-    if (userBearbeiten.biography !== "") {
+
         requestBody.biography = userBearbeiten.biography;
-    }
+
 
     if(userBearbeiten.dateOfBirthday !==""){
         console.log("date of Birth: "+ userBearbeiten.dateOfBirthday );
@@ -173,22 +172,37 @@ const handleSubmit = async (event) => {
         requestBody.isDateOfBirthVisible ="PRIVATE";
     }
     // Add exhibitionValues fields
-    const exhibitions = exhibitionValues.filter((exhibition) => exhibition.title !== "" && exhibition.link !== "");
+    const exhibitions = exhibitionValues.filter((exhibition) => exhibition.title !== "" && exhibition.location !== "" && exhibition.year !== "" && exhibition.description !== "");
     if (exhibitions.length > 0) {
         requestBody.exhibitions = exhibitions;
     }
+    else if(user.exhibitions?.length >= 1){
+        requestBody.exhibitions =  [
 
-    requestBody.contacts = userBearbeiten.telefonNumber;
-    requestBody.contacts = userBearbeiten.website;
-    //requestBody.contacts.address = userBearbeiten.street;
-    //requestBody.contacts.address = userBearbeiten.postCode;
-    //requestBody.contacts.address = userBearbeiten.city;
-    //requestBody.contacts.address = userBearbeiten.country;
+        ]
+
+    }
+
+    requestBody.contacts = {
+        ...user.contacts,
+        address: {
+            ...user.contacts?.address,
+            ...(userBearbeiten.street !== "" && { street: userBearbeiten.street }),
+            ...(userBearbeiten.postCode !== "" && { postalCode: userBearbeiten.postCode }),
+            ...(userBearbeiten.city !== "" && { city: userBearbeiten.city }),
+            ...(userBearbeiten.country !== "" && { country: userBearbeiten.country })
+        },
+        ...(userBearbeiten.telefonNumber !== "" && { telefonNumber: userBearbeiten.telefonNumber }),
+        ...(userBearbeiten.website !== "" && { website: userBearbeiten.website })
+    };
 
     // Add socialMedia fields
     const socialMedias = socialMedia.filter((media) => media.title !== "" && media.link !== "");
     if (socialMedias.length > 0) {
         requestBody.socialMedias = socialMedias;
+    }
+    else if(user.socialMedias?.length >= 1){
+        requestBody.socialMedias =  []
     }
 console.log("requestBody: "+ JSON.stringify(requestBody));
     const result = await ApiService.patchdataSecured("/users/" + user.id, requestBody);
@@ -213,9 +227,7 @@ return (
                   <p className="text-base font-semibold leading-7 text-gray-900">Edit Profil</p>
                   <div className="marginBottom">
                       <button
-                          onClick={() => {
-                              navigate("/galerie");
-                          }}
+
                           type="button"
                           className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                       >
@@ -403,7 +415,7 @@ return (
               />
 
               <label className="inputField">website</label>
-              <input className="inputField" type="text" name="country"
+              <input className="inputField" type="text" name="website"
                      defaultValue= {user.contacts?.website? user.contacts.website : ""}
                      onChange={async (e) => {
                          setUserBearbeiten({...userBearbeiten, website: e.target.value})
@@ -424,7 +436,7 @@ return (
                             <Button type="button" className="button inputField remove"
                                     onClick={() => removeExhibitionFields(index)}>Remove</Button>
                             : null
-                    } 
+                    }
 
                     <div className="sm:col-span-4">
                             <label htmlFor="title" className="block text-sm font-medium leading-6 text-gray-900">
@@ -502,7 +514,7 @@ return (
         </button>
        </div>
 
-       
+
         </div>
 
         <div className="border-b border-gray-900/10 pb-12">
@@ -568,7 +580,11 @@ return (
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
+        <button type="button" className="text-sm font-semibold leading-6 text-gray-900"
+                onClick={() => {
+                    navigate("/galerie");
+                }}
+        >
           Abbrechen
         </button>
         <button
@@ -581,6 +597,12 @@ return (
     </form>
     </div>
     </div>
+        <button
+            onClick={() => {
+            navigate("/deleteUser",  { state: { userId: user.id}});
+        }}>
+            Profil löschen
+        </button>
     {/* tailwind ui */}
     </>
 );

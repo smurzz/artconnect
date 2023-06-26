@@ -36,11 +36,11 @@ const Profile = () => {
             const userProfile = await ApiService.getDataSecuredWithParameter(urlGetUser);
             setUser(userProfile.data);
             console.log("user Profile: "+ userProfile.data.dateOfBirthday )
-            if (userProfile.data.profilePhoto.image.data == undefined) {
+            if (! userProfile.data.profilePhoto?.image?.data ) {
                 setImage(Image);
 
                 //Blank Picture
-                console.log("user Data undefined.")
+                console.log("Image undefined.")
             } else {
                 const byteCharacters = atob(userProfile.data.profilePhoto.image.data);
                 const byteNumbers = new Array(byteCharacters.length);

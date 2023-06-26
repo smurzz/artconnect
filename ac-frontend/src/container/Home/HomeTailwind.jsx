@@ -422,67 +422,6 @@ export default function HomeTailwind() {
               </div>
             </div>
 
-            {/* Image section */}
-            <div className="mt-32 sm:mt-40 xl:mx-auto xl:max-w-7xl xl:px-8">
-              <Carousel className="carousel-inner"
-                        showThumbs={false}
-                        showStatus={false}
-                        infiniteLoop={true}
-                        autoPlay={true}
-                        interval={5000}
-              >
-                <div className="carouselItem">
-                  <div className="container">
-                    <div
-                        className="slider__text d-flex flex-column justify-content-start align-items-start container__color m-4">
-                      <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl color ">CREATE ART</h1>
-                      <p className="text__body textLeft">
-                        "They sit for hours in cafés, talking incessantly about culture, art, revolution,
-                        and so on and so forth, poisoning the air with theories upon theories that never
-                        come true."
-                        Are you like Frida Kahlo and prefer to create art rather than rationalize it with
-                        words?
-                        Then upload your works for free on our platform. </p>
-                    </div>
-                  </div>
-                  <img className="d-block w-100 h-100 overflow-hidden" src={data[0].image} alt="First slide"/>
-                </div>
-
-                <div className="carouselItem">
-                  <div className="container">
-                    <div
-                        className="slider__text d-flex flex-column justify-content-start align-items-start  container__color m-4">
-                      <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl color ">SUPPORT ART</h1>
-                      <p className="text__body textLeft">
-                        "Art does not reproduce the visible, but rather makes visible." This was the motto
-                        of Paul Klee, which inspired his theory of form and color. Art makes things visible,
-                        and artists need to be made visible. You can support us by giving their artworks a
-                        new home.
-                      </p>
-                    </div>
-                  </div>
-                  <img className="d-block w-100 h-100 overflow-hidden" src={data[1].image} alt="First slide"/>
-                </div>
-
-                <div className="carouselItem">
-                  <div className="container">
-                    <div
-                        className="m-4 slider__text d-flex flex-column justify-content-start align-items-start container__color">
-                      <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl color">EXPERIENCE ART</h1>
-                      <p className="text__body textLeft">
-                        "The art is not the bread, but rather the wine of life." In line with Jean Paul's
-                        thought, more than 120
-                        artists are already showcasing their works on our website. Let yourself be inspired
-                        and take a glimpse into
-                        the world of art and its artists.
-                      </p>
-                    </div>
-                  </div>
-                  <img className="d-block w-100 h-100 overflow-hidden" src={data[2].image} alt="First slide"/>
-                </div>
-              </Carousel>
-            </div>
-
             {/* Values section */}
             <div className="mx-auto mt-32 max-w-7xl px-6 sm:mt-40 lg:px-8">
               <div className="mx-auto max-w-2xl lg:mx-0">
