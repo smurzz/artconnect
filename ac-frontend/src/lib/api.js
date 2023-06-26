@@ -191,8 +191,38 @@ async function sendImage( payload) {
     }
 }
 
+async function deleteUser(userId, payload) {
+    const tokenInfo = await storageService.getTokenInformation();
+    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
+    if(!tokenInfo) return null;
+    try{
+        const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
+        var _headers = {
+            headers: {
+                Authorization: "Bearer " + tokenInfo.accessToken,
+                "Content-type": "multipart/form-data"
+            },
+        };
+        let url= "/users/"+userId;
+            axios.delete(url, _headers)
+                .then(response => {
+                    console.log("User was deleted");
+                })
+
+        console.log("Api Service - sendImage: success")
+        logikService.logout();
+        return "success";
+    }catch(error){
+        console.log("Api Service - sendImage: error")
+        return null;
+    }
+}
+
+
+
 
 export const ApiService = {
+    deleteUser,
     getDataSecuredWithParameter,
     postRegister,
     postLogin,

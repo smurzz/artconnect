@@ -11,6 +11,7 @@ import ResetPasswortSuccess from "./container/ForgotPassword/ForgetPasswordSucce
 import NotFound from "./container/404/404";
 import Bearbeiten from "./container/ProfilBearbeiten/bearbeiten";
 import DeleteUser from "./container/DeleteUser/deleteUser"
+import DeleteUserAnswer from "./container/DeleteUser/deleteUserAnswer"
 import DetailImage from "./container/BildAnsicht/ImageView"
 import DetailImage1 from "./container/BildAnsicht/ImageView1"
 import DetailImage2 from "./container/BildAnsicht/ImageView2"
@@ -38,7 +39,7 @@ function App() {
           {/*Galerie*/}
           <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
           <Route path="/galerie/DetailImage/1" element={<DetailImage/>}></Route>
-        <Route path="deleteUser" element ={<DeleteUser/>}></Route>
+        <Route path="/deleteUser" element ={<DeleteUser/>}></Route>
           <Route path="/galerie/DetailImage/2" element={<DetailImage1/>}></Route>
           <Route path="/galerie/DetailImage/3" element={<DetailImage2/>}></Route>
           <Route path="/galerie/DetailImage/4" element={<DetailImage3/>}></Route>
@@ -47,6 +48,7 @@ function App() {
           <Route path="/galerie/DetailImage/7" element={<DetailImage6/>}></Route>
           <Route path="/galerie/DetailImage/8" element={<DetailImage7/>}></Route>
           <Route path="/galerie/DetailImage/9" element={<DetailImage8/>}></Route>
+        <Route path="/deleteUserAnswer" element ={<DeleteUserAnswer/>}></Route>
           {/*User bearbeiten*/}
             <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
           <Route  element={<ProtectedRoutes />}>

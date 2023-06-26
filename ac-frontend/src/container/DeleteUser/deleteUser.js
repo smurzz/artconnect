@@ -13,7 +13,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useLocation} from "react-router-dom";
 import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
 //lineaer loading
@@ -23,11 +23,6 @@ import Header from "../../components/headerComponent/headerLogout"
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
 
 const FORGET_URL = "/forgot-password"
 function Copyright(props) {
@@ -51,9 +46,21 @@ export default function DeleteUser() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
+    const location = useLocation();
+    const { userId } = location.state;
 
-
-
+    const deleteUser = async (userShouldBeDeleted)=>{
+        if(userShouldBeDeleted == true){
+            setLoading(true);
+            let result = await ApiService.deleteUser(userId);
+            setLoading(true);
+            if(result =="success"){
+                navigate("/deleteUserAnswer",{state:{userWantsToBeDeleted: true }});
+            }
+        }else{
+            navigate("/deleteUserAnswer",{state:{userWantsToBeDeleted: false}});
+        }
+    }
     const handleSubmit = async (event) => {
         event.preventDefault();
     };
@@ -63,7 +70,7 @@ export default function DeleteUser() {
             <Header/>
             <main>
                 <Grid container component="main" sx={{ height: '100vh' }}>
-                    <CssBaseline />
+                    {loading && <CssBaseline/>}
                     <Grid
                         item
                         xs={false}
@@ -91,6 +98,11 @@ export default function DeleteUser() {
                             <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
                                 <LockOutlinedIcon />
                             </Avatar>
+
+                            <Typography component="h1" variant="h5">
+                                Are you sure you want to delete your Account?
+                                {userId}
+                            </Typography>
                             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
                                 <Grid item sm={12}>
                                     <Box sx={{ width: '100%' }}>
@@ -98,10 +110,11 @@ export default function DeleteUser() {
                                     </Box>
                                 </Grid>
                                 <Button
-                                    type="submit"
+                                    type="button"
                                     fullWidth
                                     variant="contained"
-                                    disabled={loading}
+                                    onClick ={()=>deleteUser(true)}
+                                    on
                                     sx={{
                                         mt: 3,
                                         mb: 2,
@@ -110,7 +123,23 @@ export default function DeleteUser() {
                                             backgroundColor: '#0a0a0a ',
                                         }
                                     }}>
-                                    Delete User
+                                    Yes.
+                                </Button>
+                                <Button
+                                    type="button"
+                                    fullWidth
+                                    variant="contained"
+                                    onClick ={()=>deleteUser(false)}
+
+                                    sx={{
+                                        mt: 3,
+                                        mb: 2,
+                                        backgroundColor: '#434544',
+                                        '&:hover': {
+                                            backgroundColor: '#0a0a0a ',
+                                        }
+                                    }}>
+                                    No. I want to stay
                                 </Button>
                                 <Grid container>
                                     <Grid item xs>

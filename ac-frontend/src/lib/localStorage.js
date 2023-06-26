@@ -41,14 +41,6 @@ async function getRefreshToken(){
     return refreshToken;
 }
 
-async function resetAccessToken(accessToken, accessTime){
-
-}
-
-async function resetRefreshToken(){
-
-}
-
 async function getLocalStorage() {
     const tokens = JSON.parse(localStorage.getItem("tokens"));
     console.log("inside localstorage:" + tokens.accessToken);
@@ -77,7 +69,5 @@ export const storageService = {
     saveToken,
     getTokenInformation,
     getRefreshToken,
-    resetAccessToken,
-    resetRefreshToken,
     logout
 };
