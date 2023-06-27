@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import com.artconnect.backend.model.Image;
+import com.artconnect.backend.model.artwork.ArtWork;
 import com.artconnect.backend.model.artwork.Comment;
 import com.artconnect.backend.model.artwork.Dimension;
+import com.artconnect.backend.model.user.Status;
+import com.artconnect.backend.model.user.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,13 +31,13 @@ public class ArtWorkResponse {
     
     private String description;
     
-    private int yearOfCreation;
+    private Integer yearOfCreation;
     
     private List<String> materials;
     
     private Dimension dimension;
     
-    private double price;
+    private Double price;
     
     private String location;
     
@@ -50,6 +53,29 @@ public class ArtWorkResponse {
 	
 	private String galleryTitle;
 
-	private double likes;
+	private Integer likes;
+	
+	
+	public static ArtWorkResponse fromArtWork(ArtWork artwork, List<Image> images) {
+		ArtWorkResponse artworkResponse = ArtWorkResponse.builder()
+				.id(artwork.getId())
+				.title(artwork.getTitle())
+				.images(images)
+				.description(artwork.getDescription())
+				.yearOfCreation(artwork.getYearOfCreation())
+				.materials(artwork.getMaterials())
+				.dimension(artwork.getDimension())
+				.price(artwork.getPrice())
+				.location(artwork.getLocation())
+				.createdAt(artwork.getCreatedAt())
+				.comments(artwork.getComments())
+				.ownerId(artwork.getOwnerId())
+				.galleryId(artwork.getGalleryId())
+				.ownerName(artwork.getOwnerName())
+				.galleryTitle(artwork.getGalleryTitle())
+				.likes(artwork.getLikes())
+				.build();
+        return artworkResponse;
+	}
 
 }

@@ -20,6 +20,8 @@ import lombok.NoArgsConstructor;
 @Document(collection = "artwork")
 public class ArtWork {
 	
+	public final static int MAX_NUM_IMAGES = 5;
+	
 	@Id
 	private String id;
 	
@@ -27,13 +29,17 @@ public class ArtWork {
 	
 	private String galleryId;
 	
+	private String ownerName;
+	
+	private String galleryTitle;
+	
 	private String title;
 	
 	private List<String> imagesIds;
     
     private String description;
     
-    private int yearOfCreation;
+    private Integer yearOfCreation;
     
     private Set<String> likedByUsers;
     
@@ -41,7 +47,7 @@ public class ArtWork {
     
     private Dimension dimension;
     
-    private double price;
+    private Double price;
     
     private List<String> tags;
     
@@ -64,7 +70,11 @@ public class ArtWork {
 	}
 	
 	public Integer getLikes() {
-		return likedByUsers.size();
+		if (likedByUsers != null) {
+			return likedByUsers.size();
+		} else {
+			return 0;
+		}
 	}
 
 }

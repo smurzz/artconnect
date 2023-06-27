@@ -16,6 +16,8 @@ public interface ArtWorkRepository extends ReactiveMongoRepository<ArtWork, Stri
 	
 	Flux<ArtWork> findByGalleryId(String galleryId);
 	
+	Flux<ArtWork> findByOwnerName(String ownerName);
+	
 	Flux<ArtWork> findByMaterialsIn(List<String> materials);
 	
 	Flux<ArtWork> findByPriceLessThan(double price);

@@ -1,10 +1,11 @@
 package com.artconnect.backend.model.artwork;
 
+import java.util.Date;
+
 import com.artconnect.backend.model.user.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,9 +16,11 @@ import lombok.Setter;
 @Getter @Setter
 public class Comment {
 	
-	private User author;
+	private String authorId;
 	
-	private Data createdAt;
+	private String authorName;
+	
+	private Date createdAt;
 	
 	private String text;
 
