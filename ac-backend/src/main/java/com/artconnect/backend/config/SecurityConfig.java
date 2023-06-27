@@ -25,6 +25,8 @@ public class SecurityConfig {
 
 	final String PATH_AUTH = "/auth/**";
 	final String PATH_USERS = "/users/**";
+	final String PATH_GALLERIES = "/galleries/**";
+	final String PATH_ARTWORKS = "/artworks/**";
 
 	private final JwtAuthenticationFilter jwtAuthFilter;
 	private final ReactiveAuthenticationManager reactiveAuthenticationManager;
@@ -40,13 +42,11 @@ public class SecurityConfig {
 				.authorizeExchange(it -> it
 						.pathMatchers(HttpMethod.POST, PATH_AUTH).permitAll()
 						.pathMatchers(HttpMethod.GET, PATH_AUTH).permitAll()
+						.pathMatchers(HttpMethod.GET, PATH_USERS).permitAll()
+						.pathMatchers(HttpMethod.GET, PATH_ARTWORKS).permitAll()
+						.pathMatchers(HttpMethod.GET, PATH_GALLERIES).permitAll()
 						.pathMatchers(HttpMethod.GET, "/forgot-password/**").permitAll()
 						.pathMatchers(HttpMethod.POST, "/reset-password/**").permitAll()
-						
-						.pathMatchers(HttpMethod.GET, PATH_USERS).permitAll()
-						//.pathMatchers(HttpMethod.POST, PATH_USERS).hasRole("ADMIN")
-						//.pathMatchers(HttpMethod.POST, PATH_USERS + "profile-photo").hasAnyRole("USER", "ADMIN")
-						
 						.anyExchange().authenticated()
 						.and()
 				)
