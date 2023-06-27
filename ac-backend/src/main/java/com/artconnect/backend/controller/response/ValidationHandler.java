@@ -31,13 +31,10 @@ public class ValidationHandler {
         String message = e.getMessage();
         if (message.contains("email")) {
             return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists"));
+        } if (message.contains("ownerId")) {
+            return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Gallery already exists for the user"));
         } else {
         	return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Duplicate key error"));
         }
-	}
-	
-	@ExceptionHandler(ConstraintViolationException.class)
-    public Mono<ResponseEntity<String>> handleImageUploadException(ConstraintViolationException e) {
-		return Mono.just(ResponseEntity.badRequest().body("Image is bigger than 5Mb or is not PNG, JPEG, or JPG"));
 	}
 }
