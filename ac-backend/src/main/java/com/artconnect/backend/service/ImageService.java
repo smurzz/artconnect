@@ -1,5 +1,7 @@
 package com.artconnect.backend.service;
 
+import java.util.List;
+
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -14,6 +16,7 @@ import com.artconnect.backend.repository.ImageRepository;
 import com.artconnect.backend.validation.ImageValidation;
 
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -22,13 +25,15 @@ public class ImageService {
 	
 	private final ImageRepository imageRepository;
 	
-	public Mono<Image> addPhoto(Mono<FilePart> file, Long sizeFile)  {
+	public Mono<Image> addPhoto(Mono<FilePart> file)  {
 		return Mono
 	            .zip(file, file.flatMap(filePart -> DataBufferUtils.join(filePart.content())))
 	            .flatMap(tuple -> {
 	                FilePart filePart = tuple.getT1();
 	                DataBuffer dataBuffer = tuple.getT2();
-
+	                
+	                Long sizeFile = Long.valueOf(dataBuffer.readableByteCount());
+	                
 	                ImageValidation imageValidation = ImageValidation.builder()
 	                        .contentType(filePart.headers().getContentType().toString())
 	                        .fileName(filePart.filename())
@@ -55,9 +60,21 @@ public class ImageService {
 	            });
     }
 	
+	public Flux<Image> addPhotos(Flux<FilePart> files) {
+		return files.flatMap(filePart ->  addPhoto(Mono.just(filePart)));    
+	}
+	
 	public Mono<Image> getPhoto(String id) { 
         return imageRepository.findById(id)
         		.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
+	
+	public Flux<Image> getPhotosByIds(List<String> imageIds){
+		return imageRepository.findAllById(imageIds);
+	}
+	
+	public Mono<Void> deleteAllByIds(List<String> ids){
+		return imageRepository.deleteAllById(ids);
+	}
 
 }
