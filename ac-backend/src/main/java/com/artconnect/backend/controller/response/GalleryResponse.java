@@ -1,8 +1,9 @@
 package com.artconnect.backend.controller.response;
 
 import java.util.List;
+import java.util.Set;
 
-import com.artconnect.backend.model.artwork.ArtWork;
+import com.artconnect.backend.model.gallery.Gallery;
 import com.artconnect.backend.model.gallery.GalleryCategory;
 
 import lombok.AllArgsConstructor;
@@ -27,9 +28,23 @@ public class GalleryResponse {
 	
 	private String description;
 	
-	private List<ArtWork> artworks;
+	private List<ArtWorkResponse> artworks;
 	
-	private List<GalleryCategory> categories;
+	private Set<GalleryCategory> categories;
 	
-	private double ranking;
+	private Double ranking;
+	
+	public static GalleryResponse fromGallery(Gallery gallery, List<ArtWorkResponse> artworks) {
+		GalleryResponse galleryResponse = GalleryResponse.builder()
+				.id(gallery.getId())
+				.ownerId(gallery.getOwnerId())
+				.ownerName(gallery.getOwnerName())
+				.title(gallery.getTitle())
+				.description(gallery.getDescription())
+				.artworks(artworks)
+				.categories(gallery.getCategories())
+				.ranking(gallery.getRating())
+				.build();
+        return galleryResponse;
+	}
 }
