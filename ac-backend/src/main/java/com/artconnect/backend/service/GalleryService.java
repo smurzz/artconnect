@@ -86,15 +86,12 @@ public class GalleryService {
 	
 	public Mono<Void> delete(String id, String authorization) {
 	    return userService.findByEmail(getEmailFromAuthentication(authorization))
-	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")))
 	            .flatMap(user -> findById(id)
 	                    .filter(existingGallery -> existingGallery.getOwnerId().equals(user.getId()) || user.getRole() == Role.ADMIN)
 	                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete a gallery for another user")))
 	                    .flatMap(existingGallery -> {
 	                        List<String> artworkIds = (existingGallery.getArtworkIds() == null) ? new ArrayList<>() : existingGallery.getArtworkIds();
-	                        // System.out.println(artworkIds.isEmpty());
 	                        if (artworkIds.isEmpty() || artworkIds == null) {
-	                        	System.out.println("list of artworks is empty");
 	                        	 return galleryRepository.delete(existingGallery)
 	                        	            .then(userService.findById(user.getId()))
 	                        	            .flatMap(existingUser -> {
