@@ -3,12 +3,9 @@ package com.artconnect.backend.controller;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,15 +19,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.artconnect.backend.controller.request.ArtWorkRequest;
-import com.artconnect.backend.controller.request.UserRequest;
 import com.artconnect.backend.controller.response.ArtWorkResponse;
-import com.artconnect.backend.controller.response.UserResponse;
 import com.artconnect.backend.model.artwork.ArtWork;
-import com.artconnect.backend.model.user.User;
 import com.artconnect.backend.service.ArtWorkService;
-import com.artconnect.backend.service.GalleryService;
 import com.artconnect.backend.service.ImageService;
-import com.artconnect.backend.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -93,9 +85,10 @@ public class ArtWorkController {
 				.description(artWorkRequest.getDescription())
 				.yearOfCreation(artWorkRequest.getYearOfCreation())
 				.materials(artWorkRequest.getMaterials())
+				.tags(artWorkRequest.getTags())
+				.artDirections(artWorkRequest.getArtDirections())
 				.dimension(artWorkRequest.getDimension())
 				.price(artWorkRequest.getPrice())
-				.tags(artWorkRequest.getTags())
 				.location(artWorkRequest.getLocation())
 				.build();
 		return artWorkService.create(artwork, authorization).flatMap(this::mapArtWorkToResponse);
@@ -117,7 +110,7 @@ public class ArtWorkController {
 	        @RequestPart Flux<FilePart> files,
 	        @RequestHeader("Authorization") String authorization) {		
 		 return artWorkService.addImages(id, files, authorization)
-				 .map(imageNum -> imageNum + " images saved for ArtWork.");
+				 .map(imageNum -> "Images saved for ArtWork.");
 	}
 	
 	private Mono<ArtWorkResponse> mapArtWorkToResponse(ArtWork artwork) {

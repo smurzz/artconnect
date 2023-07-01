@@ -34,26 +34,28 @@ public class ArtWork {
 	private String galleryTitle;
 	
 	private String title;
-	
-	private List<String> imagesIds;
     
     private String description;
     
     private Integer yearOfCreation;
     
-    private Set<String> likedByUsers;
-    
-    private List<String> materials;
-    
     private Dimension dimension;
     
     private Double price;
     
-    private List<String> tags;
-    
     private String location;
     
     private Date createdAt;
+    
+    private List<String> imagesIds;
+    
+    private Set<String> likedByUsers;
+    
+    private List<String> materials;
+    
+    private Set<ArtDirection> artDirections;
+    
+    private List<String> tags;
     
 	private List<Comment> comments;
 

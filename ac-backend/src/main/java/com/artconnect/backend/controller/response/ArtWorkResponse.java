@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.artconnect.backend.model.Image;
+import com.artconnect.backend.model.artwork.ArtDirection;
 import com.artconnect.backend.model.artwork.ArtWork;
 import com.artconnect.backend.model.artwork.Comment;
 import com.artconnect.backend.model.artwork.Dimension;
@@ -35,6 +36,10 @@ public class ArtWorkResponse {
     
     private List<String> materials;
     
+    private List<String> tags;
+    
+    private Set<ArtDirection> artDirections;
+    
     private Dimension dimension;
     
     private Double price;
@@ -64,6 +69,8 @@ public class ArtWorkResponse {
 				.description(artwork.getDescription())
 				.yearOfCreation(artwork.getYearOfCreation())
 				.materials(artwork.getMaterials())
+				.tags(artwork.getTags())
+				.artDirections(artwork.getArtDirections())
 				.dimension(artwork.getDimension())
 				.price(artwork.getPrice())
 				.location(artwork.getLocation())

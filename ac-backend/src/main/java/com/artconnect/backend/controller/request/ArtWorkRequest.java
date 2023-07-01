@@ -1,9 +1,12 @@
 package com.artconnect.backend.controller.request;
 
 import java.util.List;
+import java.util.Set;
 
+import com.artconnect.backend.model.artwork.ArtDirection;
 import com.artconnect.backend.model.artwork.Dimension;
 import com.artconnect.backend.validation.MaxYear;
+import com.artconnect.backend.validation.ValidArtDirection;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -37,6 +40,10 @@ public class ArtWorkRequest {
     
     @Size(max = 10, message = "Tags list can have at most 10 strings")
     private List<String> tags;
+    
+    @Size(max = 10, message = "Max size is 10")
+	@ValidArtDirection
+    private Set<ArtDirection> artDirections;
     
     private String location;
     
