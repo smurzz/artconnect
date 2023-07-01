@@ -1,8 +1,10 @@
 package com.artconnect.backend.controller.request;
 
+import jakarta.validation.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
 
 
 public class RegisterRequestTest {
@@ -331,5 +333,43 @@ public class RegisterRequestTest {
         Assertions.assertEquals(expectedToString, actualToString);
     }
 
+
+    @Test
+    public void testInvalidFirstname() {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setFirstname("A");
+        Assertions.assertThrows(ConstraintViolationException.class, () -> validate(registerRequest));
+    }
+
+    @Test
+    public void testInvalidLastname() {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setLastname("A");
+        Assertions.assertThrows(ConstraintViolationException.class, () -> validate(registerRequest));
+    }
+
+    @Test
+    public void testInvalidEmail() {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setEmail("invalid_email");
+        Assertions.assertThrows(ConstraintViolationException.class, () -> validate(registerRequest));
+    }
+
+    @Test
+    public void testInvalidPassword() {
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setPassword("ab");
+        Assertions.assertThrows(ConstraintViolationException.class, () -> validate(registerRequest));
+    }
+
+    // Helper method to validate the RegisterRequest using javax.validation.Validator
+    private void validate(RegisterRequest registerRequest) {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<RegisterRequest>> violations = validator.validate(registerRequest);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
 
 }

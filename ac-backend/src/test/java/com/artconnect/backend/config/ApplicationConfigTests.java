@@ -21,7 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.artconnect.backend.model.Role;
+import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.repository.UserRepository;
 
 import reactor.core.publisher.Mono;
@@ -49,7 +49,7 @@ public class ApplicationConfigTests {
     @Test
     public void testUserDetailsService() {
        // Mocking the UserRepository response
-        com.artconnect.backend.model.User userEntity = com.artconnect.backend.model.User.builder().email("test@example.com").password("password").role(Role.USER).build();
+        com.artconnect.backend.model.user.User userEntity = com.artconnect.backend.model.user.User.builder().email("test@example.com").password("password").role(Role.USER).build();
         when(userRepository.findByEmail("test@example.com")).thenReturn(Mono.just(userEntity));
 
         ReactiveUserDetailsService userDetailsService = applicationConfig.userDetailsService();
@@ -83,7 +83,7 @@ public class ApplicationConfigTests {
         // Set up the behavior of the mock objects
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        com.artconnect.backend.model.User userEntity = com.artconnect.backend.model.User.builder()
+        com.artconnect.backend.model.user.User userEntity = com.artconnect.backend.model.user.User.builder()
                 .email("test@example.com")
                 .password(encoder.encode("password"))
                 .role(Role.USER)
@@ -123,7 +123,7 @@ public class ApplicationConfigTests {
     public void reactiveAuthenticationManagerReturnsAuthenticationManagerInvalidPassword() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        com.artconnect.backend.model.User userEntity = com.artconnect.backend.model.User.builder()
+        com.artconnect.backend.model.user.User userEntity = com.artconnect.backend.model.user.User.builder()
                 .email("test@example.com")
                 .password(encoder.encode("password"))
                 .role(Role.USER)

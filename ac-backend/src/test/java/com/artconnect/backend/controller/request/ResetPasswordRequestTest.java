@@ -1,10 +1,9 @@
 package com.artconnect.backend.controller.request;
 
+import jakarta.validation.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
+
 import java.util.Set;
 
 public class ResetPasswordRequestTest {
@@ -259,5 +258,23 @@ public class ResetPasswordRequestTest {
         // Assert
         Assertions.assertNull(request.getToken());
     }
+
+    @Test
+    public void testInvalidPassword() {
+        ResetPasswordRequest request = new ResetPasswordRequest();
+        request.setPassword("ab");
+        Assertions.assertThrows(ConstraintViolationException.class, () -> validate(request));
+    }
+
+    // Helper method to validate the ResetPasswordRequest using javax.validation.Validator
+    private void validate(ResetPasswordRequest request) {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<ResetPasswordRequest>> violations = validator.validate(request);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
+    }
+
 
 }
