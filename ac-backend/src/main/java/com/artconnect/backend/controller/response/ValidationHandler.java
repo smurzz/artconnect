@@ -2,6 +2,7 @@ package com.artconnect.backend.controller.response;
 
 import java.util.stream.Collectors;
 
+import org.springframework.core.codec.DecodingException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,11 @@ public class ValidationHandler {
                 .collect(Collectors.joining(", "));
         return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, errors));
     }
+    
+    @ExceptionHandler(DecodingException.class)
+    public Mono<ResponseEntity<String>> handleDecodingException(DecodingException e) {
+    	 return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "One of enum value in the list is not valid"));
+	}
     
 	@ExceptionHandler(DuplicateKeyException.class)
     public Mono<ResponseEntity<String>> handleDuplicateKeyException(DuplicateKeyException e) {
