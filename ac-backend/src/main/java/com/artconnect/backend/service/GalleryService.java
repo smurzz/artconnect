@@ -38,12 +38,14 @@ public class GalleryService {
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Gallery with id <" + id + "> is not found.")));
 	}
 
-	public Mono<Gallery> create(Gallery gallery, String ownerId, String authorization) {
-	    return userService.findByEmail(getEmailFromAuthentication(authorization))
-	            .filter(user -> user.getId().equals(ownerId))
+	public Mono<Gallery> create(Gallery gallery, String authorization) {
+		String userEmail = getEmailFromAuthentication(authorization);
+	    return userService.findByEmail(userEmail)
+	            .filter(user -> user.getEmail().equals(userEmail))
+	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to create a gallery for another user")))
 	            .flatMap(user -> {
 	                String ownerFullName = user.getFirstname() + " " + user.getLastname();
-	                gallery.setOwnerId(ownerId);
+	                gallery.setOwnerId(user.getId());
 	                gallery.setOwnerName(ownerFullName);
 	                return galleryRepository.save(gallery)
 	                        .doOnSuccess(savedGallery -> {
@@ -52,8 +54,7 @@ public class GalleryService {
 	                        })
 	                        .onErrorResume(IllegalArgumentException.class, error ->
 	                                Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error by creating gallery")));
-	            })
-	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to create a gallery for another user")));
+	            });
 	}
 	
 	public Mono<Gallery> update(String id, Gallery gallery, String authorization) {
@@ -88,26 +89,26 @@ public class GalleryService {
 	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")))
 	            .flatMap(user -> findById(id)
 	                    .filter(existingGallery -> existingGallery.getOwnerId().equals(user.getId()) || user.getRole() == Role.ADMIN)
+	                    .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete a gallery for another user")))
 	                    .flatMap(existingGallery -> {
-	                        List<String> artworkIds = existingGallery.getArtworkIds(); // (existingGallery.getArtworkIds() == null) ? new ArrayList<>() : existingGallery.getArtworkIds();
-	                        System.out.println(artworkIds.isEmpty());
-	                        if (artworkIds != null) {
-	                        	System.out.println("list of artworks is not empty");
+	                        List<String> artworkIds = (existingGallery.getArtworkIds() == null) ? new ArrayList<>() : existingGallery.getArtworkIds();
+	                        // System.out.println(artworkIds.isEmpty());
+	                        if (artworkIds.isEmpty() || artworkIds == null) {
+	                        	System.out.println("list of artworks is empty");
+	                        	 return galleryRepository.delete(existingGallery)
+	                        	            .then(userService.findById(user.getId()))
+	                        	            .flatMap(existingUser -> {
+	                        	                existingUser.setGalleryId("");
+	                        	                return userService.update(existingUser.getId(), existingUser, authorization).then();
+	                        	            });	              
+	                        } else {
 	                        	return artWorkService.deleteAllByIds(existingGallery.getArtworkIds(), authorization)
 	                                    .then(galleryRepository.delete(existingGallery))
 	                                    .then(userService.findById(user.getId()))
 	                                    .flatMap(existingUser -> {
-	                                        existingUser.setGalleryId(null);
-	                                        return userService.update(existingUser.getId(), existingUser, authorization);
+	                                        existingUser.setGalleryId("");
+	                                        return userService.update(existingUser.getId(), existingUser, authorization).then();
 	                                    });
-
-	                        } else {
-	                        	 return galleryRepository.delete(existingGallery)
-	                        	            .then(userService.findById(user.getId()))
-	                        	            .flatMap(existingUser -> {
-	                        	                existingUser.setGalleryId(null);
-	                        	                return userService.update(existingUser.getId(), existingUser, authorization);
-	                        	            });
 	                        }	                        
 	                    }))
 	                    .then();
