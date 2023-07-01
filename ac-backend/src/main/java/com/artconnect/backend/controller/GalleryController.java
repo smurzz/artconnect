@@ -51,10 +51,9 @@ public class GalleryController {
 		return galleryService.findById(id).flatMap(this::mapGalleryToResponse);
 	}
 	
-	@PostMapping("/{ownerId}")
+	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<GalleryResponse> createGallery(
-			@PathVariable("ownerId") String ownerId, 
 			@RequestHeader("Authorization") String authorization,
 			@Valid @RequestBody GalleryRequest galleryRequest) {
 		Gallery gallery = Gallery.builder()
@@ -62,7 +61,7 @@ public class GalleryController {
 				.description(galleryRequest.getDescription())
 				.categories(galleryRequest.getCategories())
 				.build();
-		return galleryService.create(gallery, ownerId, authorization).flatMap(this::mapGalleryToResponse);
+		return galleryService.create(gallery, authorization).flatMap(this::mapGalleryToResponse);
 	}
 	
 	@PutMapping("/{id}")
