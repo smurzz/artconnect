@@ -18,6 +18,7 @@ spring:
       import: env.properties
    data:
       mongodb:
+#         url: mongodb+srv://artconnect:5YuUTUWLE1NbnKdg@artconnect-test.b4ngfop.mongodb.net/?retryWrites=true&w=majority
          host: localhost
          port: 27017
          database: artconnect-db
