@@ -74,7 +74,36 @@ public class ImageService {
 	}
 	
 	public Mono<Void> deleteAllByIds(List<String> ids){
-		return imageRepository.deleteAllById(ids);
+		return imageRepository.deleteAllById(ids)
+				.then();
+	}
+	
+	public Mono<Boolean> validedAllPhoto(Flux<FilePart> files) {
+	    return files
+	            .flatMap(file -> {
+	                return Mono.zip(Mono.just(file), DataBufferUtils.join(file.content()))
+	                        .flatMap(tuple -> {
+	                            FilePart filePart = tuple.getT1();
+	                            DataBuffer dataBuffer = tuple.getT2();
+
+	                            Long sizeFile = Long.valueOf(dataBuffer.readableByteCount());
+
+	                            ImageValidation imageValidation = ImageValidation.builder()
+	                                    .contentType(filePart.headers().getContentType().toString())
+	                                    .fileName(filePart.filename())
+	                                    .size(sizeFile)
+	                                    .build();
+
+	                            if (imageValidation.validFile()) {
+	                                return Mono.just(true);
+	                            } else {
+	                                return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image with name " + filePart.filename() + " is not valid"));
+	                            }
+	                        })
+	                        .onErrorResume(error -> Mono.just(false));
+	            })
+	            .collectList()
+	            .map(validations -> validations.stream().allMatch(valid -> valid));
 	}
 
 }
