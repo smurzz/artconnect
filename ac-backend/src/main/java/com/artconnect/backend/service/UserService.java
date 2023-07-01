@@ -88,7 +88,6 @@ public class UserService {
 	                			Optional.ofNullable(user.getIsAccountEnabled()).ifPresent(foundUser::setIsAccountEnabled);
 	                			Optional.ofNullable(user.getRole()).ifPresent(foundUser::setRole);
 	                			Optional.ofNullable(user.getProfilePhoto()).ifPresent(foundUser::setProfilePhoto);
-	                			Optional.ofNullable(user.getGalleryId()).ifPresent(foundUser::setGalleryId);
 	                		}	
 	    	                Optional.ofNullable(user.getFirstname()).ifPresent(foundUser::setFirstname);
 	    	                Optional.ofNullable(user.getLastname()).ifPresent(foundUser::setLastname);              	    	                
@@ -97,7 +96,8 @@ public class UserService {
 	    	                Optional.ofNullable(user.getBiography()).ifPresent(foundUser::setBiography);
 	    	                Optional.ofNullable(user.getExhibitions()).ifPresent(foundUser::setExhibitions);
 	    	                Optional.ofNullable(user.getContacts()).ifPresent(foundUser::setContacts);
-	    	                Optional.ofNullable(user.getSocialMedias()).ifPresent(foundUser::setSocialMedias);    	                
+	    	                Optional.ofNullable(user.getSocialMedias()).ifPresent(foundUser::setSocialMedias);    	
+                			Optional.ofNullable(user.getGalleryId()).ifPresent(foundUser::setGalleryId);
 	    					return userRepository.save(foundUser);          				
 	                	});
 	                } else {
