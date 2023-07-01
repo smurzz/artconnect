@@ -34,8 +34,6 @@ public class ArtWorkService {
 	
 	private final ImageService imageService;
 	
-	// private final GalleryService galleryService;
-
 	public Flux<ArtWork> findAll() {
 		return artWorkRepository.findAll();
 	}
@@ -85,10 +83,10 @@ public class ArtWorkService {
 	                                artwork.setGalleryTitle(gallery.getTitle());
 	                                return artWorkRepository.save(artwork)
 	                                        .doOnSuccess(savedArtwork -> {
-	                                            List<String> artworkIdsList = (gallery.getArtworkIds() == null) ? new ArrayList<>() : gallery.getArtworkIds();
-	                                            artworkIdsList.add(savedArtwork.getId());
-	                                            gallery.setArtworkIds(artworkIdsList);
-	                                            galleryRepository.save(gallery);
+	                                            List<String> artworkIds = (gallery.getArtworkIds() == null) ? new ArrayList<>() : gallery.getArtworkIds();
+	                                            artworkIds.add(savedArtwork.getId());
+	                                            gallery.setArtworkIds(artworkIds);
+	                                            galleryRepository.save(gallery).subscribe();
 	                                        })
 	                                        .onErrorResume(IllegalArgumentException.class, error ->
 	                                                Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error by creating artwork")));
@@ -130,14 +128,21 @@ public class ArtWorkService {
 	                    .flatMap(artwork -> {
 	                        List<String> imagesIds = (artwork.getImagesIds() == null) ? new ArrayList<>() : artwork.getImagesIds();
 	                        int maxAllowedImages = ArtWork.MAX_NUM_IMAGES - imagesIds.size();
-	                        return files
-	                                .take(maxAllowedImages)
-	                                .flatMap(filePart -> imageService.addPhoto(Mono.just(filePart)))
-	                                .doOnNext(image -> imagesIds.add(image.getId()))
-	                                .then(Mono.fromRunnable(() -> artwork.setImagesIds(imagesIds)))
-	                                .then(artWorkRepository.save(artwork))
-	                                .onErrorResume(error -> Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error by saving image ids for artwork")))
-	                                .thenReturn(maxAllowedImages);
+	                        return imageService.validedAllPhoto(files)
+	                                .flatMap(validated -> {
+	                                    if (validated) {
+	                                        return files
+	                                                .take(maxAllowedImages)
+	                                                .flatMap(filePart -> imageService.addPhoto(Mono.just(filePart)))
+	                                                .doOnNext(image -> imagesIds.add(image.getId()))
+	                                                .then(Mono.fromRunnable(() -> artwork.setImagesIds(imagesIds)))
+	                                                .then(artWorkRepository.save(artwork))
+	                                                .onErrorResume(error -> Mono.error(error))
+	                                                .thenReturn(maxAllowedImages);
+	                                    } else {
+	                                        return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid image(s)"));
+	                                    }
+	                                });
 	                    }))
 	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Artwork not found")));
 	}
