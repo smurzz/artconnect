@@ -96,7 +96,7 @@ async function getDataSecured(url, payload) {
         };
             let result;
             if (!payload) {
-                result = await axios.get(url, _headers);
+                return null;
             } else {
                 result = await axios.get(url, _headers);
             }

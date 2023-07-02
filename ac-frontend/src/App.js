@@ -5,7 +5,10 @@ import ProtectedRoutes from "./container/protectedRoutes";
 import ForgotPassword from "./container/ForgotPassword/ForgotPassword";
 import ResetPassword from "./container/resetPassword/ResetPassword";
 import Home from "./container/Home/HomeTailwind";
-import Galerie2 from "./container/Galerie/Galerie2";
+import Galerie2 from "./container/Galerie/Galerie2"
+import PostGalerie from "./container/Galerie/postGalerie"
+import EditGalerie from "./container/Galerie/editGalerie";
+import BildErstellen from "./container/BildAnsicht/BildErstellen"
 import Login from "./container/Login/Login";
 import ResetPasswortSuccess from "./container/ForgotPassword/ForgetPasswordSuccess"
 import NotFound from "./container/404/404";
@@ -13,6 +16,7 @@ import Bearbeiten from "./container/ProfilBearbeiten/bearbeiten";
 import DeleteUser from "./container/DeleteUser/deleteUser"
 import DeleteUserAnswer from "./container/DeleteUser/deleteUserAnswer"
 import DetailImage from "./container/BildAnsicht/ImageView"
+import ImageUploadComponent from "./container/BildAnsicht/imageUpload";
 import DetailImage1 from "./container/BildAnsicht/ImageView1"
 import DetailImage2 from "./container/BildAnsicht/ImageView2"
 import DetailImage3 from "./container/BildAnsicht/ImageView3"
@@ -38,17 +42,14 @@ function App() {
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
           {/*Galerie*/}
           <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
-          <Route path="/galerie/DetailImage/1" element={<DetailImage/>}></Route>
         <Route path="/deleteUser" element ={<DeleteUser/>}></Route>
-          <Route path="/galerie/DetailImage/2" element={<DetailImage1/>}></Route>
-          <Route path="/galerie/DetailImage/3" element={<DetailImage2/>}></Route>
-          <Route path="/galerie/DetailImage/4" element={<DetailImage3/>}></Route>
-          <Route path="/galerie/DetailImage/5" element={<DetailImage4/>}></Route>
-          <Route path="/galerie/DetailImage/6" element={<DetailImage5/>}></Route>
-          <Route path="/galerie/DetailImage/7" element={<DetailImage6/>}></Route>
-          <Route path="/galerie/DetailImage/8" element={<DetailImage7/>}></Route>
-          <Route path="/galerie/DetailImage/9" element={<DetailImage8/>}></Route>
+        <Route path="/uploadImage/:id" element ={<ImageUploadComponent/>}></Route>
+        <Route path="/newArt" element={<BildErstellen/>}></Route>
+        <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
+
         <Route path="/deleteUserAnswer" element ={<DeleteUserAnswer/>}></Route>
+        <Route path="/postGalerie/:id" element ={<PostGalerie/>}></Route>
+        <Route path="/editGalerie/:id" element ={<EditGalerie/>}></Route>
           {/*User bearbeiten*/}
             <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
           <Route  element={<ProtectedRoutes />}>

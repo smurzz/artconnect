@@ -1,11 +1,10 @@
 import React, { Fragment } from 'react'
-// import EmptyGalerie from './../../components/emptyGalerie/EmptyGalerie'
-// import Navbar from './../../components/navbar/Navbar'
+
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/20/solid'
 import { Menu, Transition } from '@headlessui/react'
 import { CodeBracketIcon, EllipsisVerticalIcon, FlagIcon, StarIcon } from '@heroicons/react/20/solid'
 import { PaperClipIcon } from '@heroicons/react/20/solid'
-// import Footer from './../../components/secondFooter/Footer'
+
 
 const profile = {
     name: 'Vyacheslav',

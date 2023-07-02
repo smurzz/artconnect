@@ -205,6 +205,64 @@ export default function HomeTailwind() {
       <Header></Header>
       <main>
         <div className="bg-white">
+            <Carousel className="carousel-inner"
+                      showThumbs={false}
+                      showStatus={false}
+                      infiniteLoop={true}
+                      autoPlay={true}
+                      interval={5000}
+            >
+              <div className="carouselItem">
+                <div className="container">
+                  <div
+                      className="slider__text d-flex flex-column justify-content-start align-items-start container__color m-4">
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl color ">CREATE ART</h1>
+                    <p className="text__body textLeft">
+                      "They sit for hours in cafés, talking incessantly about culture, art, revolution,
+                      and so on and so forth, poisoning the air with theories upon theories that never
+                      come true."
+                      Are you like Frida Kahlo and prefer to create art rather than rationalize it with
+                      words?
+                      Then upload your works for free on our platform. </p>
+                  </div>
+                </div>
+                <img className="d-block w-100 h-100 overflow-hidden" src={data[0].image} alt="First slide"/>
+              </div>
+
+              <div className="carouselItem">
+                <div className="container">
+                  <div
+                      className="slider__text d-flex flex-column justify-content-start align-items-start  container__color m-4">
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl color ">SUPPORT ART</h1>
+                    <p className="text__body textLeft">
+                      "Art does not reproduce the visible, but rather makes visible." This was the motto
+                      of Paul Klee, which inspired his theory of form and color. Art makes things visible,
+                      and artists need to be made visible. You can support us by giving their artworks a
+                      new home.
+                    </p>
+                  </div>
+                </div>
+                <img className="d-block w-100 h-100 overflow-hidden" src={data[1].image} alt="First slide"/>
+              </div>
+
+              <div className="carouselItem">
+                <div className="container">
+                  <div
+                      className="m-4 slider__text d-flex flex-column justify-content-start align-items-start container__color">
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl color">EXPERIENCE ART</h1>
+                    <p className="text__body textLeft">
+                      "The art is not the bread, but rather the wine of life." In line with Jean Paul's
+                      thought, more than 120
+                      artists are already showcasing their works on our website. Let yourself be inspired
+                      and take a glimpse into
+                      the world of art and its artists.
+                    </p>
+                  </div>
+                </div>
+                <img className="d-block w-100 h-100 overflow-hidden" src={data[2].image} alt="First slide"/>
+              </div>
+            </Carousel>
+
           {/* Header */}
           {/* <header className="absolute inset-x-0 top-0 z-50">
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
@@ -472,7 +530,7 @@ export default function HomeTailwind() {
               <div className="mx-auto max-w-2xl lg:mx-0">
                 <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our team</h2>
               </div>
-              {/* <ul
+               <ul
                   role="list"
                   className="mx-auto mt-20 grid max-w-2xl grid-cols-2 gap-x-8 gap-y-16 text-center sm:grid-cols-3 md:grid-cols-4 lg:mx-0 lg:max-w-none lg:grid-cols-5 xl:grid-cols-6"
               >
@@ -483,35 +541,12 @@ export default function HomeTailwind() {
                       <p className="text-sm leading-6 text-gray-600">{person.role}</p>
                     </li>
                 ))}
-              </ul> */}
+              </ul>
             </div>
 
             {/* Blog section */}
           </main>
 
-          {/* Footer
-          <footer className="mx-auto mt-40 max-w-7xl overflow-hidden px-6 pb-20 sm:mt-64 sm:pb-24 lg:px-8">
-            <nav className="-mb-6 columns-2 sm:flex sm:justify-center sm:space-x-12" aria-label="Footer">
-              {footerNavigation.main.map((item) => (
-                  <div key={item.name} className="pb-6">
-                    <a href={item.href} className="text-sm leading-6 text-gray-600 hover:text-gray-900">
-                      {item.name}
-                    </a>
-                  </div>
-              ))}
-            </nav>
-            <div className="mt-10 flex justify-center space-x-10">
-              {footerNavigation.social.map((item) => (
-                  <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
-                    <span className="sr-only">{item.name}</span>
-                    <item.icon className="h-6 w-6" aria-hidden="true" />
-                  </a>
-              ))}
-            </div>
-            <p className="mt-10 text-center text-xs leading-5 text-gray-500">
-              &copy; 2020 Your Company, Inc. All rights reserved.
-            </p>
-          </footer>*/}
         </div>
       </main>
       </>

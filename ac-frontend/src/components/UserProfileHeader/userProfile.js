@@ -7,6 +7,7 @@ import {CodeBracketIcon, EllipsisVerticalIcon, FlagIcon, StarIcon} from '@heroic
 import {PaperClipIcon} from '@heroicons/react/20/solid'
 import {storageService} from "../../lib/localStorage"
 import {ApiService} from "../../lib/api";
+import {GalerieApiService} from "../../lib/apiGalerie"
 
 // Hier bitte richtiges User Bild rein
 import Image from '../../images/Logo.png';
@@ -28,6 +29,7 @@ function classNames(...classes) {
 const Profile = () => {
     const [user, setUser] = useState([])
     const [image, setImage] = useState([]);
+
     //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
     useEffect(() => {
         async function getUserData() {
@@ -107,7 +109,7 @@ const Profile = () => {
                     </div>
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                                                                         <span className="flex-grow">
-{(user.biography ? user.biography + " " : " ")}
+                {(user.biography ? user.biography + " " : " ")}
               </span>
                     </div>
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

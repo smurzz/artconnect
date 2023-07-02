@@ -63,7 +63,18 @@ async function getUser() {
     return user;
 }
 
+async function saveGallerieId(id){
+    await localStorage.setItem("gallerieId", id);
+    return;
+}
+async function getGallerieId() {
+    const gallerieId = JSON.stringify(localStorage.getItem("gallerieId"));
+    return gallerieId;
+}
+
 export const storageService = {
+    saveGallerieId,
+    getGallerieId,
     setUser,
     getUser,
     saveToken,
