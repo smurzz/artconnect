@@ -9,6 +9,7 @@ import PopupModal from "../../components/ModalPopUp/ModalPopUp"
 const MaterialForm = ({materials, setMaterials}) => {
     const [newMaterial, setNewMaterial] = useState('');
     const handleAddMaterial = (event) => {
+        console.log("test");
         event.preventDefault();
         if (newMaterial.trim() !== '') {
             if (materials.length < 10) {
