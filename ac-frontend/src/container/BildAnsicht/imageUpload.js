@@ -22,6 +22,7 @@ export default function ImageUploadComponent() {
     };
 
     const handleFileUpload = async (event) => {
+        console.log("datarouting");
         event.preventDefault();
         console.log(selectedFile);
         if (selectedFile) {
