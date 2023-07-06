@@ -1,0 +1,32 @@
+name: Update EC2 Docker Images
+
+on:
+  workflow_run:
+    workflows:
+      - "Build and push Docker image"
+    types:
+      - completed
+
+jobs:
+  update-images:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Update Git repository
+        run: |
+          cd artconnect
+          git pull
+
+      - name: Login to GitHub Packages
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Pull latest Docker images
+        run: |
+          docker-compose pull
+          # Additional commands to pull other Docker images if necessary
+
+      - name: Restart Docker containers
+        run: docker-compose up -d
