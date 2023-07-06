@@ -124,6 +124,10 @@ body{
     font-size: 0.7em;
 }
 
+.imageUploadFile{
+    object-fit: contain !important;
+}
+
 
 
 
