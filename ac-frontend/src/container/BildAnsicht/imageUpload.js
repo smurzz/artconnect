@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GalerieApiService } from '../../lib/apiGalerie';
 import { useParams } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
+import Image2 from './../Galerie/imgSlides/original2.jpg';
 
 export default function ImageUploadComponent() {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -38,7 +39,7 @@ export default function ImageUploadComponent() {
             <div className="card-group">
                 <div className="big-card">
                     <Card>
-                        <Card.Img variant="top" src={selectedFile !== null ? URL.createObjectURL(selectedFile) : ""} />
+                        <Card.Img style={{ height: "30rem" , margin-right: "3rem"}} variant="top" src={selectedFile !== null ? URL.createObjectURL(selectedFile) : {Image2}} />
                         <Card.Body>
                             <Card.Title>Big Image</Card.Title>
                             <Card.Text>

@@ -33,7 +33,7 @@ export default function ResponsiveAppBar() {
         console.log("logout");
         if (logout == "success") {
             console.log("logout");
-            navigate("/home");
+            navigate("/");
         }
     }
 

@@ -14,6 +14,9 @@ const PopupModal = ({open, handleClose, userId}) => {
                     <Button variant="primary" className="btn-lg" onClick={()=>{navigate("/uploadImage/"+userId)}}>
                         Proceed to Upload Image
                     </Button>
+                    <Button variant="primary" className="btn-lg" onClick={()=>{navigate("/galerie")}}>
+                       maybe later
+                    </Button>
                 </div>
             </Modal.Body>
         </Modal>

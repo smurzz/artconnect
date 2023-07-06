@@ -22,7 +22,9 @@ const MaterialForm = ({materials, setMaterials}) => {
     };
 
 
-    const handleDeleteMaterials = (index) => {
+    const handleDeleteMaterials = (event, index) => {
+        event.preventDefault();
+        console.log("handleDeleteMaterials: "+ index);
         const updatedMaterials = [...materials];
         updatedMaterials.splice(index, 1);
         setMaterials(updatedMaterials);
@@ -36,7 +38,7 @@ const MaterialForm = ({materials, setMaterials}) => {
                 {materials.map((material, index) => (
                     <li key={index}>
                         {material}
-                        <button className="btn btn-secondary mx-3" onClick={() => handleDeleteMaterials(index)}>Delete
+                        <button className="btn btn-secondary mx-3" onClick={(event) => handleDeleteMaterials(event,index)}>Delete
                         </button>
                     </li>
                 ))}
@@ -63,7 +65,8 @@ const TagForm = ({tags, setTags}) => {
             }
         }
     };
-    const handleDeleteTag = (index) => {
+    const handleDeleteTag = (event,index) => {
+        event.preventDefault();
         const updatedTags = [...tags];
         updatedTags.splice(index, 1);
         setTags(updatedTags);
@@ -77,7 +80,7 @@ const TagForm = ({tags, setTags}) => {
                         {tags.map((tag, index) => (
                             <li key={index}>
                                 {tag}
-                                <button className="btn btn-secondary mx-3" onClick={() => handleDeleteTag(index)}>Delete
+                                <button className="btn btn-secondary mx-3" onClick={(event) => handleDeleteTag(event,index)}>Delete
                                 </button>
                             </li>
                         ))}
