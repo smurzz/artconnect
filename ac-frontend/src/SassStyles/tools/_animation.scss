@@ -1,0 +1,103 @@
+@import "variables";
+@import "mixins";
+
+/*button animation for the main-navigation*/
+.button{
+    transition: 1s ease-in-out;
+    cursor:pointer;
+}
+
+.button:hover {
+    transition: 1s ease-in-out;
+    background: $red__wine;
+    color: $main__text--light;
+}
+
+/*helpe classes for changing the color of the header with the observer*/
+.headerColor {
+    & ul >li:nth-child(2) > a{
+        text-shadow: 0 0 10px $main__text--light,
+        0 0 20px $main__text--light,
+        0 0 40px $main__text--light,
+        0 0 120px $main__text--light;
+    }
+    & .header__menu{
+        background:$green__dark;
+        color: white;
+    }
+    & a{
+        cursor: pointer;
+        transition: 0.5s;
+        &:hover{
+            color: $main__text--light;
+            text-shadow: 0 0 10px $main__text--light,
+            0 0 20px $main__text--light,
+            0 0 40px $main__text--light,
+            0 0 120px $main__text--light;
+        }
+    }
+}
+
+.changeColor {
+    & ul >li:nth-child(2) > a{
+        color: $color__pink--dark;
+        text-shadow: 0 0 10px $color__pink,
+        0 0 20px $color__pink,
+        0 0 40px $color__pink,
+        0 0 120px $color__pink;
+    }
+    & a{
+        cursor: pointer;
+        transition: 0.5s;
+        &:hover{
+            color: $color__pink;
+            text-shadow: 0 0 10px $color__pink,
+            0 0 20px $color__pink,
+            0 0 40px $color__pink,
+            0 0 120px $color__pink;
+        }
+    }
+}
+
+/*helper classes for header animation*/
+.has-fade {
+    visibility: hidden;
+  }
+  
+  @keyframes fade-in {
+    from {
+      visibility: hidden;
+      opacity: 0;
+    }
+    1% {
+      visibility: visible;
+      opacity: 0;
+    }
+    to {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  .fade-in {
+    animation: fade-in 200ms ease-in-out forwards;
+  }
+
+  
+  @keyframes fade-out {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+    99% {
+      visibility: visible;
+      opacity: 0;
+    }
+    to {
+      visibility: hidden;
+      opacity: 0;
+    }
+  }
+
+  .fade-out {
+    animation: fade-out 200ms ease-in-out forwards;
+  }

@@ -6,3 +6,4 @@ ArtConnect is a web-platform for artists that allows them to showcase their artw
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=smurzz_artconnect&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=smurzz_artconnect)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=smurzz_artconnect&metric=coverage)](https://sonarcloud.io/summary/new_code?id=smurzz_artconnect)
 
+@ArtConnect Team

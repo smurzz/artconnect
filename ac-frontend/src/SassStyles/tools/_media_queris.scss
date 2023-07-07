@@ -1,0 +1,41 @@
+@import "variables";
+@import "mixins";
+
+
+@media (max-width:800px) {
+  .card{
+    width: 47%;
+  }
+  .sortiment__recomondation{
+    display: none;
+  }
+  footer{
+    & h3{
+      display: none;
+    }
+    & div{
+      flex-direction: column;
+    }
+  }
+
+
+}
+
+@media (max-width:696px) {
+
+  .card{
+    width: 100%;
+  }
+
+  .sortiment > header ul{
+            flex-direction: column;
+            width: 100%;
+            & li{
+              width: 100%;
+            margin-bottom:$margin__section--smal;
+            & button{
+              width: 100%;
+            }
+            }
+        }
+      }
