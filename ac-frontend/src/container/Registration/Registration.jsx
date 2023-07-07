@@ -15,15 +15,17 @@ import {useState, useEffect, useRef} from "react";
 import {Link, Route, Routes, useNavigate} from "react-router-dom";
 import {ApiService} from "../../lib/api";
 import Login from "../Login/Login";
-import Modul from "../../components/Modul/Modul";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import CircularProgress from '@mui/material/CircularProgress';
-import Header from "../../components/headerLogout/header";
+import Header from "../../components/headerComponent/headerLogout"
+
+//lineaer loading
+import LinearProgress from '@mui/material/LinearProgress';
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 //redux
@@ -89,16 +91,21 @@ function SignUp(props) {
 
     //Immer wenn ein Fehler aus dem Backend kommt, wird der Fehler Dialog angezeigt
     useEffect(() => {
-        if (props.errorSignup !== null && props.errorSignup == "Email already exists") {
+        if (props.errorSignup !== null ){
             setOpen(true);
-            setTitel("Your Email is already Registered");
-            setMessage("`Oops! Your email has already been registered. Please proceed to the login page.");
-        } else {
-            setErrorMessage(true);
-            const messageError = props.errorSignup + '';
-            seterrAlert(messageError.split(',').map(str => <p>{str}</p>));
+            console.log("inside this method");
+            if( props.errorSignup == "Email already exists") {
+                console.log("Use Effect error sign up: "+ props.errorSignup);
+                setTitel("Your Email is already Registered");
+                setMessage("`Oops! Your email has already been registered. Please proceed to the login page.");
+            } else {
+                setOpen(true);
+                console.log("Use Effect error sign up: "+ props.errorSignup);
+                setTitel("Oops! Something went wrong");
+                setMessage(props.errorSignup);
+            }
         }
-    }, [props.errorSignup, props.signupUserAction]);
+    }, [props.errorSignup]);
 
     //Sobald der User einen neuen Wert im Feld eingibt wird die Fehler messages wieder entfernt
     useEffect(() => {
@@ -112,9 +119,11 @@ function SignUp(props) {
     const handleClose = () => {
         if (success) {
             setOpen(false);
+            props.resetState();
             navigate("/login");
         }
         setOpen(false);
+        props.resetState();
         setTitel("");
         setMessage("");
     };
@@ -177,12 +186,13 @@ function SignUp(props) {
                     }}
                 >
                     <Avatar sx={{m: 1, bgcolor: 'secondary.light'}}>
-                        {loading ? <CircularProgress/> : <LockOutlinedIcon/>}
+                       <LockOutlinedIcon/>
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Sign up
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 3}}>
+
                         <Grid container spacing={2}>
                             <Grid item sm={12}>
                                 {errorMessage && <div className="alert alert-danger" role="alert">
@@ -264,10 +274,19 @@ function SignUp(props) {
                                     label="I want to receive inspiration, marketing promotions and updates via email."
                                 />
                             </Grid>
-                        </Grid><Button
+                            <Grid item sm={12}>
+
+                                    <Box sx={{ width: '100%' }}>
+                                        {loading &&   <LinearProgress />}
+                                    </Box>
+
+                            </Grid>
+                        </Grid>
+                        <Button
                         type="submit"
                         fullWidth
                         variant="contained"
+                        disabled={loading}
                         sx={{
                             mt: 3,
                             mb: 2,
@@ -288,6 +307,7 @@ function SignUp(props) {
                             { open &&
                                 <div >
                                     <Dialog
+                                        className ="styleVisible"
                                         open={open}
                                         maxWidth="xs" // Set the maxWidth to limit the dialog's width
                                         onClose={handleClose}
@@ -322,6 +342,7 @@ function SignUp(props) {
 
 const mapDispatchToProps = dispatch => {
     return {
+        resetState:() => dispatch(authenticationActions.getResetStateAction()),
         signupUserAction: (user) => dispatch(authenticationActions.signupUser(user))
     }
 }

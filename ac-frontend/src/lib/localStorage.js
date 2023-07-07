@@ -41,39 +41,44 @@ async function getRefreshToken(){
     return refreshToken;
 }
 
-async function resetAccessToken(accessToken, accessTime){
-
-}
-
-async function resetRefreshToken(){
-
-}
-
 async function getLocalStorage() {
     const tokens = JSON.parse(localStorage.getItem("tokens"));
+    console.log("inside localstorage:" + tokens.accessToken);
     return tokens;
 }
 
 async function logout() {
     await localStorage.removeItem("tokens");
+    await localStorage.removeItem("userObject");
     console.log("logout localStorage");
     return "success";
 }
 
-async function getRemeberMe(){
-localStorage.getItem("rememberMe")
+async function setUser(userObject){
+    return await localStorage.setItem("userObject", userObject);
 }
-async function setRemeberMe(rememberMe){
-    return await localStorage.setItem("rememberMe", rememberMe);
+
+async function getUser() {
+    const user = JSON.stringify(localStorage.getItem("userObject"));
+    return user;
+}
+
+async function saveGallerieId(id){
+    await localStorage.setItem("gallerieId", id);
+    return;
+}
+async function getGallerieId() {
+    const gallerieId = JSON.stringify(localStorage.getItem("gallerieId"));
+    return gallerieId;
 }
 
 export const storageService = {
-    setRemeberMe,
-    getRemeberMe,
+    saveGallerieId,
+    getGallerieId,
+    setUser,
+    getUser,
     saveToken,
     getTokenInformation,
     getRefreshToken,
-    resetAccessToken,
-    resetRefreshToken,
     logout
 };

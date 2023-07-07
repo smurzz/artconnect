@@ -2,7 +2,11 @@
   "name": "ac-frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8080",
+  "devServer": {
+    "allowedHosts": [
+      "localhost:3000"
+    ]
+  },
   "dependencies": {
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
@@ -17,6 +21,8 @@
     "bootstrap": "^5.3.0",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.7.4",
+    "react-datepicker": "^4.14.1",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
     "react-redux": "^8.0.7",

@@ -1,0 +1,17 @@
+.flexBox{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/*header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Add other styling properties as needed */
+
+.fullwidth{
+    width: 100%;
+    text-align:left;
+}
