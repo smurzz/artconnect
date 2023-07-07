@@ -27,6 +27,10 @@ jobs:
         run: |
           git checkout main
           git pull
+          
+      - name: Get latest tag version
+        id: get-version
+        run: echo "::set-env name=LATEST_TAG::$(git describe --tags --abbrev=0)"
 
       - name: Login to GitHub Packages
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u ${{ github.actor }} --password-stdin
@@ -37,4 +41,4 @@ jobs:
           # Additional commands to pull other Docker images if necessary
 
       - name: Restart Docker containers
-        run: docker-compose up -d
+        run: docker-compose up -d --build --env LATEST_TAG=${LATEST_TAG}
