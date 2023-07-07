@@ -6,6 +6,9 @@ on:
       - "Build and push Docker image"
     types:
       - completed
+    branches:
+      - 'main'
+      - 'dev'
 
 jobs:
   update-images:
