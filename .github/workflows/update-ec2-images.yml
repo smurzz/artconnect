@@ -30,7 +30,7 @@ jobs:
           
       - name: Get all tags
         id: get-tags
-        run: git fetch --tags
+        run: git fetch --tags --force
           
       - name: Get latest tag version
         id: get-version
