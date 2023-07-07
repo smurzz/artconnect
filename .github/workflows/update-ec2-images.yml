@@ -43,10 +43,10 @@ jobs:
       - name: Login to GitHub Packages
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-      - name: Pull latest Docker images
+      - name: Remove all Docker images
         run: |
-          docker-compose pull
+          docker-compose down --rmi all
           # Additional commands to pull other Docker images if necessary
 
       - name: Restart Docker containers
-        run: docker-compose up -d --build
+        run: docker-compose up -d
