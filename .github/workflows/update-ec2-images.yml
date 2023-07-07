@@ -10,6 +10,8 @@ on:
 jobs:
   update-images:
     runs-on: self-hosted
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
     steps:
       - name: Checkout repository
