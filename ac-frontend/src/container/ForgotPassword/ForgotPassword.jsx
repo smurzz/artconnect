@@ -16,9 +16,10 @@ import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
-import Modul from "../../components/Modul/Modul";
-import CircularProgress from '@mui/material/CircularProgress';
-import Header from "../../components/headerLogout/header"
+//lineaer loading
+import LinearProgress from '@mui/material/LinearProgress';
+import Header from "../../components/headerComponent/headerLogout"
+
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -142,6 +143,7 @@ export default function ForgotPassword() {
   return (
     <ThemeProvider theme={defaultTheme}>
         <Header/>
+        <main>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />
         <Grid
@@ -169,7 +171,7 @@ export default function ForgotPassword() {
             }}
           >
               <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
-                  {loading ?<CircularProgress /> :<LockOutlinedIcon />}
+                <LockOutlinedIcon />
               </Avatar>
             <Typography component="h1" variant="h5">
               Forgot Password
@@ -190,12 +192,26 @@ export default function ForgotPassword() {
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
               />
-              <Button
+                <Grid item sm={12}>
+
+                    <Box sx={{ width: '100%' }}>
+                        {loading &&   <LinearProgress />}
+                    </Box>
+
+                </Grid>
+                <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
+                disabled={loading}
+                sx={{
+                mt: 3,
+                mb: 2,
+                backgroundColor: '#434544',
+                '&:hover': {
+                    backgroundColor: '#0a0a0a ',
+                }
+            }}>
                 Reset password
               </Button>
               <Grid container>
@@ -236,6 +252,7 @@ export default function ForgotPassword() {
           </Box>
         </Grid>
       </Grid>
+        </main>
     </ThemeProvider>
   );
 }

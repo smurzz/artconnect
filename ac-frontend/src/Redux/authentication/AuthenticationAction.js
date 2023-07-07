@@ -8,6 +8,7 @@ export const AUTHENTICATION_ERROR = 'AUTHENTICATION_ERROR';
 export const SING_UP_PENDING = 'SING_UP_PENDING';
 export const SING_UP_SUCCESS = 'SING_UP_SUCCESS';
 export const SING_UP_ERROR = 'SING_UP_ERROR';
+export const RESET_STATE = 'RESET_STATE';
 
 export function getSignupePendingAction() {
     return {
@@ -15,11 +16,16 @@ export function getSignupePendingAction() {
     }
 }
 
+export function getResetStateAction() {
+    return {
+        type: RESET_STATE,
+    }
+}
 export function getSignupSuccessAction(res) {
     return {
         type: SING_UP_SUCCESS,
         status: res.status,
-            message: res.data
+        message: res.data
     }
 }
 
@@ -45,6 +51,7 @@ export function signupUser(user) {
             })
             .catch(error => {
                 const errorMessage = error.response.data;
+                console.log("Inside Error Message: "+ errorMessage + "error: "+ JSON.stringify(error))
                 dispatch(getSignupErrorAction(errorMessage));
             })
 
