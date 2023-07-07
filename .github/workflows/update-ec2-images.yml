@@ -10,8 +10,6 @@ on:
 jobs:
   update-images:
     runs-on: self-hosted
-    env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
 
     steps:
       - name: Checkout repository
@@ -36,7 +34,11 @@ jobs:
           
       - name: Get latest tag version
         id: get-version
-        run: echo "::set-env name=LATEST_TAG::$(git tag | sort -V | tail -1)"
+        run: echo "::set-output name=LATEST_TAG::$(git tag | sort -V | tail -1)"
+        
+      - name: Create .env file
+        run: |
+          echo "LATEST_TAG=${{ steps.get-version.outputs.latest_tag }}" >> .env
 
       - name: Login to GitHub Packages
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u ${{ github.actor }} --password-stdin
@@ -47,4 +49,4 @@ jobs:
           # Additional commands to pull other Docker images if necessary
 
       - name: Restart Docker containers
-        run: docker-compose up -d --build --env LATEST_TAG=${LATEST_TAG}
+        run: docker-compose up -d --build
