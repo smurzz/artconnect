@@ -7,6 +7,10 @@ application:
             validityInMs: 604800000   # 7 days
          confirm-token: 
             validityInMs: 900000   # 15 minutes
+management:
+  endpoint:
+    health:
+      show-details: always
 frontend:
   base-url: http://localhost:3000
 server:
@@ -41,6 +45,10 @@ application:
             validityInMs: 604800000   # 7 days
          confirm-token: 
             validityInMs: 900000   # 15 minutes
+management:
+  endpoint:
+    health:
+      show-details: always
 frontend:
   base-url: http://localhost:3000
 spring:

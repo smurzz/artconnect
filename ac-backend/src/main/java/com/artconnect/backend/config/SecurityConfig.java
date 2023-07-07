@@ -45,6 +45,7 @@ public class SecurityConfig {
 						.pathMatchers(HttpMethod.GET, PATH_USERS).permitAll()
 						.pathMatchers(HttpMethod.GET, PATH_ARTWORKS).permitAll()
 						.pathMatchers(HttpMethod.GET, PATH_GALLERIES).permitAll()
+						.pathMatchers(HttpMethod.GET, "/actuator/**").permitAll()
 						.pathMatchers(HttpMethod.GET, "/forgot-password/**").permitAll()
 						.pathMatchers(HttpMethod.POST, "/reset-password/**").permitAll()
 						.anyExchange().authenticated()
