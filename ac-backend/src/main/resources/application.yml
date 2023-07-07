@@ -9,6 +9,8 @@ application:
             validityInMs: 900000   # 15 minutes
 frontend:
   base-url: http://localhost:3000
+backend:
+  base-url: http://localhost:8080
 server:
    port: 8080
 spring:
@@ -41,7 +43,9 @@ application:
          confirm-token: 
             validityInMs: 900000   # 15 minutes
 frontend:
-  base-url: http://localhost:3000
+  base-url: http://18.185.79.47:3000
+backend:
+  base-url: http://18.185.79.47:8080
 spring:
    config:
       activate:
@@ -49,12 +53,8 @@ spring:
       import: env.properties
    data:
       mongodb:
-         host: mongo
-         port: 27018
+         url: mongodb+srv://artconnect:AauS5wGE27kAFocz@artconnetc-cluster.hh5a4oh.mongodb.net/?retryWrites=true&w=majority
          database: artconnect-db
-         username: admin
-         password: password
-         authentication-database: admin
          auto-index-creation: true
    mail:
       host: smtp.gmail.com

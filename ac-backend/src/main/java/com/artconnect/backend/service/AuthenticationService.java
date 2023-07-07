@@ -2,6 +2,7 @@ package com.artconnect.backend.service;
 
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -32,6 +33,9 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+	
+	@Value("${backend.base-url}")
+	private String backendBaseUrl;
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -53,7 +57,7 @@ public class AuthenticationService {
 		return userRepository.save(user)
 				.flatMap(savedUser -> {
 					String confirmToken = jwtService.generateConfirmationToken(user);
-					String link = "http://localhost:8080/auth/confirm-account?token=" + confirmToken;
+					String link = backendBaseUrl + "/auth/confirm-account?token=" + confirmToken;
 					String messageBodyString = buildEmail(savedUser.getFirstname(), link);
 					String subject = "Complete Registration by ArtConnect!";
 					emailService.sendEmail(user.getEmail(), subject, messageBodyString);
