@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Fetch all branches
-        run: git fetch --all
+        run: git fetch --all --tags
         
       - name: Update Git repository on dev
         run: |
@@ -30,7 +30,7 @@ jobs:
           
       - name: Get latest tag version
         id: get-version
-        run: echo "::set-env name=LATEST_TAG::$(git describe --tags --abbrev=0)"
+        run: echo "::set-env name=LATEST_TAG::$(git tag | sort -V | tail -1)"
 
       - name: Login to GitHub Packages
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u ${{ github.actor }} --password-stdin
