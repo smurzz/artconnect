@@ -15,12 +15,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         
-      - name: List directory contents
-        run: ls
-
-      - name: Update Git repository
+      - name: Update Git repository on dev
         run: |
-          cd artconnect
+          git checkout dev
+          git pull
+
+      - name: Update Git repository on main
+        run: |
+          git checkout main
           git pull
 
       - name: Login to GitHub Packages
