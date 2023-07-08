@@ -7,12 +7,10 @@ application:
             validityInMs: 604800000   # 7 days
          confirm-token: 
             validityInMs: 900000   # 15 minutes
-management:
-  endpoint:
-    health:
-      show-details: always
 frontend:
   base-url: http://localhost:3000
+backend:
+  base-url: http://localhost:8080
 server:
    port: 8080
 spring:
@@ -22,7 +20,6 @@ spring:
       import: env.properties
    data:
       mongodb:
-#         url: mongodb+srv://artconnect:5YuUTUWLE1NbnKdg@artconnect-test.b4ngfop.mongodb.net/?retryWrites=true&w=majority
          host: localhost
          port: 27017
          database: artconnect-db
@@ -45,12 +42,10 @@ application:
             validityInMs: 604800000   # 7 days
          confirm-token: 
             validityInMs: 900000   # 15 minutes
-management:
-  endpoint:
-    health:
-      show-details: always
 frontend:
-  base-url: http://localhost:3000
+  base-url: http://18.185.79.47:3000
+backend:
+  base-url: http://18.185.79.47:8080
 spring:
    config:
       activate:
@@ -58,6 +53,7 @@ spring:
       import: env.properties
    data:
       mongodb:
+         # url: mongodb+srv://artconnect:${MONGO_PASSWORD}@artconnetc-cluster.hh5a4oh.mongodb.net/?retryWrites=true&w=majority
          host: mongo
          port: 27018
          database: artconnect-db
