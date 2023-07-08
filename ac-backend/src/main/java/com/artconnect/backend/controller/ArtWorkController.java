@@ -7,9 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +21,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.artconnect.backend.controller.request.ArtWorkRequest;
+import com.artconnect.backend.controller.request.ArtWorkUpdateRequest;
+import com.artconnect.backend.controller.request.GalleryRequest;
 import com.artconnect.backend.controller.response.ArtWorkResponse;
+import com.artconnect.backend.controller.response.GalleryResponse;
 import com.artconnect.backend.model.artwork.ArtWork;
+import com.artconnect.backend.model.gallery.Gallery;
 import com.artconnect.backend.service.ArtWorkService;
 import com.artconnect.backend.service.ImageService;
 
@@ -111,6 +117,34 @@ public class ArtWorkController {
 	        @RequestHeader("Authorization") String authorization) {		
 		 return artWorkService.addImages(id, files, authorization)
 				 .map(imageNum -> "Images saved for ArtWork.");
+	}
+	
+	@PutMapping("/{id}")
+	public Mono<ArtWorkResponse> updateMyArtWork(
+			@PathVariable("id") String id, 
+			@Valid @RequestBody ArtWorkUpdateRequest artworkRequest, 
+			@RequestHeader("Authorization") String authorization){
+		ArtWork artWork = ArtWorkUpdateRequest.toArtWork(artworkRequest);
+		return artWorkService.update(id, artWork, authorization).flatMap(this::mapArtWorkToResponse);
+	}
+	
+	@PostMapping("/{id}/like")
+	public Mono<ArtWorkResponse> addRemoveLikeByArtWork(
+			@PathVariable("id") String id, 
+			@RequestHeader("Authorization") String authorization) {
+		return artWorkService.addRemoveLike(id, authorization).flatMap(this::mapArtWorkToResponse);
+	}
+	
+	@DeleteMapping("/{id}/images/{imageId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public Mono<Void> deleteImageInArtWorkById(@PathVariable String id, @PathVariable String imageId, @RequestHeader("Authorization") String authorization) {
+	    return artWorkService.deleteImageById(id, imageId, authorization);
+	}
+	
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public Mono<Void> deleteArtWork(@PathVariable String id, @RequestHeader("Authorization") String authorization) {
+	    return artWorkService.delete(id, authorization);
 	}
 	
 	private Mono<ArtWorkResponse> mapArtWorkToResponse(ArtWork artwork) {

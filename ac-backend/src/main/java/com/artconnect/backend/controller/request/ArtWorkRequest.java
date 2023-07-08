@@ -21,7 +21,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ArtWorkRequest {
-	
+
 	@NotBlank
 	private String title;
     

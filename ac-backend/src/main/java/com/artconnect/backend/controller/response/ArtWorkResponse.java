@@ -59,8 +59,7 @@ public class ArtWorkResponse {
 	private String galleryTitle;
 
 	private Integer likes;
-	
-	
+		
 	public static ArtWorkResponse fromArtWork(ArtWork artwork, List<Image> images) {
 		ArtWorkResponse artworkResponse = ArtWorkResponse.builder()
 				.id(artwork.getId())

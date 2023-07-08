@@ -25,6 +25,15 @@ public class ImageService {
 	
 	private final ImageRepository imageRepository;
 	
+	public Mono<Image> getPhoto(String id) { 
+        return imageRepository.findById(id)
+        		.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
+    }
+	
+	public Flux<Image> getPhotosByIds(List<String> imageIds){
+		return imageRepository.findAllById(imageIds);
+	}
+	
 	public Mono<Image> addPhoto(Mono<FilePart> file)  {
 		return Mono
 	            .zip(file, file.flatMap(filePart -> DataBufferUtils.join(filePart.content())))
@@ -64,20 +73,6 @@ public class ImageService {
 		return files.flatMap(filePart ->  addPhoto(Mono.just(filePart)));    
 	}
 	
-	public Mono<Image> getPhoto(String id) { 
-        return imageRepository.findById(id)
-        		.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
-    }
-	
-	public Flux<Image> getPhotosByIds(List<String> imageIds){
-		return imageRepository.findAllById(imageIds);
-	}
-	
-	public Mono<Void> deleteAllByIds(List<String> ids){
-		return imageRepository.deleteAllById(ids)
-				.then();
-	}
-	
 	public Mono<Boolean> validedAllPhoto(Flux<FilePart> files) {
 	    return files
 	            .flatMap(file -> {
@@ -104,6 +99,16 @@ public class ImageService {
 	            })
 	            .collectList()
 	            .map(validations -> validations.stream().allMatch(valid -> valid));
+	}
+	
+	public Mono<Void> deleteById(String id){
+		return imageRepository.deleteById(id)
+				.then();
+	}
+	
+	public Mono<Void> deleteAllByIds(List<String> ids){
+		return imageRepository.deleteAllById(ids)
+				.then();
 	}
 
 }

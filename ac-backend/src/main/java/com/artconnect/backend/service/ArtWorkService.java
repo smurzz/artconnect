@@ -3,6 +3,7 @@ package com.artconnect.backend.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -12,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.artconnect.backend.config.jwt.JwtService;
+import com.artconnect.backend.controller.response.ArtWorkResponse;
 import com.artconnect.backend.model.artwork.ArtWork;
+import com.artconnect.backend.model.gallery.Gallery;
+import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.repository.ArtWorkRepository;
 import com.artconnect.backend.repository.GalleryRepository;
 
@@ -119,7 +123,7 @@ public class ArtWorkService {
 						}))
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Artwork not found")));
 	}
-
+	
 	public Mono<Integer> addImages(String id, Flux<FilePart> files, String authorization) {
 	    return userService.findByEmail(getEmailFromAuthentication(authorization))
 	            .flatMap(user -> findById(id)
@@ -147,6 +151,48 @@ public class ArtWorkService {
 	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Artwork not found")));
 	}
 	
+	public Mono<ArtWork> update(String id, ArtWork artwork, String authorization) {
+		return userService.findByEmail(getEmailFromAuthentication(authorization))
+				.flatMap(user -> {
+					return findById(id)
+							.filter(existingArtwork -> existingArtwork.getOwnerId().equals(user.getId()) || user.getRole() == Role.ADMIN)
+							.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to update an artwork for another user")))
+							.flatMap(existingArtwork -> {
+								if(user.getRole() == Role.ADMIN) {
+									Optional.ofNullable(artwork.getId()).ifPresent(existingArtwork::setId);
+									Optional.ofNullable(artwork.getOwnerId()).ifPresent(existingArtwork::setOwnerId);
+									Optional.ofNullable(artwork.getGalleryId()).ifPresent(existingArtwork::setOwnerId);
+									Optional.ofNullable(artwork.getGalleryTitle()).ifPresent(existingArtwork::setGalleryTitle);
+									Optional.ofNullable(artwork.getOwnerId()).ifPresent(existingArtwork::setOwnerId);
+								}
+								Optional.ofNullable(artwork.getTitle()).ifPresent(existingArtwork::setTitle);
+								Optional.ofNullable(artwork.getDescription()).ifPresent(existingArtwork::setDescription);
+								Optional.ofNullable(artwork.getYearOfCreation()).ifPresent(existingArtwork::setYearOfCreation);
+								Optional.ofNullable(artwork.getDimension()).ifPresent(existingArtwork::setDimension);
+								Optional.ofNullable(artwork.getPrice()).ifPresent(existingArtwork::setPrice);
+								Optional.ofNullable(artwork.getLocation()).ifPresent(existingArtwork::setLocation);
+								Optional.ofNullable(artwork.getMaterials()).ifPresent(existingArtwork::setMaterials);
+								Optional.ofNullable(artwork.getArtDirections()).ifPresent(existingArtwork::setArtDirections);
+								Optional.ofNullable(artwork.getTags()).ifPresent(existingArtwork::setTags);
+								
+								return artWorkRepository.save(existingArtwork);
+							});
+		});
+	}
+
+	
+
+	public Mono<ArtWork> addRemoveLike(String id, String authorization) {
+		return userService.findByEmail(getEmailFromAuthentication(authorization))
+				.flatMap(user -> {
+					return findById(id)
+							.flatMap(existingArtwork -> {
+								existingArtwork.setLike(user.getEmail());
+								return artWorkRepository.save(existingArtwork);
+							});
+		});
+	}
+	
 	public Mono<Void> delete(String id, String authorization) {
 	    return userService.findByEmail(getEmailFromAuthentication(authorization))
 	            .flatMap(user -> findById(id)
@@ -161,7 +207,11 @@ public class ArtWorkService {
 	                            deleteImages = Mono.empty();
 	                        }
 	                        return deleteImages.then(artWorkRepository.delete(artwork))
-	                        		.then();
+	                        		.then(galleryRepository.findByOwnerId(user.getId()))
+	                                .flatMap(gallery -> {
+	                                    gallery.getArtworkIds().remove(id);
+	                                    return galleryRepository.save(gallery);
+	                                });
 	                    }))
 	            .then();
 	}
@@ -173,10 +223,34 @@ public class ArtWorkService {
 	            .then();
 	}
 	
+	public Mono<Void> deleteImageById(String artworkId, String imageId, String authorization){
+		return userService.findByEmail(getEmailFromAuthentication(authorization))
+				.flatMap(user -> findById(artworkId)
+						.filter(artwork -> artwork.getOwnerId().equals(user.getId()))
+						.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to remove an image for another user or artwork")))
+						.flatMap(artwork -> {
+							if(artwork.getImagesIds().contains(imageId)) {
+								return imageService.getPhoto(imageId)
+	                                    .flatMap(image -> imageService.deleteById(image.getId())
+	                                            .then(Mono.fromCallable(() -> {
+	                                                List<String> newImageIds = artwork.getImagesIds().stream()
+	                                                        .filter(id -> !id.equals(imageId))
+	                                                        .toList();
+	                                                artwork.setImagesIds(newImageIds);
+	                                                return artwork;
+	                                            }))
+	                                            .flatMap(artWorkRepository::save)
+	                                    );
+							} else {
+								return Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Image is not found by ArtWork"));
+							}
+						}))
+				.then();
+	}
+	
 	private String getEmailFromAuthentication(String authorization) {
 		String token = authorization.substring(7);
 	    return jwtService.extractUsername(token);
 	}
-
 	
 }
