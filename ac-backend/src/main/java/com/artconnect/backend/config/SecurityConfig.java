@@ -1,5 +1,6 @@
 package com.artconnect.backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +23,9 @@ import lombok.RequiredArgsConstructor;
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
+	
+	@Value("${frontend.base-url}")
+	private String frontendBaseUrl;
 
 	final String PATH_AUTH = "/auth/**";
 	final String PATH_USERS = "/users/**";
@@ -57,8 +61,8 @@ public class SecurityConfig {
 	private CorsConfigurationSource createCorsConfigSource() {
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		CorsConfiguration config = new CorsConfiguration();
-		config.addAllowedOrigin("http://localhost:3000");
 		config.addAllowedOrigin("http://localhost:3001");
+		config.addAllowedOrigin(frontendBaseUrl);
 		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
 
