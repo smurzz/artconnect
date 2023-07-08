@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import {useEffect, useState} from 'react'
 import { Dialog } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import React from "react";
@@ -8,7 +8,10 @@ import {useTheme} from '@mui/material/styles';
 import {styled} from '@mui/material/styles';
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../../components/headerComponent/headerLogout"
-import "./homeTailwind.css"
+import "./homeTailwind.css";
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 
 //Carousel
 import {Carousel} from 'react-responsive-carousel';
@@ -199,10 +202,19 @@ const footerNavigation = {
 
 export default function HomeTailwind() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  useEffect(()=>{
+    async function getLoggedIn(){
+      const loggedInHeader = await logikService.isLoggedIn();
+      setIsLoggedIn(loggedInHeader);
+      console.log("loggedIn: " + loggedInHeader)
+    }
+    getLoggedIn();
+  },[])
 
   return (
       <>
-      <Header></Header>
+        {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
       <main>
         <div className="bg-white">
             <Carousel className="carousel-inner"

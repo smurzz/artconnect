@@ -92,6 +92,31 @@ async function putSecuredData(url,payload){
     }
 }
 
+async function deleteSecuredData(url) {
+    const tokenInfo = await storageService.getTokenInformation();
+    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
+    if(!tokenInfo) return null;
+    try{
+        const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
+        var _headers = {
+            headers: {
+                Authorization: "Bearer " + tokenInfo.accessToken,
+                "Content-type": "multipart/form-data"
+            },
+        };
+        axios.delete(url, _headers)
+            .then(response => {
+                console.log("User was deleted");
+            })
+
+        console.log("Api Service - sendImage: success")
+        return "success";
+    }catch(error){
+        console.log("Api Service - sendImage: error")
+        return null;
+    }
+}
+
 async function postSecuredImage(url,payload){
     const tokenInfo = await storageService.getTokenInformation();
     console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
@@ -129,6 +154,7 @@ async function postSecuredImage(url,payload){
         getSecuredData,
         postSecuredData,
         putSecuredData,
-        postSecuredImage
+        postSecuredImage,
+        deleteSecuredData
     }
 

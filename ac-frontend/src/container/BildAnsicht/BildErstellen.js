@@ -5,7 +5,10 @@ import {storageService} from "../../lib/localStorage"
 import {ApiService} from "../../lib/api";
 import {useNavigate, Link} from "react-router-dom";
 import {GalerieService} from "../../lib/apiGalerie";
-import PopupModal from "../../components/ModalPopUp/ModalPopUp"
+import PopupModal from "../../components/ModalPopUp/ModalPopUp";
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout"
 const MaterialForm = ({materials, setMaterials}) => {
     const [newMaterial, setNewMaterial] = useState('');
     const handleAddMaterial = (event) => {
@@ -105,6 +108,16 @@ const BildErstellen = () => {
     const [idImage, setIdImage] = useState("");
     const [success, setSuccess]= useState(false);
     const currentYear = new Date().getFullYear();
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
+
     const artDirectionsOptions = [
         "ABSTRACT",
         "REALISM",
@@ -200,8 +213,7 @@ const BildErstellen = () => {
 
     return (
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-
-
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
         <div>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">

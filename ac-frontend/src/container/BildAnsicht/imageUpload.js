@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { GalerieApiService } from '../../lib/apiGalerie';
 import { useParams } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
 import {useNavigate, Link} from "react-router-dom";
 import Image2 from './../Galerie/imgSlides/original2.jpg';
-
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout"
 export default function ImageUploadComponent() {
     const [selectedFileMain, setSelectedFileMain] = useState(null);
     const [selectedFile1, setSelectedFile1] = useState(null);
@@ -13,6 +15,15 @@ export default function ImageUploadComponent() {
     const [selectedFile4, setSelectedFile4] = useState(null);
     const[noFileUploaded, setNoFileUploaded] = useState(null);
     const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+        }
+        getLoggedIn();
+    },[])
+
 
     const { id } = useParams();
 
@@ -51,6 +62,7 @@ export default function ImageUploadComponent() {
 
     return (
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             {noFileUploaded == true && alert("Please Upload a file")}
             <div className="card-group d-flex justify-content-around">
                 <div className="big-card">

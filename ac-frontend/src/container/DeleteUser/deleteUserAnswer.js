@@ -18,8 +18,9 @@ import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';
-import Header from "../../components/headerComponent/headerLogout"
-
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout"
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -44,15 +45,20 @@ const defaultTheme = createTheme();
 
 export default function DeleteUserAnswer() {
     const navigate = useNavigate();
-
     const location = useLocation();
     const { userWantsToBeDeleted } = location.state;
-
-
-
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Header/>
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             <main>
                 <Grid container component="main" sx={{ height: '100vh' }}>
                     <CssBaseline />

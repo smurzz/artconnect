@@ -2,11 +2,9 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from "react";
 import {Link, Route, Routes, useNavigate, useLocation} from "react-router-dom";
 import "./bearbeiten.css";
-
 import axios from "../../api/axios";
 import {ApiService} from "../../lib/api";
 import { format } from 'date-fns';
-
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -14,6 +12,9 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -57,6 +58,15 @@ function Bearbeiten(props) {
             website:""
         }
     )
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
 
     //add ExhibitionValues
     const [exhibitionValues, setExhibitionValues] = useState([{title: "", location: "", year: "", description: ""}])
@@ -217,7 +227,7 @@ console.log("requestBody: "+ JSON.stringify(requestBody));
 
 return (
     <>
-        <Header/>
+        {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
     {/* tailwind ui */}
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}

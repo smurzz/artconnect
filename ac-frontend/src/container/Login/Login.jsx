@@ -18,7 +18,8 @@ import { ApiService } from "../../lib/api";
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';
 import Header from "../../components/headerComponent/headerLogout"
-
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn"
+import {logikService} from  "../../lib/service"
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -60,8 +61,17 @@ export default function SignInSide() {
   const [titel, setTitel] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [errAlert, seterrAlert] = React.useState("");
-
+const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   //Immer wenn ein Fehler aus dem Backend kommt, wird der Fehler Dialog angezeigt
+
+  useEffect(()=>{
+    async function getLoggedIn(){
+      const loggedInHeader = await logikService.isLoggedIn();
+      setIsLoggedIn(loggedInHeader);
+      console.log("loggedIn: " + loggedInHeader)
+    }
+    getLoggedIn();
+  },[])
 
   useEffect(() => {
     setErrorMessage(false);
@@ -124,7 +134,8 @@ export default function SignInSide() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Header />
+      {isLoggedIn? <HeaderLogedIn/>:<Header />}
+
       <Grid container component="main" maxWidth="xs" sx={{ height: '100vh' }}>
         {open &&
           <div >

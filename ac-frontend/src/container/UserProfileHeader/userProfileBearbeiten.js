@@ -1,11 +1,13 @@
-import React, {Fragment} from 'react'
+import React, {Fragment, useEffect} from 'react'
 import EmptyGalerie from '../../container/Galerie/Galerie2'
 import {EnvelopeIcon, PhoneIcon} from '@heroicons/react/20/solid'
 import {Menu, Transition} from '@headlessui/react'
 import {CodeBracketIcon, EllipsisVerticalIcon, FlagIcon, StarIcon} from '@heroicons/react/20/solid'
 import {PaperClipIcon} from '@heroicons/react/20/solid'
-import Header from "../../components/headerComponent/headerLogedIn";
 import {useNavigate, Link} from "react-router-dom";
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 
 
 const profile = {
@@ -33,11 +35,20 @@ function classNames(...classes) {
 }
 
 const Profile = () => {
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
     const navigate = useNavigate();
     return (
         <>
             <div>
-                <Header></Header>
+                {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
                 <div>
                     <div>
                         <img className="h-32 w-full object-cover lg:h-48" src={profile.backgroundImage} alt=""/>

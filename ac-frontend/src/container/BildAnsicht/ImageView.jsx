@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react'
-import { useParams, useNavigate} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 import {Disclosure, RadioGroup, Tab} from '@headlessui/react'
 import {StarIcon} from '@heroicons/react/20/solid'
 import {HeartIcon, MinusIcon, PlusIcon} from '@heroicons/react/24/outline'
@@ -8,6 +8,9 @@ import {storageService} from "../../lib/localStorage"
 import Image1 from './../Galerie/imgSlides/original.jpg';
 import React from "react";
 import Header from "../../components/headerComponent/headerLogedIn"
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout"
 
 const product = {
     name: 'Olivia Montague',
@@ -55,17 +58,22 @@ export default function Example() {
     const {id} = useParams();
     const [artwork, setArtwork] = useState();
     const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
     useEffect(() => {
         async function getUserData() {
-            const getArtwork= await GalerieApiService.getSecuredData("/artworks/"+id);
-            console.log("artwork: "+ JSON.stringify(getArtwork.data));
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            const getArtwork = await GalerieApiService.getSecuredData("/artworks/" + id);
+            console.log("artwork: " + JSON.stringify(getArtwork.data));
             setArtwork(getArtwork.data);
         }
+
         getUserData();
 
     }, [])
 
-    function convertImage(data){
+    function convertImage(data) {
         if (data) {
             const byteCharacters = atob(data);
             const byteNumbers = new Array(byteCharacters.length);
@@ -83,9 +91,15 @@ export default function Example() {
         }
     }
 
+    async function deleteArtwort(id) {
+        console.log("deleteArtwork: " + id);
+        await GalerieApiService.deleteSecuredData("/artworks/" + id);
+        navigate("/galerie");
+    }
+
     return (
         <>
-            <Header></Header>
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             <div className="bg-white">
 
                 <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -95,38 +109,50 @@ export default function Example() {
                             {/* Image selector */}
                             <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
                                 {artwork && artwork.images && artwork.images[0] ? (
-                                        <Tab.Panel>
-                                            <img
-                                                src={convertImage( artwork.images[0].image.data)}
-                                                className="h-full w-full object-cover object-center sm:rounded-lg"
-                                            />
-                                        </Tab.Panel>
-                                ):                                        <Tab.Panel>
+                                    <Tab.Panel>
+                                        <img
+                                            src={convertImage(artwork.images[0].image.data)}
+                                            className="h-full w-full object-cover object-center sm:rounded-lg"
+                                        />
+                                    </Tab.Panel>
+                                ) : <Tab.Panel>
                                     <img
                                         src={Image1}
                                         className="h-full w-full object-cover object-center sm:rounded-lg"
                                     />
-                                </Tab.Panel> }
+                                </Tab.Panel>}
                             </Tab.Panels>
                         </Tab.Group>
 
                         {/* Product info */}
                         <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
                             <div className="flex items-center mb-7">
-                                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{artwork?.title}</h1>                                <button
+                                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{artwork?.title}</h1>
+                                <button
                                     onClick={() => {
-                                        navigate("/editArt", { state: { artworkOld: artwork, artworkId: id } });
+                                        navigate("/editArt", {state: {artworkOld: artwork, artworkId: id}});
                                     }}
                                     className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 m-7"
                                 >
                                     Edit Artwork
                                 </button>
+
+                                <button
+                                    onClick={() => {
+                                        deleteArtwort(id);
+
+                                    }}
+                                    className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+                                >
+                                    Delete Artwork
+                                </button>
                             </div>
-                            <div className="like-count text-gray-400">{artwork?.location === "" ? <span>unknown, </span> : <span>{artwork?.location}, </span>} {artwork?.yearOfCreation}
+                            <div className="like-count text-gray-400">{artwork?.location === "" ?
+                                <span>unknown, </span> : <span>{artwork?.location}, </span>} {artwork?.yearOfCreation}
                             </div>
-                             {artwork?.tags.map((tag)=>(
-                                 <span className="tag tag-sm">#{tag}</span>
-                             ))}
+                            {artwork?.tags.map((tag) => (
+                                <span className="tag tag-sm">#{tag}</span>
+                            ))}
 
                             <div className="mt-3">
                                 <h2 className="sr-only">Product information</h2>
@@ -173,18 +199,18 @@ export default function Example() {
                                 </h2>
 
                                 <div className="divide-y divide-gray-200 border-t">
-                                        <Disclosure as="div" key="details">
-                                            {({open}) => (
-                                                <>
-                                                    <h3>
-                                                        <Disclosure.Button
-                                                            className="group relative flex w-full items-center justify-between py-6 text-left">
+                                    <Disclosure as="div" key="details">
+                                        {({open}) => (
+                                            <>
+                                                <h3>
+                                                    <Disclosure.Button
+                                                        className="group relative flex w-full items-center justify-between py-6 text-left">
                             <span
                                 className={classNames(open ? 'text-indigo-600' : 'text-gray-900', 'text-sm font-medium')}
                             >
                               Details
                             </span>
-                                                            <span className="ml-6 flex items-center">
+                                                        <span className="ml-6 flex items-center">
                               {open ? (
                                   <MinusIcon
                                       className="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
@@ -197,33 +223,35 @@ export default function Example() {
                                   />
                               )}
                             </span>
-                                                        </Disclosure.Button>
-                                                    </h3>
-                                                    <Disclosure.Panel as="div" className="prose prose-sm pb-6">
-                                                        <ul role="list">
+                                                    </Disclosure.Button>
+                                                </h3>
+                                                <Disclosure.Panel as="div" className="prose prose-sm pb-6">
+                                                    <ul role="list">
                                                         <li>
-                                                            Dimension: <span>Height: {artwork?.height}</span> <span>Width: {artwork?.dimension.width}</span> <span>Depth: {artwork?.dimension.depth}</span>
+                                                            Dimension: <span>Height: {artwork?.height}</span>
+                                                            <span>Width: {artwork?.dimension.width}</span>
+                                                            <span>Depth: {artwork?.dimension.depth}</span>
                                                         </li>
-                                                            <li>Price: {artwork?.price} Euro</li>
-                                                        </ul>
-                                                    </Disclosure.Panel>
-                                                </>
-                                            )}
-                                        </Disclosure>
+                                                        <li>Price: {artwork?.price} Euro</li>
+                                                    </ul>
+                                                </Disclosure.Panel>
+                                            </>
+                                        )}
+                                    </Disclosure>
                                 </div>
                                 <div className="divide-y divide-gray-200 border-t">
-                                        <Disclosure as="div" key="materials">
-                                            {({open}) => (
-                                                <>
-                                                    <h3>
-                                                        <Disclosure.Button
-                                                            className="group relative flex w-full items-center justify-between py-6 text-left">
+                                    <Disclosure as="div" key="materials">
+                                        {({open}) => (
+                                            <>
+                                                <h3>
+                                                    <Disclosure.Button
+                                                        className="group relative flex w-full items-center justify-between py-6 text-left">
                             <span
                                 className={classNames(open ? 'text-indigo-600' : 'text-gray-900', 'text-sm font-medium')}
                             >
                               Materials
                             </span>
-                                                            <span className="ml-6 flex items-center">
+                                                        <span className="ml-6 flex items-center">
                               {open ? (
                                   <MinusIcon
                                       className="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
@@ -236,23 +264,24 @@ export default function Example() {
                                   />
                               )}
                             </span>
-                                                        </Disclosure.Button>
-                                                    </h3>
-                                                    <Disclosure.Panel as="div" className="prose prose-sm pb-6">
-                                                        <ul role="list">
-                                                            {artwork?.materials.map((material) => (
+                                                    </Disclosure.Button>
+                                                </h3>
+                                                <Disclosure.Panel as="div" className="prose prose-sm pb-6">
+                                                    <ul role="list">
+                                                        {artwork?.materials.map((material) => (
                                                             <li>{material}</li>))}
-                                                        </ul>
-                                                    </Disclosure.Panel>
-                                                </>
-                                            )}
-                                        </Disclosure>
+                                                    </ul>
+                                                </Disclosure.Panel>
+                                            </>
+                                        )}
+                                    </Disclosure>
                                 </div>
                             </section>
                         </div>
                     </div>
                 </div>
             </div>
+
         </>
     )
 }

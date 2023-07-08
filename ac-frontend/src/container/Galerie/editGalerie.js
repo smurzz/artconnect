@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import {Link, Route, Routes, useNavigate, useLocation, useParams} from "react-router-dom";
-import Header from "../../components/headerComponent/headerLogedIn";
 import {GalerieApiService} from "../../lib/apiGalerie"
 import {storageService} from "../../lib/localStorage"
-
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 function EditGalerie (props) {
     const navigate = useNavigate();
-
     //User und Image Opject von der UserprofilSeite
     const location = useLocation();
     const { gallery, galerieId } = location.state;
     //Categorie handeling
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
     const categoriesOptions = [
         "PRINT",
         "PAINTING",
@@ -22,9 +31,6 @@ function EditGalerie (props) {
         description: '',
         categories: []
     });
-useEffect(()=>{
-    console.log(galerieId);
-},[])
 
     const handleCategoryChange = (category) => {
         if (gallerie.categories.includes(category)) {
@@ -57,10 +63,9 @@ useEffect(()=>{
         await GalerieApiService.putSecuredData("/galleries/"+galerieId.replace(/"/g, ''),requestBody);
         navigate("/galerie")
     };
-
     return (
         <div className="container">
-            <Header/>
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Title:</label>

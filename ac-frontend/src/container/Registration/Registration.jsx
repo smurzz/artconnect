@@ -21,7 +21,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import Header from "../../components/headerComponent/headerLogout"
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';
@@ -76,6 +78,16 @@ function SignUp(props) {
     const [titel, setTitel] = React.useState("");
     const [message, setMessage] = React.useState("");
     const [errAlert, seterrAlert] = React.useState("");
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
+
     useEffect(() => {
         setLoading(props.pending)
     }, [props.pending]);
@@ -174,7 +186,7 @@ function SignUp(props) {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Header/>
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             <Container component="main" maxWidth="xs">
                 <CssBaseline/>
                 <Box

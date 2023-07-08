@@ -35,28 +35,29 @@ function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Home />}></Route>{/*ausgeloggte Homeseite*/}
-          <Route path="/register" element={<Registration />}></Route>
+        <Route path="/register" element={<Registration />}></Route>
         <Route path="/login" element={<Login />} />
-          {/*Forgot Password routes*/}
-          <Route path ="/forgot" element ={<ForgotPassword/>}/>
+        {/*Forgot Password routes*/}
+        <Route path ="/forgot" element ={<ForgotPassword/>}/>
         <Route path ="/resetSuccess" element ={<ResetPasswortSuccess/>}/>
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
-          {/*Galerie*/}
-          <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
-        <Route path="/deleteUser" element ={<DeleteUser/>}></Route>
-        <Route path ="/editGallery" element ={<EditGalerie/>}/>
-        <Route path="/uploadImage/:id" element ={<ImageUploadComponent/>}></Route>
-        <Route path="/newArt" element={<BildErstellen/>}></Route>
-        <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
-
-        <Route path="/deleteUserAnswer" element ={<DeleteUserAnswer/>}></Route>
-        <Route path="/postGalerie/:id" element ={<PostGalerie/>}></Route>
-        <Route path="/editGalerie/:id" element ={<EditGalerie/>}></Route>
-        <Route path="/editArt" element ={<BildBearbeiten/>}></Route>
           {/*User bearbeiten*/}
-            <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
+
           <Route  element={<ProtectedRoutes />}>
               {/*Protected Routes*/}
+            <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
+            {/*Galerie*/}
+            <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
+            <Route path ="/editGallery" element ={<EditGalerie/>}/>
+            <Route path="/deleteUser" element ={<DeleteUser/>}></Route>
+            <Route path="/uploadImage/:id" element ={<ImageUploadComponent/>}></Route>
+            <Route path="/newArt" element={<BildErstellen/>}></Route>
+            <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
+
+            <Route path="/deleteUserAnswer" element ={<DeleteUserAnswer/>}></Route>
+            <Route path="/postGalerie/:id" element ={<PostGalerie/>}></Route>
+            <Route path="/editGalerie/:id" element ={<EditGalerie/>}></Route>
+            <Route path="/editArt" element ={<BildBearbeiten/>}></Route>
           </Route>
         <Route path='*' element={<NotFound/>}/>
       </Routes>
