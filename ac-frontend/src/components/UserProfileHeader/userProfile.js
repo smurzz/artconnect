@@ -96,9 +96,9 @@ const Profile = () => {
                                             navigate("/bearbeiten", { state: { user: user, imageProps: image } });
                                         }}
                                         type="button"
-                                        className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7 mb-7"
                                     >
-                                        <span>Edit</span>
+                                        <span>Edit User</span>
                                     </button>
                                 </div>
                             </div>

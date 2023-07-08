@@ -19,7 +19,6 @@ const product = {
             src: Image1,
             alt: 'Angled front view with bag zipped and handles upright.',
         },
-        // More images...
     ],
     colors: [
         {name: 'Washed Black', bgColor: 'bg-gray-700', selectedColor: 'ring-gray-700'},
@@ -55,6 +54,7 @@ export default function Example() {
     const [selectedColor, setSelectedColor] = useState(product.colors[0])
     const {id} = useParams();
     const [artwork, setArtwork] = useState();
+    const navigate = useNavigate();
     useEffect(() => {
         async function getUserData() {
             const getArtwork= await GalerieApiService.getSecuredData("/artworks/"+id);
@@ -65,60 +65,63 @@ export default function Example() {
 
     }, [])
 
+    function convertImage(data){
+        if (data) {
+            const byteCharacters = atob(data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            // Create URL for the binary image data
+            const blob = new Blob([byteArray], {type: 'image/png'}); // Adjust the 'type' according to the actual image format
+            const url = URL.createObjectURL(blob);
+            return url;
+
+            //Blank Picture
+            console.log("Image undefined.")
+        }
+    }
+
     return (
         <>
             <Header></Header>
             <div className="bg-white">
 
                 <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-
                     <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
                         {/* Image gallery */}
                         <Tab.Group as="div" className="flex flex-col-reverse">
                             {/* Image selector */}
-                            <div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">
-                                <Tab.List className="grid grid-cols-4 gap-6">
-                                    {product.images.map((image) => (
-                                        <Tab
-                                            key={image.id}
-                                            className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
-                                        >
-                                            {({selected}) => (
-                                                <>
-                                                    <span className="sr-only">{image.name}</span>
-                                                    <span className="absolute inset-0 overflow-hidden rounded-md">
-                          <img src={image.src} alt="" className="h-full w-full object-cover object-center"/>
-                        </span>
-                                                    <span
-                                                        className={classNames(
-                                                            selected ? 'ring-indigo-500' : 'ring-transparent',
-                                                            'pointer-events-none absolute inset-0 rounded-md ring-2 ring-offset-2'
-                                                        )}
-                                                        aria-hidden="true"
-                                                    />
-                                                </>
-                                            )}
-                                        </Tab>
-                                    ))}
-                                </Tab.List>
-                            </div>
-
                             <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
-                                {product.images.map((image) => (
-                                    <Tab.Panel key={image.id}>
-                                        <img
-                                            src={image.src}
-                                            alt={image.alt}
-                                            className="h-full w-full object-cover object-center sm:rounded-lg"
-                                        />
-                                    </Tab.Panel>
-                                ))}
+                                {artwork && artwork.images && artwork.images[0] ? (
+                                        <Tab.Panel>
+                                            <img
+                                                src={convertImage( artwork.images[0].image.data)}
+                                                className="h-full w-full object-cover object-center sm:rounded-lg"
+                                            />
+                                        </Tab.Panel>
+                                ):                                        <Tab.Panel>
+                                    <img
+                                        src={Image1}
+                                        className="h-full w-full object-cover object-center sm:rounded-lg"
+                                    />
+                                </Tab.Panel> }
                             </Tab.Panels>
                         </Tab.Group>
 
                         {/* Product info */}
                         <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-                            <h1 className="text-3xl font-bold tracking-tight text-gray-900">{artwork?.title}</h1>
+                            <div className="flex items-center mb-7">
+                                <h1 className="text-3xl font-bold tracking-tight text-gray-900">{artwork?.title}</h1>                                <button
+                                    onClick={() => {
+                                        navigate("/editArt", { state: { artworkOld: artwork, artworkId: id } });
+                                    }}
+                                    className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 m-7"
+                                >
+                                    Edit Artwork
+                                </button>
+                            </div>
                             <div className="like-count text-gray-400">{artwork?.location === "" ? <span>unknown, </span> : <span>{artwork?.location}, </span>} {artwork?.yearOfCreation}
                             </div>
                              {artwork?.tags.map((tag)=>(

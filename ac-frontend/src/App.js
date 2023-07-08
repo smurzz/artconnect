@@ -26,6 +26,7 @@ import DetailImage6 from "./container/BildAnsicht/ImageView6"
 import DetailImage7 from "./container/BildAnsicht/ImageView7"
 import DetailImage8 from "./container/BildAnsicht/ImageView8"
 import editGalerie from "./container/Galerie/editGalerie"
+import BildBearbeiten from "./container/BildAnsicht/BildBearbeiten"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -51,6 +52,7 @@ function App() {
         <Route path="/deleteUserAnswer" element ={<DeleteUserAnswer/>}></Route>
         <Route path="/postGalerie/:id" element ={<PostGalerie/>}></Route>
         <Route path="/editGalerie/:id" element ={<EditGalerie/>}></Route>
+        <Route path="/editArt" element ={<BildBearbeiten/>}></Route>
           {/*User bearbeiten*/}
             <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
           <Route  element={<ProtectedRoutes />}>

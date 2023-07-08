@@ -3,9 +3,10 @@ import {useEffect, useState} from "react";
 import {GalerieApiService} from "../../lib/apiGalerie"
 import {storageService} from "../../lib/localStorage"
 import {ApiService} from "../../lib/api";
-import {useNavigate, Link} from "react-router-dom";
+import {useNavigate, Link, useLocation } from "react-router-dom";
 import {GalerieService} from "../../lib/apiGalerie";
 import PopupModal from "../../components/ModalPopUp/ModalPopUp"
+
 const MaterialForm = ({materials, setMaterials}) => {
     const [newMaterial, setNewMaterial] = useState('');
     const handleAddMaterial = (event) => {
@@ -98,13 +99,17 @@ const TagForm = ({tags, setTags}) => {
     );
 };
 
-const BildErstellen = () => {
+const BildBearbeiten = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { artworkOld, artworkId } = location.state;
     const [titleError, setTitleError] = useState("");
     const [isTitleError, setIsTitleError] = useState(false);
     const [openModalPost, setOpenModalPost] = useState(false)
     const [idImage, setIdImage] = useState("");
     const [success, setSuccess]= useState(false);
     const currentYear = new Date().getFullYear();
+
     const artDirectionsOptions = [
         "ABSTRACT",
         "REALISM",
@@ -186,6 +191,7 @@ const BildErstellen = () => {
     useEffect(() => {
         setIsTitleError(false);
         setTitleError("");
+        console.log(JSON.stringify(artworkOld))
     }, [artwork])
 
     const handleDimensionChange = (property, value) => {
@@ -326,4 +332,4 @@ const BildErstellen = () => {
 
 };
 
-export default BildErstellen;
+export default BildBearbeiten;
