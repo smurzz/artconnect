@@ -4,7 +4,8 @@
   "private": true,
   "devServer": {
     "allowedHosts": [
-      "localhost:3000"
+      "localhost:3000",
+      "18.185.79.47:3000"
     ]
   },
   "dependencies": {
