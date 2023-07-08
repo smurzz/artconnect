@@ -187,6 +187,28 @@ function SignUp(props) {
     return (
         <ThemeProvider theme={defaultTheme}>
             {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
+            {isLoggedIn?
+                <Container component="main" maxWidth="xs">
+                <Grid item xs={12} sm={8} md={5} square>
+                    <Box
+                        sx={{
+                            my: 8,
+                            mx: 4,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Avatar sx={{m: 1, bgcolor: 'secondary.light'}}>
+                            <LockOutlinedIcon/>
+                        </Avatar>
+                        <Typography component="h1" variant="h5">
+                            Du Bist bereits eingeloggt
+                        </Typography>
+                    </Box>
+                </Grid>
+                </Container>
+                    :
             <Container component="main" maxWidth="xs">
                 <CssBaseline/>
                 <Box
@@ -347,7 +369,7 @@ function SignUp(props) {
 
                 </Box>
                 <Copyright sx={{mt: 5}}/>
-            </Container>
+            </Container>}
         </ThemeProvider>
     );
 }
