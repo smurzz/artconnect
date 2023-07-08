@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.artconnect.backend.config.jwt.JwtService;
+import com.artconnect.backend.controller.response.GalleryResponse;
 import com.artconnect.backend.model.gallery.Gallery;
 import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.repository.GalleryRepository;
@@ -82,6 +83,18 @@ public class GalleryService {
 								return galleryRepository.save(existingGallery);
 							});
 		});
+	}
+	
+
+	public Mono<Gallery> addRating(String id, Integer value, String authorization) {
+		return userService.findByEmail(getEmailFromAuthentication(authorization))
+				.flatMap(user -> {
+					return findById(id)
+							.flatMap(existingGallery -> {
+								existingGallery.setEvaluation(user.getId(), value);
+								return galleryRepository.save(existingGallery);
+							});
+				});		
 	}
 	
 	public Mono<Void> delete(String id, String authorization) {

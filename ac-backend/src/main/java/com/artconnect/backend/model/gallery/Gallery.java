@@ -48,10 +48,10 @@ public class Gallery {
 		}
 	}
 
-	public void setEvaluation(String userEmail, Integer rating) {
+	public void setEvaluation(String userid, Integer rating) {
 		if (evaluations == null) {
 			evaluations = new HashMap<>();
 		}
-		this.evaluations.put(userEmail, rating);
+		this.evaluations.put(userid, rating);
 	}
 }
