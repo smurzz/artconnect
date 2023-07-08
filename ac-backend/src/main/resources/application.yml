@@ -53,7 +53,6 @@ spring:
       import: env.properties
    data:
       mongodb:
-         # url: mongodb+srv://artconnect:${MONGO_PASSWORD}@artconnetc-cluster.hh5a4oh.mongodb.net/?retryWrites=true&w=majority
          host: mongo
          port: 27018
          database: artconnect-db

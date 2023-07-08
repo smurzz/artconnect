@@ -162,11 +162,11 @@ public class SecurityConfigTest {
 
 		webTestClient.get()
 			.uri("http://localhost:8080/users/admin")
-			.header("Origin", "http://localhost:3000")
+			.header("Origin", "http://localhost:3001")
 			.header("Authorization", "Bearer " + accessToken)
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader()
-			.valueEquals("Access-Control-Allow-Origin", "http://localhost:3000");
+			.valueEquals("Access-Control-Allow-Origin", "http://localhost:3001");
 	}
 }
