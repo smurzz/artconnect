@@ -189,7 +189,7 @@ export default function Gallery() {
     useEffect(() => {
         async function getUserData() {
             const result = await storageService.getUser();
-            const urlGetUser = `http://localhost:8080/users?email=${result}`.replace(/"/g, '');
+            const urlGetUser = `/users?email=${result}`.replace(/"/g, '');
             const userProfile = await ApiService.getDataSecuredWithParameter(urlGetUser);
             setUser(userProfile.data);
             const userGallerieId = await storageService.getGallerieId();
