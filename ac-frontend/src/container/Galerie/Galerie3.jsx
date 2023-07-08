@@ -89,12 +89,13 @@ const artworks = [
   ]
 
 const Galerie3 = () => {
-    const [Galerie, setGalerie] = useState([]);
+    const [galerie, setGalerie] = useState([]);
 
     useEffect(() => {
         async function getGaleryData() {
-            const getGalerie= await GalerieApiService.getUnsecuredData("/galleries/");
-            console.log("getgalerie: "+ getGalerie);
+            const getGalerie= await GalerieApiService.getUnsecuredData("/galleries");
+            console.log("getgalerie: "+ JSON.stringify(getGalerie.data));
+            setGalerie(getGalerie.data);
         }
 
         getGaleryData();
@@ -105,7 +106,7 @@ const Galerie3 = () => {
   return (
     <div className='container'>
                         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                            {artworks.map((artwork) => (
+                            {galerie?.map((artwork) => (
                                 <Link to={`/galerie/DetailImage/${artwork.id}`}>
                                     <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
                                         <img

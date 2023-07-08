@@ -43,7 +43,7 @@ function App() {
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
           {/*Galerie*/}
           <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
-          <Route path="/galerie" element={<Galerie3 />}></Route> {/*Galerie eines Besuchers*/}
+          <Route path="/galerieOpen" element={<Galerie3 />}></Route> {/*Galerie eines Besuchers*/}
         <Route path="/deleteUser" element ={<DeleteUser/>}></Route>
         <Route path="/uploadImage/:id" element ={<ImageUploadComponent/>}></Route>
         <Route path="/newArt" element={<BildErstellen/>}></Route>
