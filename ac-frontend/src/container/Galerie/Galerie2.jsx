@@ -148,17 +148,27 @@ const profile = {
     ],
 }
 
-const GalleryHeader = ({ gallery }) => {
+const GalleryHeader = ({ gallery,id  }) => {
     const { title, description, categories } = gallery;
-    useEffect(()=>{
-        console.log("categories: "+categories);
+    const navigate = useNavigate();
 
+    useEffect(()=>{
+        console.log("galerieID: "+id);
     },[])
 
 
     return (
         <div>
             <h1>{title}</h1>
+            <button
+                onClick={() => {
+                    navigate("/editGallery", { state: { gallery: gallery , galerieId : id} });
+                }}
+                className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+                <PlusIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
+                Edit gallery
+            </button>
             <h3 className="sr-only">Reviews</h3>
             <div className="flex items-center">
                 {[0, 1, 2, 3, 4].map((rating) => (
@@ -184,6 +194,7 @@ export default function Gallery() {
     const [user, setUser] = useState()
     const [emptyGallerie,setEmptyGallerie] = useState(false);
     const [artwork, setArtwork]= useState([]);
+    const [galerieId, setGalerieId] = useState();
     const navigate = useNavigate();
     //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
     useEffect(() => {
@@ -193,18 +204,15 @@ export default function Gallery() {
             const userProfile = await ApiService.getDataSecuredWithParameter(urlGetUser);
             setUser(userProfile.data);
             const userGallerieId = await storageService.getGallerieId();
+            setGalerieId(userGallerieId);
+            console.log("getGAllerieID: "+userGallerieId);
             const userGallerieIdClean = userGallerieId.replace(/"/g, "");
             const getGalerie= await GalerieApiService.getSecuredData("/galleries/"+userGallerieIdClean);
-            console.log("getgalerie: "+ getGalerie);
             if(getGalerie == null){
-                console.log("setEmpty :"+ true);
                 setEmptyGallerie(true);
             }else{
-                console.log("getGAllerie: "+ JSON.stringify(getGalerie.data.artworks));
                 const artWork= getGalerie.data.artworks;
-                console.log("artwork: "+ artWork);
                 setArtwork(artWork);
-                console.log("artwork: "+ artwork);
                 gallerie.title = getGalerie.data.title;
                 setGallerie({
                     title: getGalerie.data.title,
@@ -257,7 +265,7 @@ export default function Gallery() {
                 :
                 <div className="bg-white">
                     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-                        <GalleryHeader gallery={gallerie}/>
+                        <GalleryHeader gallery={gallerie} id ={galerieId}/>
                         <button onClick={()=>{navigate("/newArt")}}
                                 type="button"
                                 className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

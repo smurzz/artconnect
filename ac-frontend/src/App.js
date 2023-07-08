@@ -25,7 +25,7 @@ import DetailImage5 from "./container/BildAnsicht/ImageView5"
 import DetailImage6 from "./container/BildAnsicht/ImageView6"
 import DetailImage7 from "./container/BildAnsicht/ImageView7"
 import DetailImage8 from "./container/BildAnsicht/ImageView8"
-
+import editGalerie from "./container/Galerie/editGalerie"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
@@ -43,6 +43,7 @@ function App() {
           {/*Galerie*/}
           <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
         <Route path="/deleteUser" element ={<DeleteUser/>}></Route>
+        <Route path ="/editGallery" element ={<EditGalerie/>}/>
         <Route path="/uploadImage/:id" element ={<ImageUploadComponent/>}></Route>
         <Route path="/newArt" element={<BildErstellen/>}></Route>
         <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
