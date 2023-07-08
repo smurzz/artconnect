@@ -70,30 +70,29 @@ export default function ImageUploadComponent() {
     const handleFileUpload = async (event) => {
         setNoFileUploaded(false);
         event.preventDefault();
-        const result="";
         if (selectedFileMain) {
             console.log("image uploaded Main")
-           result= await connectionToBackend(selectedFileMain);
+            let resultMain= await connectionToBackend(selectedFileMain);
         }
 
         if (selectedFile1) {
             console.log("image uploaded 1")
-           result= await connectionToBackend(selectedFile1);
+           let result1= await connectionToBackend(selectedFile1);
         }
 
         if (selectedFile2) {
             console.log("image uploaded 2")
-           result= await connectionToBackend(selectedFile2);
+            let result2= await connectionToBackend(selectedFile2);
         }
 
         if (selectedFile3) {
             console.log("image uploaded 3")
-           result= await connectionToBackend(selectedFile3);
+            let result3= await connectionToBackend(selectedFile3);
         }
 
         if (selectedFile4) {
             console.log("image uploaded 4")
-            result= await connectionToBackend(selectedFile4);
+            let result4= await connectionToBackend(selectedFile4);
         }
         console.log("image uploaded")
         navigate("/galerie");
@@ -102,6 +101,7 @@ export default function ImageUploadComponent() {
     async function connectionToBackend(file) {
         const formData = new FormData();
         formData.append('file', file);
+        console.log("connectionToBackend");
         const result = await GalerieApiService.postSecuredImage(`/artworks/add-photo/${id}`, formData);
         return result;
     }
