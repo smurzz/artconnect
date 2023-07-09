@@ -59,8 +59,10 @@ public class ArtWorkResponse {
 	private String galleryTitle;
 
 	private Integer likes;
+	
+	private boolean isLikedByCurrentUser;
 		
-	public static ArtWorkResponse fromArtWork(ArtWork artwork, List<Image> images) {
+	public static ArtWorkResponse fromArtWork(ArtWork artwork, List<Image> images, boolean isLiked) {
 		ArtWorkResponse artworkResponse = ArtWorkResponse.builder()
 				.id(artwork.getId())
 				.title(artwork.getTitle())
@@ -80,6 +82,7 @@ public class ArtWorkResponse {
 				.ownerName(artwork.getOwnerName())
 				.galleryTitle(artwork.getGalleryTitle())
 				.likes(artwork.getLikes())
+				.isLikedByCurrentUser(isLiked)
 				.build();
         return artworkResponse;
 	}
