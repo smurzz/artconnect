@@ -1,0 +1,52 @@
+name: Update EC2 Docker Images
+
+on:
+  workflow_run:
+    workflows:
+      - "Build and push Docker image"
+    types:
+      - completed
+
+jobs:
+  update-images:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Fetch all branches
+        run: git fetch --all
+        
+      - name: Update Git repository on dev
+        run: |
+          git checkout dev
+          git pull
+
+      - name: Update Git repository on main
+        run: |
+          git checkout main
+          git pull
+          
+      - name: Get all tags
+        id: get-tags
+        run: git fetch --tags --force
+          
+      - name: Get latest tag version
+        id: get-version
+        run: echo "::set-output name=LATEST_TAG::$(git tag | sort -V | tail -1)"
+        
+      - name: Create .env file
+        run: |
+          echo "LATEST_TAG=${{ steps.get-version.outputs.latest_tag }}" >> .env
+
+      - name: Login to GitHub Packages
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login https://docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
+      - name: Remove all Docker images
+        run: |
+          docker-compose down --rmi all
+          # Additional commands to pull other Docker images if necessary
+
+      - name: Restart Docker containers
+        run: docker-compose up -d

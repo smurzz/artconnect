@@ -1,6 +1,7 @@
 HELP.md
 target/
 bin/
+env.properties
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -32,3 +33,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore .DS_Store files anywhere in the project
+**/.DS_Store

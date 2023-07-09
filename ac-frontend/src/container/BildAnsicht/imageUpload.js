@@ -40,6 +40,7 @@ export default function ImageUploadComponent() {
     };
     const handleFileUpload = async (event) => {
         setNoFileUploaded(false);
+        console.log("datarouting");
         event.preventDefault();
         if (selectedFileMain) {
             console.log("image uploaded Main")
