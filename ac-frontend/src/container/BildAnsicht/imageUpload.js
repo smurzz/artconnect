@@ -3,7 +3,7 @@ import { GalerieApiService } from '../../lib/apiGalerie';
 import { useParams } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
 import {useNavigate, Link} from "react-router-dom";
-import Image2 from './../Galerie/imgSlides/original2.jpg';
+import Image2 from '../../images/defaultArtworkPlaceholder.png';
 import {logikService} from  "../../lib/service"
 import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
 import HeaderLogedOut from "../../components/headerComponent/headerLogout"
@@ -58,8 +58,10 @@ export default function ImageUploadComponent() {
     }
 
     return (
+        <>
+        {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
+
             {noFileUploaded == true && alert("Please Upload a file")}
             <div className="card-group d-flex justify-content-around">
                 <div className="big-card">
@@ -81,5 +83,6 @@ export default function ImageUploadComponent() {
                 </div>
             </div>
         </div>
+        </>
     );
 }

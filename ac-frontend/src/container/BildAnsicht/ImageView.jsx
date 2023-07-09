@@ -142,6 +142,14 @@ export default function Example() {
                                         src={Image1}
                                         className="h-full w-full object-cover object-center sm:rounded-lg"
                                     />
+                                    <button
+                                        onClick={() => {
+                                            navigate("/uploadImage/"+ artwork.id);
+                                        }}
+                                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7"
+                                    >
+                                        Upload image
+                                    </button>
                                 </Tab.Panel>}
                             </Tab.Panels>
                         </Tab.Group>
@@ -250,11 +258,12 @@ export default function Example() {
                                                 <Disclosure.Panel as="div" className="prose prose-sm pb-6">
                                                     <ul role="list">
                                                         <li>
-                                                            Dimension: <span>Height: {artwork?.height}</span>
-                                                            <span>Width: {artwork?.dimension.width}</span>
-                                                            <span>Depth: {artwork?.dimension.depth}</span>
+                                                           <p className="text-sm font-medium">Dimension </p>
+                                                            <div>Height: {artwork?.dimension.height}</div>
+                                                            <div className="mb-2">Width: {artwork?.dimension.width}</div>
+                                                            <div>Depth: {artwork?.dimension.depth}</div>
                                                         </li>
-                                                        <li>Price: {artwork?.price} Euro</li>
+                                                        <li> <p className="text-sm font-medium">Price</p> <div className="mb-2">{artwork?.price}Euro </div></li>
                                                     </ul>
                                                 </Disclosure.Panel>
                                             </>

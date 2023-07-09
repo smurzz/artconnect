@@ -9,51 +9,6 @@ import PopupModal from "../../components/ModalPopUp/ModalPopUp";
 import {logikService} from  "../../lib/service"
 import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
 import HeaderLogedOut from "../../components/headerComponent/headerLogout"
-const MaterialForm = ({oldMaterials, materials, setMaterials}) => {
-    const [newMaterial, setNewMaterial] = useState('');
-    const handleAddMaterial = (event) => {
-        console.log("test");
-        event.preventDefault();
-        if (newMaterial.trim() !== '') {
-            if (materials.length < 10) {
-                setMaterials([...materials, newMaterial]);
-                setNewMaterial('');
-            } else {
-                alert('Oops! We can not let you have to power of adding more then 10 Materials. Sorry!');
-            }
-        }
-    };
-
-
-    const handleDeleteMaterials = (event, index) => {
-        event.preventDefault();
-        const updatedMaterials = [...materials];
-        updatedMaterials.splice(index, 1);
-        setMaterials(updatedMaterials);
-    };
-
-    return (
-        <div>
-            <label>Materials:</label>
-            <p>You can add upto 10 Materials</p>
-            <ul>
-                {materials?.map((material, index) => (
-                    <li key={index}>
-                        {material}
-                        <button className="btn btn-secondary mx-3" onClick={(event) => handleDeleteMaterials(event,index)}>Delete
-                        </button>
-                    </li>
-                ))}
-            </ul>
-            <input
-                type="text"
-                value={newMaterial}
-                onChange={(e) => setNewMaterial(e.target.value)}
-            />
-            <button className="btn btn-secondary mx-3" onClick={handleAddMaterial}>Add Material</button>
-        </div>
-    );
-};
 const TagForm = ({ oldTags, tags, setTags}) => {
     const [newTag, setNewTag] = useState('');
     const handleAddTag = (event) => {
@@ -198,14 +153,39 @@ const BildBearbeiten = () => {
         if (artwork.tags.length >0 ) {
             requestBody.tags = artwork.tags;
         }
-        if (artwork.dimension.height.trim() !== "") {
-            requestBody.dimension.height = artwork.dimension.height;
+
+        if (artwork.dimension.height !== "") {
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                height: artwork.dimension.height
+            };
+        }else{
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                height: artworkOld.dimension.height
+            };
         }
-        if (artwork.dimension.width.trim() !== "") {
-            requestBody.dimension.width = artwork.dimension.width;
-        }
-        if (artwork.dimension.depth.trim() !== "") {
-            requestBody.dimension.depth = artwork.dimension.depth;
+        if (artwork.dimension.width !== "") {
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                width: artwork.dimension.width
+            };
+        }else{
+                requestBody.dimension = {
+                    ...requestBody.dimension,
+                    width: artworkOld.dimension.width
+                };
+            }
+        if (artwork.dimension.depth !== "") {
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                depth: artwork.dimension.depth
+            };
+        }else{
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                depth: artworkOld.dimension.depth
+            };
         }
         if (artwork.artDirections.length >0 ) {
             requestBody.artDirections = artwork.artDirections;
@@ -246,9 +226,17 @@ const BildBearbeiten = () => {
         }));
     };
 
+    const makeItAnArray=(value)=>{
+        const materialsArray = value.split(",");
+        console.log(materialsArray);
+        return materialsArray;
+    }
+
     return (
+        <>
+        {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
+
         <div>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -296,11 +284,19 @@ const BildBearbeiten = () => {
                             onChange={(e) => setArtwork({...artwork, price: e.target.value})}
                         />
                     </div>
-                    <MaterialForm
-                        oldMaterials={artworkOld.materials}
-                        materials={artwork.materials}
-                        setMaterials={(materials) => setArtwork({...artwork, materials})}
-                    />
+
+                    <div className="form-group">
+
+                        <label>Materials:</label>
+                        <p>please seperate the materials with a comma. Example: material1,material2</p>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="materials"
+                            defaultValue={artworkOld.materials}
+                            onChange={(e) => setArtwork({...artwork, materials: makeItAnArray(e.target.value)})}
+                        />
+                    </div>
                     <TagForm
                         oldTags={artworkOld}
                         tags={artwork.tags}
@@ -372,7 +368,8 @@ const BildBearbeiten = () => {
 
 
         </div>
-    )
+        </>
+            )
 
 };
 

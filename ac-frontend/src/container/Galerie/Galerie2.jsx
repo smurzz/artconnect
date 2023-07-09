@@ -201,7 +201,12 @@ export default function Gallery() {
                                             className="h-full w-full object-cover object-center group-hover:opacity-75"
                                         />
                                     </div>
-                                    <div className="flex flex-col justify-between mt-4">
+                                    <div className="flex flex-col justify-between mt-4 ">
+                                        <div className="flex  flex-wrap">
+                                        {product?.artDirections.map((tag) => (
+                                            <span className="tag tag-sm">#{tag}</span>
+                                        ))}
+                                        </div>
                                         <div className="d-flex flex-wrap justify-content-between mt-4">
                                             <h3 className="link text-lg font-medium text-gray-900 flex-grow-1">{product.title}</h3>
                                             <p className="link mt-1 text-lg font-medium text-gray-900">{product.price} Euro</p>
