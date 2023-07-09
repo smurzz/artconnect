@@ -21,12 +21,15 @@ const product = {
     rating: 4
 }
 const GalleryHeader = ({gallery, id}) => {
-    const {title, description, categories} = gallery;
+    const { title, description, categories, ranking} = gallery;
     const navigate = useNavigate();
     async function deleteGalerie() {
         const galerieId = id.replace(/"/g, "")
-        await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
-        navigate("/galerie");
+        GalerieApiService.putSecuredParameter("/galleries/" + galerieId+ "/rating?value=5")
+
+
+     /*   await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
+        navigate("/galerie");*/
     }
 
 

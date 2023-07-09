@@ -63,11 +63,24 @@ export default function Example() {
     const [success, setSuccess]= React.useState(false);
     const [failure, setFailure] = React.useState(false);
     const [openModal, setOpenModal] =React.useState(false);
+    const [successImage, setSuccessImage]= React.useState(false);
+    const [failureImage, setFailureImage] = React.useState(false);
+    const [openModalImage, setOpenModalImage] =React.useState(false);
 
     //Modal
     const handleOpenModal = () => {
         setOpenModal(true);
     };
+
+    const handleOpenModalImage = () => {
+        setOpenModalImage(true);
+    };
+    const handleCloseModalImage = () => {
+        setSuccessImage(false);
+        setFailureImage(false);
+        setOpenModalImage(false);
+    };
+
 
     const handleCloseModal = () => {
         setSuccess(false);
@@ -87,7 +100,16 @@ export default function Example() {
         getUserData();
 
     }, [])
-
+   async function deleteImage(idArtwork, idImage){
+        console.log("Image id: "+ JSON.stringify(idImage));
+       const result = await GalerieApiService.deleteSecuredData("/artworks/"+idArtwork+"/images/"+idImage.replace(/"/g, ''));
+       if(result =="success"){
+           setSuccessImage(true);
+           handleOpenModalImage();
+       }else{
+           setFailureImage(true);
+       }
+   }
     function convertImage(data) {
         if (data) {
             const byteCharacters = atob(data);
@@ -124,6 +146,10 @@ export default function Example() {
             <div className="bg-white">
                 {success && <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete Artwork" message="You have successfully deleted the Artwork" url="/galerie"/>}
                 {failure && <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete Artwork" message="Opps. Something went wrong, please Try again later!" url="/galerie" />}
+
+
+                {successImage && <ModalSuccess open={openModalImage} handleClose={handleCloseModalImage} meassageHeader="Delete Image" message="You have successfully deleted the Image" url="/galerie"/>}
+                {failureImage && <ModalSuccess open={openModalImage} handleClose={handleCloseModalImage} meassageHeader="Delete Image" message="Opps. Something went wrong, please Try again later!" url="/galerie" />}
                 <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
                     <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
                         {/* Image gallery */}
@@ -136,6 +162,14 @@ export default function Example() {
                                             src={convertImage(artwork.images[0].image.data)}
                                             className="h-full w-full object-cover object-center sm:rounded-lg"
                                         />
+                                        <button
+                                            onClick={() => {
+                                                deleteImage( artwork.id, artwork.images[0].id);
+                                            }}
+                                            className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7"
+                                        >
+                                            Delete image
+                                        </button>
                                     </Tab.Panel>
                                 ) : <Tab.Panel>
                                     <img

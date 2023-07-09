@@ -149,12 +149,34 @@ async function postSecuredImage(url,payload){
         return null;
     }
 }
+
+async function putSecuredParameter(url){
+    if(!url){
+        return null;
+    }
+    const tokenInfo = await storageService.getTokenInformation();
+    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
+    if(!tokenInfo) return null;
+    try{
+        const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
+        var _headers = {
+            headers: {
+                Authorization: "Bearer " + tokenInfo.accessToken,
+            },
+        };
+        let result = await axios.put(url, _headers);
+        return result;
+    }catch(error){
+        return null;
+    }
+}
     export const GalerieApiService = {
         getUnsecuredData,
         getSecuredData,
         postSecuredData,
         putSecuredData,
         postSecuredImage,
-        deleteSecuredData
+        deleteSecuredData,
+        putSecuredParameter
     }
 
