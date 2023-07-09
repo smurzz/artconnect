@@ -147,16 +147,8 @@ public class ArtWorkController {
 	    return artWorkService.delete(id, authorization);
 	}
 	
-	private Mono<ArtWorkResponse> mapArtWorkToResponse(ArtWork artwork) {
-	    List<String> imageIds = artwork.getImagesIds();
-	    if (imageIds != null && !imageIds.isEmpty()) {
-	        return imageService.getPhotosByIds(imageIds)
-	                .collectList()
-	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images));
-	    } else {
-	        return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList()));
-	    }
-	}
-
-
+	private Mono<ArtWorkResponse> mapArtWorkToResponse(ArtWork artWork) {
+        return artWorkService.mapArtWorkToResponse(artWork);
+    }
+	
 }

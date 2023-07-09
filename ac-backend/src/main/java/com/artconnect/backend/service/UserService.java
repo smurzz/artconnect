@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -57,6 +59,14 @@ public class UserService {
 		return userRepository.findByEmail(email)
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
+	
+	public Mono<User> getCurrentUser() {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication)
+                .filter(authentication -> authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.User)
+                .map(authentication -> (org.springframework.security.core.userdetails.User) authentication.getPrincipal())
+                .flatMap(user -> findByEmail(user.getUsername()));
+    }
 
 	public Mono<User> create(User user) {
 		user.setCreatedAt(new Date());
