@@ -1,6 +1,7 @@
 package com.artconnect.backend.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.artconnect.backend.config.jwt.JwtService;
+import com.artconnect.backend.controller.response.ArtWorkResponse;
 import com.artconnect.backend.controller.response.GalleryResponse;
 import com.artconnect.backend.model.gallery.Gallery;
 import com.artconnect.backend.model.user.Role;
@@ -29,6 +31,8 @@ public class GalleryService {
 	private final UserService userService;
 	
 	private final ArtWorkService artWorkService;
+	
+	private final ImageService imageService;
 		
 	public Flux<Gallery> findAll() {
 		return galleryRepository.findAll();
@@ -85,18 +89,6 @@ public class GalleryService {
 		});
 	}
 	
-
-	public Mono<Gallery> addRating(String id, Integer value, String authorization) {
-		return userService.findByEmail(getEmailFromAuthentication(authorization))
-				.flatMap(user -> {
-					return findById(id)
-							.flatMap(existingGallery -> {
-								existingGallery.setEvaluation(user.getId(), value);
-								return galleryRepository.save(existingGallery);
-							});
-				});		
-	}
-	
 	public Mono<Void> delete(String id, String authorization) {
 	    return userService.findByEmail(getEmailFromAuthentication(authorization))
 	            .flatMap(user -> findById(id)
@@ -122,6 +114,22 @@ public class GalleryService {
 	                        }	                        
 	                    }))
 	                    .then();
+	}
+	
+	public Mono<GalleryResponse> mapGalleryToResponse(Gallery gallery) {
+	    return artWorkService.findByGalleryId(gallery.getId())
+	            .flatMap(artwork -> {
+	                List<String> imageIds = artwork.getImagesIds();
+	                if (imageIds != null && !imageIds.isEmpty()) {
+	        	        return imageService.getPhotosByIds(imageIds)
+	        	                .collectList()
+	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images));
+	        	    } else {
+	        	        return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList()));
+	        	    }	                             
+	            })
+	            .collectList()
+	            .map(artworkResponses -> GalleryResponse.fromGallery(gallery, artworkResponses));
 	}
 
 	private String getEmailFromAuthentication(String authorization) {

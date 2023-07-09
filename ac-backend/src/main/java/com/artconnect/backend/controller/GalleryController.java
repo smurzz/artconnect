@@ -1,9 +1,5 @@
 package com.artconnect.backend.controller;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.hibernate.validator.constraints.Range;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,17 +10,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.artconnect.backend.controller.request.GalleryRequest;
-import com.artconnect.backend.controller.response.ArtWorkResponse;
 import com.artconnect.backend.controller.response.GalleryResponse;
 import com.artconnect.backend.model.gallery.Gallery;
-import com.artconnect.backend.service.ArtWorkService;
 import com.artconnect.backend.service.GalleryService;
-import com.artconnect.backend.service.ImageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,10 +30,6 @@ import reactor.core.publisher.Mono;
 public class GalleryController {
 	
 	private final GalleryService galleryService;
-	
-	private final ArtWorkService artWorkService;
-	
-	private final ImageService imageService;
 	
 	@GetMapping
 	public Flux<GalleryResponse> getAllGalleries() {
@@ -84,14 +72,6 @@ public class GalleryController {
 		return galleryService.update(id, gallery, authorization).flatMap(this::mapGalleryToResponse);
 	}
 	
-	@PostMapping("/{id}/rating")
-	public Mono<GalleryResponse> addRatingToGallery(
-			@PathVariable("id") String id, 
-			@RequestParam @Range(min = 1, max = 5) Integer value,
-			@RequestHeader("Authorization") String authorization) {
-		return galleryService.addRating(id, value, authorization).flatMap(this::mapGalleryToResponse);
-	}
-	
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public Mono<Void> deleteGallery(@PathVariable String id, @RequestHeader("Authorization") String authorization) {
@@ -99,18 +79,7 @@ public class GalleryController {
 	}
 	
 	private Mono<GalleryResponse> mapGalleryToResponse(Gallery gallery) {
-	    return artWorkService.findByGalleryId(gallery.getId())
-	            .flatMap(artwork -> {
-	                List<String> imageIds = artwork.getImagesIds();
-	                if (imageIds != null && !imageIds.isEmpty()) {
-	        	        return imageService.getPhotosByIds(imageIds)
-	        	                .collectList()
-	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images));
-	        	    } else {
-	        	        return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList()));
-	        	    }	                             
-	            })
-	            .collectList()
-	            .map(artworkResponses -> GalleryResponse.fromGallery(gallery, artworkResponses));
-	}
+        return galleryService.mapGalleryToResponse(gallery);
+    }
+	
 }
