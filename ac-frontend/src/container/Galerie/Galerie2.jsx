@@ -7,7 +7,7 @@ import {useNavigate, Link} from "react-router-dom";
 import {StarIcon} from '@heroicons/react/20/solid'
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import Image1 from './imgSlides/original.jpg';
+import Image1 from '../../images/defaultArtworkPlaceholder.png';
 import {logikService} from  "../../lib/service"
 import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
 import HeaderLogedOut from "../../components/headerComponent/headerLogout";
@@ -23,6 +23,11 @@ const product = {
 const GalleryHeader = ({gallery, id}) => {
     const {title, description, categories} = gallery;
     const navigate = useNavigate();
+    async function deleteGalerie() {
+        const galerieId = id.replace(/"/g, "")
+        await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
+        navigate("/galerie");
+    }
 
 
     return (
@@ -36,6 +41,15 @@ const GalleryHeader = ({gallery, id}) => {
                     className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                     Edit Gallery
+                </button>
+                <button
+                    onClick={() => {
+                        deleteGalerie();
+
+                    }}
+                    className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+                >
+                    Delete Galerie
                 </button>
             </div>
             <h3 className="sr-only">Reviews</h3>

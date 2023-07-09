@@ -109,6 +109,7 @@ const BildErstellen = () => {
     const [success, setSuccess]= useState(false);
     const currentYear = new Date().getFullYear();
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    const navigate = useNavigate();
     useEffect(()=>{
         async function getLoggedIn(){
             const loggedInHeader = await logikService.isLoggedIn();
@@ -212,9 +213,26 @@ const BildErstellen = () => {
     };
 
     return (
-        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
+        <>
+        {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-7">
+
         <div>
+        <div>
+
+
+            <div>
+                <p className="text-base font-semibold  text-gray-900">Post artwork</p>
+                <div className="marginBottom">
+                    <button
+                        onClick={()=>{navigate("/galerie")}}
+                        type="button"
+                        className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                    >
+                        <span>Back to Profile</span>
+                    </button>
+                </div>
+            </div>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     {isTitleError && <div className="alert alert-danger" role="alert">
@@ -325,7 +343,7 @@ const BildErstellen = () => {
                         onChange={(e) => setArtwork({...artwork, location: e.target.value})}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn btn-primary mt-7">
                     Submit
                 </button>
             </form>
@@ -334,6 +352,8 @@ const BildErstellen = () => {
 
 
         </div>
+        </div>
+        </>
     )
 
 };

@@ -5,12 +5,13 @@ import {StarIcon} from '@heroicons/react/20/solid'
 import {HeartIcon, MinusIcon, PlusIcon} from '@heroicons/react/24/outline'
 import {GalerieApiService} from "../../lib/apiGalerie"
 import {storageService} from "../../lib/localStorage"
-import Image1 from './../Galerie/imgSlides/original.jpg';
+import Image1 from '../../images/defaultArtworkPlaceholder.png';
 import React from "react";
 import Header from "../../components/headerComponent/headerLogedIn"
 import {logikService} from  "../../lib/service"
 import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
-import HeaderLogedOut from "../../components/headerComponent/headerLogout"
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
+import ModalSuccess from "../../components/ModalPopUp/ModalSuccess";
 
 const product = {
     name: 'Olivia Montague',
@@ -59,6 +60,20 @@ export default function Example() {
     const [artwork, setArtwork] = useState();
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    const [success, setSuccess]= React.useState(false);
+    const [failure, setFailure] = React.useState(false);
+    const [openModal, setOpenModal] =React.useState(false);
+
+    //Modal
+    const handleOpenModal = () => {
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setSuccess(false);
+        setFailure(false);
+        setOpenModal(false);
+    };
 
     useEffect(() => {
         async function getUserData() {
@@ -93,15 +108,22 @@ export default function Example() {
 
     async function deleteArtwort(id) {
         console.log("deleteArtwork: " + id);
-        await GalerieApiService.deleteSecuredData("/artworks/" + id);
-        navigate("/galerie");
+        const result = await GalerieApiService.deleteSecuredData("/artworks/" + id);
+        if(result =="success"){
+            setSuccess(true);
+            handleOpenModal();
+        }else{
+            setFailure(true);
+        }
+
     }
 
     return (
         <>
             {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             <div className="bg-white">
-
+                {success && <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete Artwork" message="You have successfully deleted the Artwork" url="/galerie"/>}
+                {failure && <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete Artwork" message="Opps. Something went wrong, please Try again later!" url="/galerie" />}
                 <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
                     <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
                         {/* Image gallery */}

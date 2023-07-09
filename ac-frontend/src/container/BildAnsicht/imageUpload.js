@@ -24,9 +24,7 @@ export default function ImageUploadComponent() {
         getLoggedIn();
     },[])
 
-
     const { id } = useParams();
-
     const handleFileChange = (event, index) => {
         const file = event.target.files[0];
         if (file) {
@@ -37,7 +35,6 @@ export default function ImageUploadComponent() {
                         setSelectedFileMain(file);
             } else {
                         setSelectedFileMain(null);
-
             }
         }
     };

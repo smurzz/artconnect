@@ -10,7 +10,7 @@ import {ApiService} from "../../lib/api";
 import {GalerieApiService} from "../../lib/apiGalerie"
 
 // Hier bitte richtiges User Bild rein
-import Image from '../../images/Logo.png';
+import Image from '../../images/placeholderUser.png';
 
 
 const profile = {
