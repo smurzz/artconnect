@@ -164,7 +164,7 @@ async function putSecuredParameter(url){
                 Authorization: "Bearer " + tokenInfo.accessToken,
             },
         };
-        let result = await axios.put(url, _headers);
+        let result = await axios.post(url, {},_headers);
         return result;
     }catch(error){
         return null;

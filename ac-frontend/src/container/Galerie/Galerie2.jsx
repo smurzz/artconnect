@@ -25,7 +25,7 @@ const GalleryHeader = ({gallery, id}) => {
     const navigate = useNavigate();
     async function deleteGalerie() {
         const galerieId = id.replace(/"/g, "")
-        GalerieApiService.putSecuredParameter("/galleries/" + galerieId+ "/rating?value=5")
+        GalerieApiService.putSecuredParameter("/galleries/64a91ed469a57e1c3a4d54d3/rating?value=3")
 
 
      /*   await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
@@ -45,7 +45,7 @@ const GalleryHeader = ({gallery, id}) => {
                 >
                     Edit Gallery
                 </button>
-                {/*<button
+                <button
                     onClick={() => {
                         deleteGalerie();
 
@@ -53,7 +53,7 @@ const GalleryHeader = ({gallery, id}) => {
                     className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
                 >
                     Delete Galerie
-                </button>*/}
+                </button>
             </div>
             <h3 className="sr-only">Reviews</h3>
             <div className="flex items-center">
