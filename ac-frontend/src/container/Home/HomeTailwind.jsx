@@ -80,7 +80,7 @@ const values = [
    {
      name: 'Mona',
      role: 'Web-Developer',
-     imageUrl: require('../../images/artists1.png')  },
+     imageUrl: require('../../images/ImageMona.png')  },
    {
      name: 'Ronny',
      role: 'Project Manager',
@@ -97,7 +97,7 @@ const values = [
    {
      name: 'Özkan',
      role: 'Software Developer',
-    //  imageUrl: require('../../images/image 187ozi.png')
+     imageUrl: require('../../images/ImageÖzkan.png')
    },
 
   {
