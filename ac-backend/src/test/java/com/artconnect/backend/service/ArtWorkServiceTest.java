@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import com.artconnect.backend.model.Image;
 import com.artconnect.backend.model.gallery.Gallery;
 import com.artconnect.backend.model.user.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,6 +58,7 @@ class ArtWorkServiceTest {
 
     @InjectMocks
     private ArtWorkService artWorkService;
+
 
     @BeforeEach
     void setUp() {
@@ -235,6 +237,5 @@ class ArtWorkServiceTest {
                 .expectNext(artwork)
                 .verifyComplete();
     }
-
 
 }
