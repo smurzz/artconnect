@@ -231,4 +231,87 @@ public class ArtWorkTest {
 
         assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
+
+    @Test
+    @DisplayName("Test setId")
+    public void testSetId() {
+        String id = "123456789";
+
+        artWork.setId(id);
+
+        assertEquals(id, artWork.getId());
+    }
+
+    @Test
+    @DisplayName("Test setOwnerId")
+    public void testSetOwnerId() {
+        String ownerId = "987654321";
+
+        artWork.setOwnerId(ownerId);
+
+        assertEquals(ownerId, artWork.getOwnerId());
+    }
+
+    @Test
+    @DisplayName("Test setGalleryId")
+    public void testSetGalleryId() {
+        String galleryId = "567890123";
+
+        artWork.setGalleryId(galleryId);
+
+        assertEquals(galleryId, artWork.getGalleryId());
+    }
+
+    @Test
+    @DisplayName("Test setOwnerName")
+    public void testSetOwnerName() {
+        String ownerName = "Jane Doe";
+
+        artWork.setOwnerName(ownerName);
+
+        assertEquals(ownerName, artWork.getOwnerName());
+    }
+
+    @Test
+    @DisplayName("Test setGalleryTitle")
+    public void testSetGalleryTitle() {
+        String galleryTitle = "Art Gallery 2.0";
+
+        artWork.setGalleryTitle(galleryTitle);
+
+        assertEquals(galleryTitle, artWork.getGalleryTitle());
+    }
+
+    @Test
+    @DisplayName("Test setTitle")
+    public void testSetTitle() {
+        String title = "New Artwork Title";
+
+        artWork.setTitle(title);
+
+        assertEquals(title, artWork.getTitle());
+    }
+
+    @Test
+    @DisplayName("Test MAX_NUM_IMAGES")
+    public void testMaxNumImages() {
+        int maxNumImages = ArtWork.MAX_NUM_IMAGES;
+
+        // Create a list with maximum number of images
+        List<String> imagesIds = new ArrayList<>();
+        for (int i = 0; i < maxNumImages-1; i++) {
+            imagesIds.add("image" + i);
+        }
+
+        artWork.setImagesIds(imagesIds);
+
+        // Try to add one more image
+        List<String> updatedImagesIds = new ArrayList<>(artWork.getImagesIds());
+        updatedImagesIds.add("imageExtra");
+        artWork.setImagesIds(updatedImagesIds);
+
+        // The size of imagesIds list should still be the same as MAX_NUM_IMAGES
+        assertEquals(maxNumImages, artWork.getImagesIds().size());
+    }
+
 }
