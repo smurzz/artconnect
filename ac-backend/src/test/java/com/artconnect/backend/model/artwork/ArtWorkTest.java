@@ -421,34 +421,59 @@ public class ArtWorkTest {
         assertEquals(comments, artWork.getComments());
     }
 
+//    @Test
+//    @DisplayName("Test setLike method")
+//    public void testSetLike() throws NoSuchFieldException, IllegalAccessException {
+//        String userEmail = "user@example.com";
+//
+//        // Set up the likedByUsers field using reflection
+//        Field likedByUsersField = artWork.getClass().getDeclaredField("likedByUsers");
+//        likedByUsersField.setAccessible(true);
+//        Set<String> likedByUsers = (Set<String>) likedByUsersField.get(artWork);
+//        if (likedByUsers == null) {
+//            likedByUsers = new HashSet<>();
+//            likedByUsersField.set(artWork, likedByUsers);
+//        }
+//
+//        // Test when likedByUsers is null
+//        artWork.setLike(userEmail);
+//        likedByUsers.add(userEmail);
+//        assertEquals(likedByUsers, artWork.getLikedByUsers());
+//
+//        // Test when likedByUsers is not null
+//        artWork.setLike(userEmail);
+//        assertEquals(likedByUsers, artWork.getLikedByUsers());
+//
+//        // Test with another user
+//        String anotherUserEmail = "anotheruser@example.com";
+//        artWork.setLike(anotherUserEmail);
+//        likedByUsers.add(anotherUserEmail);
+//        assertEquals(likedByUsers, artWork.getLikedByUsers());
+//    }
+
+
     @Test
-    @DisplayName("Test setLike method")
-    public void testSetLike() throws NoSuchFieldException, IllegalAccessException {
-        String userEmail = "user@example.com";
+    @DisplayName("Test Set Like")
+    public void testSetLike() {
+        ArtWork artWork = new ArtWork();
+        String userEmail = "test@example.com";
 
-        // Set up the likedByUsers field using reflection
-        Field likedByUsersField = artWork.getClass().getDeclaredField("likedByUsers");
-        likedByUsersField.setAccessible(true);
-        Set<String> likedByUsers = (Set<String>) likedByUsersField.get(artWork);
-        if (likedByUsers == null) {
-            likedByUsers = new HashSet<>();
-            likedByUsersField.set(artWork, likedByUsers);
-        }
+        // Initially, likedByUsers should be null
+        assertEquals(null, artWork.getLikedByUsers());
 
-        // Test when likedByUsers is null
+        // Call the setLike method
         artWork.setLike(userEmail);
-        likedByUsers.add(userEmail);
-        assertEquals(likedByUsers, artWork.getLikedByUsers());
 
-        // Test when likedByUsers is not null
+        // Verify that the likedByUsers field is initialized with a new HashSet
+        Set<String> expectedLikedByUsers = new HashSet<>();
+        expectedLikedByUsers.add(userEmail);
+        assertEquals(expectedLikedByUsers, artWork.getLikedByUsers());
+
+        // Call the setLike method again with the same userEmail
         artWork.setLike(userEmail);
-        assertEquals(likedByUsers, artWork.getLikedByUsers());
 
-        // Test with another user
-        String anotherUserEmail = "anotheruser@example.com";
-        artWork.setLike(anotherUserEmail);
-        likedByUsers.add(anotherUserEmail);
-        assertEquals(likedByUsers, artWork.getLikedByUsers());
+        // Verify that the userEmail is removed from likedByUsers
+        assertEquals(new HashSet<>(), artWork.getLikedByUsers());
     }
 
     @Test
