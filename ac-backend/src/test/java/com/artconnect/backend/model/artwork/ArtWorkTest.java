@@ -13,6 +13,9 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import java.util.Arrays;
+import java.lang.reflect.Field;
+
 
 public class ArtWorkTest {
 
@@ -314,4 +317,139 @@ public class ArtWorkTest {
         assertEquals(maxNumImages, artWork.getImagesIds().size());
     }
 
+    @Test
+    @DisplayName("Test description")
+    public void testDescription() {
+        String description = "Artwork description";
+
+        artWork.setDescription(description);
+
+        assertEquals(description, artWork.getDescription());
+    }
+
+    @Test
+    @DisplayName("Test yearOfCreation")
+    public void testYearOfCreation() {
+        Integer yearOfCreation = 2022;
+
+        artWork.setYearOfCreation(yearOfCreation);
+
+        assertEquals(yearOfCreation, artWork.getYearOfCreation());
+    }
+
+    @Test
+    @DisplayName("Test dimension")
+    public void testDimension() {
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+
+        artWork.setDimension(dimension);
+
+        assertEquals(dimension, artWork.getDimension());
+    }
+
+    @Test
+    @DisplayName("Test price")
+    public void testPrice() {
+        Double price = 99.99;
+
+        artWork.setPrice(price);
+
+        assertEquals(price, artWork.getPrice());
+    }
+
+    @Test
+    @DisplayName("Test location")
+    public void testLocation() {
+        String location = "Artwork location";
+
+        artWork.setLocation(location);
+
+        assertEquals(location, artWork.getLocation());
+    }
+
+    @Test
+    @DisplayName("Test createdAt")
+    public void testCreatedAt() {
+        Date createdAt = new Date();
+
+        artWork.setCreatedAt(createdAt);
+
+        assertEquals(createdAt, artWork.getCreatedAt());
+    }
+
+    @Test
+    @DisplayName("Test materials")
+    public void testMaterials() {
+        List<String> materials = Arrays.asList("Oil paint", "Canvas", "Wood");
+
+        artWork.setMaterials(materials);
+
+        assertEquals(materials, artWork.getMaterials());
+    }
+
+    @Test
+    @DisplayName("Test artDirections")
+    public void testArtDirections() {
+        Set<ArtDirection> artDirections = new HashSet<>();
+        artDirections.add(ArtDirection.ABSTRACT);
+        artDirections.add(ArtDirection.IMPRESSIONISM);
+
+        artWork.setArtDirections(artDirections);
+
+        assertEquals(artDirections, artWork.getArtDirections());
+    }
+
+    @Test
+    @DisplayName("Test tags")
+    public void testTags() {
+        List<String> tags = Arrays.asList("painting", "abstract", "modern");
+
+        artWork.setTags(tags);
+
+        assertEquals(tags, artWork.getTags());
+    }
+
+    @Test
+    @DisplayName("Test comments")
+    public void testComments() {
+        List<Comment> comments = new ArrayList<>();
+        Comment comment1 = new Comment(null, null, "User1", null, false, null, "Great artwork!");
+        Comment comment2 = new Comment(null, null, "User2", null, false, null, "I love it!");
+        comments.add(comment1);
+        comments.add(comment2);
+
+        artWork.setComments(comments);
+
+        assertEquals(comments, artWork.getComments());
+    }
+
+    @Test
+    @DisplayName("Test setLike method")
+    public void testSetLike() throws NoSuchFieldException, IllegalAccessException {
+        String userEmail = "user@example.com";
+
+        // Set up the likedByUsers field using reflection
+        Field likedByUsersField = artWork.getClass().getDeclaredField("likedByUsers");
+        likedByUsersField.setAccessible(true);
+        Set<String> likedByUsers = (Set<String>) likedByUsersField.get(artWork);
+        if (likedByUsers == null) {
+            likedByUsers = new HashSet<>();
+            likedByUsersField.set(artWork, likedByUsers);
+        }
+
+        // Test when likedByUsers is null
+        artWork.setLike(userEmail);
+        likedByUsers.add(userEmail);
+        assertEquals(likedByUsers, artWork.getLikedByUsers());
+
+        // Test when likedByUsers is not null
+        artWork.setLike(userEmail);
+        assertEquals(likedByUsers, artWork.getLikedByUsers());
+
+        // Test with another user
+        String anotherUserEmail = "anotheruser@example.com";
+        artWork.setLike(anotherUserEmail);
+        likedByUsers.add(anotherUserEmail);
+        assertEquals(likedByUsers, artWork.getLikedByUsers());
+    }
 }
