@@ -2,8 +2,6 @@ package com.artconnect.backend.repository;
 
 import java.util.List;
 
-import javax.security.auth.login.FailedLoginException;
-
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import com.artconnect.backend.model.artwork.ArtWork;
