@@ -1,6 +1,5 @@
 package com.artconnect.backend.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -22,13 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.artconnect.backend.controller.request.ArtWorkRequest;
 import com.artconnect.backend.controller.request.ArtWorkUpdateRequest;
-import com.artconnect.backend.controller.request.GalleryRequest;
 import com.artconnect.backend.controller.response.ArtWorkResponse;
-import com.artconnect.backend.controller.response.GalleryResponse;
+import com.artconnect.backend.model.artwork.ArtDirection;
 import com.artconnect.backend.model.artwork.ArtWork;
-import com.artconnect.backend.model.gallery.Gallery;
 import com.artconnect.backend.service.ArtWorkService;
-import com.artconnect.backend.service.ImageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +39,6 @@ public class ArtWorkController {
 	
 	private final ArtWorkService artWorkService;
 	
-	private final ImageService imageService;
-	
 	@GetMapping
 	public Flux<ArtWorkResponse> getAllArtWorks() {
 		return artWorkService.findAll().flatMap(this::mapArtWorkToResponse);
@@ -56,6 +50,8 @@ public class ArtWorkController {
 	        @RequestParam(required = false) String galleryId,
 	        @RequestParam(required = false) String ownerName,
 	        @RequestParam(required = false) List<String> materials,
+	        @RequestParam(required = false) List<String> tags,
+	        @RequestParam(required = false) List<ArtDirection> artDirections,
 	        @RequestParam(required = false) Double priceLessThan,
 	        @RequestParam(required = false) Double maxPrice,
 	        @RequestParam(required = false) Double minPrice) {
@@ -67,7 +63,11 @@ public class ArtWorkController {
 			return artWorkService.findByOwnerName(ownerName).flatMap(this::mapArtWorkToResponse);
 		} else if (materials != null && materials.size() != 0) {
 			return artWorkService.findByMaterialsIn(materials).flatMap(this::mapArtWorkToResponse);
-		}  else if (priceLessThan != null) {
+		} else if (tags != null && tags.size() != 0) {
+			return artWorkService.findByTagsIn(tags).flatMap(this::mapArtWorkToResponse);
+		} else if (artDirections != null && artDirections.size() != 0) {
+			return artWorkService.findByArtDirectionsIn(artDirections).flatMap(this::mapArtWorkToResponse);
+		} else if (priceLessThan != null) {
 			return artWorkService.findByPriceLessThan(priceLessThan).flatMap(this::mapArtWorkToResponse);
 		} else if (minPrice != null && maxPrice != null) {
 			return artWorkService.findByPriceBetween(minPrice, maxPrice).flatMap(this::mapArtWorkToResponse);

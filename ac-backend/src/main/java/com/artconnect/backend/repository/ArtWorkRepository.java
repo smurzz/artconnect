@@ -2,10 +2,9 @@ package com.artconnect.backend.repository;
 
 import java.util.List;
 
-import javax.security.auth.login.FailedLoginException;
-
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
+import com.artconnect.backend.model.artwork.ArtDirection;
 import com.artconnect.backend.model.artwork.ArtWork;
 
 import reactor.core.publisher.Flux;
@@ -19,6 +18,10 @@ public interface ArtWorkRepository extends ReactiveMongoRepository<ArtWork, Stri
 	Flux<ArtWork> findByOwnerName(String ownerName);
 	
 	Flux<ArtWork> findByMaterialsIn(List<String> materials);
+	
+	Flux<ArtWork> findByTagsInIgnoreCase(List<String> tags);
+	
+	Flux<ArtWork> findByArtDirectionsIn(List<ArtDirection> artDirections);
 	
 	Flux<ArtWork> findByPriceLessThan(double price);
 
