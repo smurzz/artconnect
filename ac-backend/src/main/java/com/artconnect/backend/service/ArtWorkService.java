@@ -108,7 +108,6 @@ public class ArtWorkService {
 	            });        
 	}
 
-
 	public Mono<String> addImage(String id, Mono<FilePart> file, String authorization) {
 		return userService.findByEmail(getEmailFromAuthentication(authorization))
 				.flatMap(user -> findById(id).filter(artwork -> artwork.getOwnerId().equals(user.getId()))
@@ -187,8 +186,6 @@ public class ArtWorkService {
 		});
 	}
 
-	
-
 	public Mono<ArtWork> addRemoveLike(String id, String authorization) {
 		return userService.findByEmail(getEmailFromAuthentication(authorization))
 				.flatMap(user -> {
@@ -222,7 +219,6 @@ public class ArtWorkService {
 	                    }))
 	            .then();
 	}
-
 	
 	public Mono<Void> deleteAllByIds(List<String> ids, String authorization) {
 	    return Flux.fromIterable(ids)
