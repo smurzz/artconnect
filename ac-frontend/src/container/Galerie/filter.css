@@ -1,0 +1,20 @@
+.tag-button {
+    padding: 0.5rem 1rem;
+    background-color: #e2e8f0;
+    color: #4a5568;
+    border: none;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+  }
+  
+  .tag-button:hover {
+    background-color: #cbd5e0;
+  }
+  
+  .tag-button-active {
+    background-color: #2d3748;
+    color: #fff;
+  }
+
+  /* Styles for the search bar  */
+  
