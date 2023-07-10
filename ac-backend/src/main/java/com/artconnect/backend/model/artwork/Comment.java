@@ -2,8 +2,6 @@ package com.artconnect.backend.model.artwork;
 
 import java.util.Date;
 
-import com.artconnect.backend.model.user.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

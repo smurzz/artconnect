@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.artconnect.backend.controller.request.CommentRequest;
+import com.artconnect.backend.controller.request.CommentUpdateRequest;
 import com.artconnect.backend.controller.response.ArtWorkResponse;
 import com.artconnect.backend.model.artwork.ArtWork;
 import com.artconnect.backend.service.ArtWorkService;
 import com.artconnect.backend.service.CommentService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -31,9 +33,10 @@ public class CommentController {
 	private final ArtWorkService artWorkService;
 
 	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<ArtWorkResponse> createComment(
 			@PathVariable String id,
-			@RequestBody CommentRequest commentRequest) {
+			@Valid @RequestBody CommentRequest commentRequest) {
 		return commentService.create(id, commentRequest).flatMap(this::mapArtWorkToResponse);
 	}
 	
@@ -41,7 +44,7 @@ public class CommentController {
 	public Mono<ArtWorkResponse> updateComment(
 			@PathVariable String id,
 			@PathVariable String commentId,
-			@RequestBody CommentRequest commentRequest) {
+			@Valid @RequestBody CommentUpdateRequest commentRequest) {
 		return commentService.update(id, commentId, commentRequest).flatMap(this::mapArtWorkToResponse);
 	}
 	

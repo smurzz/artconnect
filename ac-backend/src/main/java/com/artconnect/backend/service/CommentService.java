@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.artconnect.backend.controller.request.CommentRequest;
+import com.artconnect.backend.controller.request.CommentUpdateRequest;
 import com.artconnect.backend.model.artwork.ArtWork;
 import com.artconnect.backend.model.artwork.Comment;
 import com.artconnect.backend.repository.ArtWorkRepository;
@@ -50,7 +51,7 @@ public class CommentService {
 				});
 	}
 	
-	public Mono<ArtWork> update(String artworkId, String commentId, CommentRequest commentRequest) {
+	public Mono<ArtWork> update(String artworkId, String commentId, CommentUpdateRequest commentRequest) {
 	    return userService.getCurrentUser()
 	            .flatMap(user -> artWorkService.findById(artworkId)
 	                    .flatMap(artwork -> {

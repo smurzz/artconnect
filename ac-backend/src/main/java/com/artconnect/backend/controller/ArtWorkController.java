@@ -1,6 +1,5 @@
 package com.artconnect.backend.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -22,13 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.artconnect.backend.controller.request.ArtWorkRequest;
 import com.artconnect.backend.controller.request.ArtWorkUpdateRequest;
-import com.artconnect.backend.controller.request.GalleryRequest;
 import com.artconnect.backend.controller.response.ArtWorkResponse;
-import com.artconnect.backend.controller.response.GalleryResponse;
 import com.artconnect.backend.model.artwork.ArtWork;
-import com.artconnect.backend.model.gallery.Gallery;
 import com.artconnect.backend.service.ArtWorkService;
-import com.artconnect.backend.service.ImageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +37,6 @@ import reactor.core.publisher.Mono;
 public class ArtWorkController {
 	
 	private final ArtWorkService artWorkService;
-	
-	private final ImageService imageService;
 	
 	@GetMapping
 	public Flux<ArtWorkResponse> getAllArtWorks() {
