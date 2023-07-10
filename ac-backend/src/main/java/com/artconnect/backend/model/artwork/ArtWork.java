@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -55,6 +56,7 @@ public class ArtWork {
     
     private Set<ArtDirection> artDirections;
     
+    @Indexed
     private List<String> tags;
     
 	private List<Comment> comments;

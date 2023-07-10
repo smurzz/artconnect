@@ -13,6 +13,7 @@ import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.controller.response.ArtWorkResponse;
 import com.artconnect.backend.controller.response.GalleryResponse;
 import com.artconnect.backend.model.gallery.Gallery;
+import com.artconnect.backend.model.gallery.GalleryCategory;
 import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.repository.GalleryRepository;
 
@@ -36,6 +37,10 @@ public class GalleryService {
 		
 	public Flux<Gallery> findAll() {
 		return galleryRepository.findAll();
+	}
+	
+	public Flux<Gallery> findByCategoriesIn(List<GalleryCategory> categories) {
+		return galleryRepository.findByCategoriesIn(categories);
 	}
 	
 	public Mono<Gallery> findById(String id) {

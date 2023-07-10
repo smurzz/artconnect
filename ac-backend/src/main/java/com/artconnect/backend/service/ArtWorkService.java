@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.controller.response.ArtWorkResponse;
+import com.artconnect.backend.model.artwork.ArtDirection;
 import com.artconnect.backend.model.artwork.ArtWork;
 import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.repository.ArtWorkRepository;
@@ -54,6 +55,14 @@ public class ArtWorkService {
 	
 	public Flux<ArtWork> findByMaterialsIn(List<String> materials) {
 		return artWorkRepository.findByMaterialsIn(materials);
+	}
+	
+	public Flux<ArtWork> findByTagsIn(List<String> tags) {
+		return artWorkRepository.findByTagsInIgnoreCase(tags);
+	}
+	
+	public Flux<ArtWork> findByArtDirectionsIn(List<ArtDirection> artDirections) {
+		return artWorkRepository.findByArtDirectionsIn(artDirections);
 	}
 	
 	public Flux<ArtWork> findByPriceLessThan(Double price) {
