@@ -10,10 +10,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class GalleryTest {
 
     private Gallery gallery;
+    private Gallery otherGallery;
 
     @BeforeEach
     public void setUp() {
@@ -27,6 +29,87 @@ public class GalleryTest {
                 .categories(Collections.singleton(GalleryCategory.PAINTING))
                 .evaluations(new HashMap<>())
                 .build();
+        otherGallery = new Gallery();
+    }
+
+    @Test
+    public void testNoArgsConstructor() {
+        assertNotNull(otherGallery);
+    }
+
+    @Test
+    public void testSettersAndGetters() {
+        String id = "galleryId";
+        String ownerId = "ownerId";
+        String ownerName = "John Doe";
+        String title = "Gallery Title";
+        String description = "Gallery Description";
+        List<String> artworkIds = Arrays.asList("artworkId1", "artworkId2");
+        Set<GalleryCategory> categories = Collections.singleton(GalleryCategory.PAINTING);
+        Map<String, Integer> evaluations = new HashMap<>();
+
+        gallery.setId(id);
+        gallery.setOwnerId(ownerId);
+        gallery.setOwnerName(ownerName);
+        gallery.setTitle(title);
+        gallery.setDescription(description);
+        gallery.setArtworkIds(artworkIds);
+        gallery.setCategories(categories);
+        gallery.setEvaluations(evaluations);
+
+        assertEquals(id, gallery.getId());
+        assertEquals(ownerId, gallery.getOwnerId());
+        assertEquals(ownerName, gallery.getOwnerName());
+        assertEquals(title, gallery.getTitle());
+        assertEquals(description, gallery.getDescription());
+        assertEquals(artworkIds, gallery.getArtworkIds());
+        assertEquals(categories, gallery.getCategories());
+        assertEquals(evaluations, gallery.getEvaluations());
+    }
+
+    @Test
+    public void testEqualsAndHashCode() {
+        Gallery gallery1 = new Gallery();
+        Gallery gallery2 = new Gallery();
+        Gallery gallery3 = new Gallery();
+
+        // Two objects created using the default constructor should be equal and have the same hash code
+        assertEquals(gallery1, gallery2);
+        assertEquals(gallery1.hashCode(), gallery2.hashCode());
+
+        // Modifying the field values should not affect equality
+        gallery1.setId("id1");
+        gallery2.setId("id2");
+        gallery3.setId("id1");
+        assertEquals(gallery1, gallery3);
+        assertNotEquals(gallery1, gallery2);
+        assertNotEquals(gallery2, gallery3);
+        assertNotEquals(gallery1.hashCode(), gallery2.hashCode());
+    }
+
+    @Test
+    public void testToString() {
+        String id = "galleryId";
+        String ownerId = "ownerId";
+        String ownerName = "John Doe";
+        String title = "Gallery Title";
+        String description = "Gallery Description";
+        List<String> artworkIds = Arrays.asList("artworkId1", "artworkId2");
+        Set<GalleryCategory> categories = Collections.singleton(GalleryCategory.PAINTING);
+
+        gallery.setId(id);
+        gallery.setOwnerId(ownerId);
+        gallery.setOwnerName(ownerName);
+        gallery.setTitle(title);
+        gallery.setDescription(description);
+        gallery.setArtworkIds(artworkIds);
+        gallery.setCategories(categories);
+
+        String expectedToString = "Gallery(id=galleryId, ownerId=ownerId, ownerName=John Doe, title=Gallery Title, " +
+                "description=Gallery Description, artworkIds=[artworkId1, artworkId2], categories=[PAINTING], " +
+                "evaluations={})";
+
+        assertEquals(expectedToString, gallery.toString());
     }
 
     @Test
@@ -204,5 +287,18 @@ public class GalleryTest {
         assertNotNull(evaluations);
         assertNull(evaluations.get("user1")); // Verify that the value is null
         assertEquals(1, evaluations.size());
+    }
+
+    @Test
+    public void testGalleryFields() {
+        assertEquals("galleryId", gallery.getId());
+        assertEquals("ownerId", gallery.getOwnerId());
+        assertEquals("John Doe", gallery.getOwnerName());
+        assertEquals("Gallery Title", gallery.getTitle());
+        assertEquals("Gallery Description", gallery.getDescription());
+        assertEquals(Arrays.asList("artworkId1", "artworkId2"), gallery.getArtworkIds());
+        assertEquals(Collections.singleton(GalleryCategory.PAINTING), gallery.getCategories());
+        assertNotNull(gallery.getEvaluations());
+        assertTrue(gallery.getEvaluations().isEmpty());
     }
 }
