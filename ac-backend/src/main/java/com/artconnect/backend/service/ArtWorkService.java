@@ -1,12 +1,11 @@
 package com.artconnect.backend.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.artconnect.backend.config.jwt.JwtService;
 import com.artconnect.backend.controller.response.ArtWorkResponse;
 import com.artconnect.backend.model.artwork.ArtWork;
-import com.artconnect.backend.model.gallery.Gallery;
 import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.repository.ArtWorkRepository;
 import com.artconnect.backend.repository.GalleryRepository;
@@ -246,6 +244,21 @@ public class ArtWorkService {
 							}
 						}))
 				.then();
+	}
+
+	public Mono<ArtWorkResponse> mapArtWorkToResponse(ArtWork artwork) {
+		return userService.getCurrentUser()
+				.flatMap(user -> {
+					boolean isLikedByCurrentUser = artwork.isArtWorkLikedByUserId(user.getEmail());
+					List<String> imageIds = artwork.getImagesIds();
+					if (imageIds != null && !imageIds.isEmpty()) {
+						return imageService.getPhotosByIds(imageIds).collectList()
+								.map(images -> ArtWorkResponse.fromArtWork(artwork, images, isLikedByCurrentUser));
+					} else {
+						return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), isLikedByCurrentUser));
+					}
+				})
+				.switchIfEmpty(Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), false)));
 	}
 	
 	private String getEmailFromAuthentication(String authorization) {

@@ -78,5 +78,9 @@ public class ArtWork {
 			return 0;
 		}
 	}
+	
+	public boolean isArtWorkLikedByUserId(String userEmail) {
+		return likedByUsers != null && likedByUsers.contains(userEmail);
+	}
 
 }

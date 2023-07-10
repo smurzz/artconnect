@@ -120,13 +120,17 @@ public class GalleryService {
 	    return artWorkService.findByGalleryId(gallery.getId())
 	            .flatMap(artwork -> {
 	                List<String> imageIds = artwork.getImagesIds();
-	                if (imageIds != null && !imageIds.isEmpty()) {
-	        	        return imageService.getPhotosByIds(imageIds)
-	        	                .collectList()
-	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images));
-	        	    } else {
-	        	        return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList()));
-	        	    }	                             
+	                	return userService.getCurrentUser()
+                			.flatMap(user -> {
+                				boolean isLikedByCurrentUser = artwork.isArtWorkLikedByUserId(user.getEmail());
+                				if (imageIds != null && !imageIds.isEmpty()) {
+		                			return imageService.getPhotosByIds(imageIds)
+		    	        	                .collectList()
+		    	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images, isLikedByCurrentUser));
+                				} else {
+                					return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), isLikedByCurrentUser));
+                				}	
+	                		});                          
 	            })
 	            .collectList()
 	            .map(artworkResponses -> GalleryResponse.fromGallery(gallery, artworkResponses));
