@@ -31,4 +31,10 @@ public class NotBlankIfSpecifiedValidatorTest {
         assertTrue(validator.isValid("some value", mock(ConstraintValidatorContext.class)));
     }
 
+    @Test
+    void testInitialize() {
+        NotBlankIfSpecifiedValidator validator = new NotBlankIfSpecifiedValidator();
+        assertDoesNotThrow(() -> validator.initialize(null));
+    }
+
 }
