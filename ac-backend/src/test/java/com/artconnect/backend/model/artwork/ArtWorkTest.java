@@ -1,8 +1,4 @@
 package com.artconnect.backend.model.artwork;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.lang.reflect.Field;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ArtWorkTest {
@@ -452,4 +450,232 @@ public class ArtWorkTest {
         likedByUsers.add(anotherUserEmail);
         assertEquals(likedByUsers, artWork.getLikedByUsers());
     }
+
+    @Test
+    @DisplayName("Test @NoArgsConstructor")
+    public void testNoArgsConstructor() {
+        ArtWork artWork = new ArtWork();
+
+        assertNotNull(artWork);
+        assertEquals(null, artWork.getId());
+        assertEquals(null, artWork.getOwnerId());
+        assertEquals(null, artWork.getGalleryId());
+        assertEquals(null, artWork.getOwnerName());
+        assertEquals(null, artWork.getGalleryTitle());
+    }
+
+    @Test
+    @DisplayName("Test @Data - Equals and HashCode")
+    public void testDataEqualsAndHashCode() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork1 = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        ArtWork artWork2 = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        ArtWork artWork3 = new ArtWork("987", ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        assertEquals(artWork1, artWork2);
+        assertEquals(artWork1.hashCode(), artWork2.hashCode());
+        assertNotEquals(artWork1, artWork3);
+        assertNotEquals(artWork1.hashCode(), artWork3.hashCode());
+    }
+
+    @Test
+    @DisplayName("Test @Data - ToString")
+    public void testDataToString() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        String expectedToString = "ArtWork(id=123, ownerId=456, galleryId=789, ownerName=John Doe, galleryTitle=Art Gallery, " +
+                "title=Artwork Title, description=This is an artwork., yearOfCreation=2021, " +
+                "dimension=Dimension(height=100.0, width=100.0, depth=50.0), price=1000.0, location=New York, " +
+                "createdAt=" + createdAt.toString();
+
+        String actualToString = artWork.toString();
+
+        assertTrue(actualToString.contains(expectedToString));
+    }
+
+
+
+    @Test
+    @DisplayName("Test @Data - Getter")
+    public void testDataGetter() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        // Verify getters for all fields
+        assertEquals(id, artWork.getId());
+        assertEquals(ownerId, artWork.getOwnerId());
+        assertEquals(galleryId, artWork.getGalleryId());
+        assertEquals(ownerName, artWork.getOwnerName());
+        assertEquals(galleryTitle, artWork.getGalleryTitle());
+        assertEquals(title, artWork.getTitle());
+        assertEquals(description, artWork.getDescription());
+        assertEquals(yearOfCreation, artWork.getYearOfCreation());
+        assertEquals(dimension, artWork.getDimension());
+        assertEquals(price, artWork.getPrice());
+        assertEquals(location, artWork.getLocation());
+        assertEquals(createdAt, artWork.getCreatedAt());
+        assertEquals(imagesIds, artWork.getImagesIds());
+        assertEquals(likedByUsers, artWork.getLikedByUsers());
+        assertEquals(materials, artWork.getMaterials());
+        assertEquals(artDirections, artWork.getArtDirections());
+        assertEquals(tags, artWork.getTags());
+        assertEquals(comments, artWork.getComments());
+    }
+
+    @Test
+    @DisplayName("Test @Data - Setter")
+    public void testDataSetter() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork = new ArtWork();
+
+        // Verify setters for all fields
+        artWork.setId(id);
+        artWork.setOwnerId(ownerId);
+        artWork.setGalleryId(galleryId);
+        artWork.setOwnerName(ownerName);
+        artWork.setGalleryTitle(galleryTitle);
+        artWork.setTitle(title);
+        artWork.setDescription(description);
+        artWork.setYearOfCreation(yearOfCreation);
+        artWork.setDimension(dimension);
+        artWork.setPrice(price);
+        artWork.setLocation(location);
+        artWork.setCreatedAt(createdAt);
+        artWork.setImagesIds(imagesIds);
+        artWork.setLikedByUsers(likedByUsers);
+        artWork.setMaterials(materials);
+        artWork.setArtDirections(artDirections);
+        artWork.setTags(tags);
+        artWork.setComments(comments);
+
+        // Verify getters for all fields
+        assertEquals(id, artWork.getId());
+        assertEquals(ownerId, artWork.getOwnerId());
+        assertEquals(galleryId, artWork.getGalleryId());
+        assertEquals(ownerName, artWork.getOwnerName());
+        assertEquals(galleryTitle, artWork.getGalleryTitle());
+        assertEquals(title, artWork.getTitle());
+        assertEquals(description, artWork.getDescription());
+        assertEquals(yearOfCreation, artWork.getYearOfCreation());
+        assertEquals(dimension, artWork.getDimension());
+        assertEquals(price, artWork.getPrice());
+        assertEquals(location, artWork.getLocation());
+        assertEquals(createdAt, artWork.getCreatedAt());
+        assertEquals(imagesIds, artWork.getImagesIds());
+        assertEquals(likedByUsers, artWork.getLikedByUsers());
+        assertEquals(materials, artWork.getMaterials());
+        assertEquals(artDirections, artWork.getArtDirections());
+        assertEquals(tags, artWork.getTags());
+        assertEquals(comments, artWork.getComments());
+    }
+
+    @Test
+    @DisplayName("Test @Data - RequiredArgsConstructor")
+    public void testDataRequiredArgsConstructor() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        // Verify that the object is not null
+        assertNotNull(artWork);
+    }
+
 }
