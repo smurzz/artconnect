@@ -3,7 +3,10 @@ package com.artconnect.backend.controller.response;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
+import com.artconnect.backend.model.artwork.ArtDirection;
 import org.junit.jupiter.api.Test;
 
 import com.artconnect.backend.controller.response.ArtWorkResponse;
@@ -30,5 +33,20 @@ public class ArtWorkResponseTest {
         assertEquals(2, response.getMaterials().size());
         assertEquals(2, response.getTags().size());
     }
+
+    @Test
+    public void testArtWorkResponse2() {
+        ArtWorkResponse response = new ArtWorkResponse();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        artDirections.add(ArtDirection.ABSTRACT);
+        artDirections.add(ArtDirection.REALISM);
+        response.setArtDirections(artDirections);
+
+        assertEquals(2, response.getArtDirections().size());
+        assertTrue(response.getArtDirections().contains(ArtDirection.ABSTRACT));
+        assertTrue(response.getArtDirections().contains(ArtDirection.REALISM));
+    }
+
+
 }
 
