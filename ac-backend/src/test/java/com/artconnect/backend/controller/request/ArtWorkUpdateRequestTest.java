@@ -75,6 +75,48 @@ class ArtWorkUpdateRequestTest {
     }
 
 
+    @Test
+    void allArgsConstructor_CreatesObjectWithAllFields() {
+        String id = "123";
+        String ownerId = "ownerId";
+        String galleryId = "galleryId";
+        String ownerName = "Owner Name";
+        String galleryTitle = "Gallery Title";
+        String title = "Artwork Title";
+        String description = "Artwork description";
+        Integer yearOfCreation = 2021;
+        List<String> materials = Arrays.asList("material1", "material2");
+        Dimension dimension = new Dimension(10.0, 20.0, 5.0);
+        Double price = 100.0;
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        Set<ArtDirection> artDirections = new HashSet<>(Arrays.asList(ArtDirection.ABSTRACT, ArtDirection.REALISM));
+        String location = "Artwork location";
+        List<String> imagesIds = Arrays.asList("image1", "image2");
+        Set<String> likedByUsers = Collections.singleton("user1");
+        List<Comment> comments = Arrays.asList(new Comment(), new Comment());
 
+        ArtWorkUpdateRequest request = new ArtWorkUpdateRequest(
+                id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation, materials,
+                dimension, price, tags, artDirections, location, imagesIds, likedByUsers, comments
+        );
+
+        assertEquals(id, request.getId());
+        assertEquals(ownerId, request.getOwnerId());
+        assertEquals(galleryId, request.getGalleryId());
+        assertEquals(ownerName, request.getOwnerName());
+        assertEquals(galleryTitle, request.getGalleryTitle());
+        assertEquals(title, request.getTitle());
+        assertEquals(description, request.getDescription());
+        assertEquals(yearOfCreation, request.getYearOfCreation());
+        assertEquals(materials, request.getMaterials());
+        assertEquals(dimension, request.getDimension());
+        assertEquals(price, request.getPrice());
+        assertEquals(tags, request.getTags());
+        assertEquals(artDirections, request.getArtDirections());
+        assertEquals(location, request.getLocation());
+        assertEquals(imagesIds, request.getImagesIds());
+        assertEquals(likedByUsers, request.getLikedByUsers());
+        assertEquals(comments, request.getComments());
+    }
 
 }
