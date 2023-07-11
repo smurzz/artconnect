@@ -14,6 +14,10 @@ import com.artconnect.backend.model.Image;
 
 public class ArtWorkResponseTest {
 
+
+
+
+
     @Test
     public void testArtWorkResponse() {
         ArtWorkResponse response = new ArtWorkResponse();
@@ -46,6 +50,7 @@ public class ArtWorkResponseTest {
         assertTrue(response.getArtDirections().contains(ArtDirection.ABSTRACT));
         assertTrue(response.getArtDirections().contains(ArtDirection.REALISM));
     }
+
 
 
 }
