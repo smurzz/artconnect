@@ -20,6 +20,9 @@ import static org.mockito.Mockito.when;
 import com.artconnect.backend.controller.request.ArtWorkUpdateRequest;
 import reactor.test.StepVerifier;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 class ArtWorkControllerTest {
 
@@ -142,13 +145,106 @@ class ArtWorkControllerTest {
     void getArtWorkById_shouldReturnArtWorkResponse() {
         String artWorkId = "artWorkId";
         ArtWork artWork = createArtWork();
-        ArtWorkResponse artWorkResponse = createArtWorkResponsLeerAttr();
+        ArtWorkResponse artWorkResponse = createArtWorkResponseLeerAttr();
         when(artWorkService.findById(artWorkId)).thenReturn(Mono.just(artWork));
         when(artWorkService.mapArtWorkToResponse(artWork)).thenReturn(Mono.just(artWorkResponse));
 
         Mono<ArtWorkResponse> response = artWorkController.getArtWorkById(artWorkId);
         StepVerifier.create(response)
                 .expectNext(artWorkResponse)
+                .verifyComplete();
+    }
+
+    @Test
+    void getArtworksByParam_withOwnerId_shouldReturnArtWorks() {
+        String ownerId = "ownerId";
+        List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
+        when(artWorkService.findByOwnerId(ownerId)).thenReturn(Flux.fromIterable(artWorks));
+        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+
+        Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(ownerId, null, null, null, null, null, null, null, null);
+        StepVerifier.create(response)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void getArtworksByParam_withGalleryId_shouldReturnArtWorks() {
+        String galleryId = "galleryId";
+        List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
+        when(artWorkService.findByGalleryId(galleryId)).thenReturn(Flux.fromIterable(artWorks));
+        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+
+        Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, galleryId, null, null, null, null, null, null, null);
+        StepVerifier.create(response)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void getArtworksByParam_withOwnerName_shouldReturnArtWorks() {
+        String ownerName = "ownerName";
+        List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
+        when(artWorkService.findByOwnerName(ownerName)).thenReturn(Flux.fromIterable(artWorks));
+        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+
+        Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, ownerName, null, null, null, null, null, null);
+        StepVerifier.create(response)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void getArtworksByParam_withMaterials_shouldReturnArtWorks() {
+        List<String> materials = Arrays.asList("material1", "material2");
+        List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
+        when(artWorkService.findByMaterialsIn(materials)).thenReturn(Flux.fromIterable(artWorks));
+        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+
+        Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, null, materials, null, null, null, null, null);
+        StepVerifier.create(response)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void getArtworksByParam_withTags_shouldReturnArtWorks() {
+        List<String> tags = Arrays.asList("tag1", "tag2");
+        List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
+        when(artWorkService.findByTagsIn(tags)).thenReturn(Flux.fromIterable(artWorks));
+        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+
+        Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, null, null, tags, null, null, null, null);
+        StepVerifier.create(response)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+
+    @Test
+    void getArtworksByParam_withPriceLessThan_shouldReturnArtWorks() {
+        double priceLessThan = 100.0;
+        List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
+        when(artWorkService.findByPriceLessThan(priceLessThan)).thenReturn(Flux.fromIterable(artWorks));
+        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+
+        Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, null, null, null, null, priceLessThan, null, null);
+        StepVerifier.create(response)
+                .expectNextCount(2)
+                .verifyComplete();
+    }
+
+    @Test
+    void getArtworksByParam_withPriceBetween_shouldReturnArtWorks() {
+        double minPrice = 50.0;
+        double maxPrice = 150.0;
+        List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
+        when(artWorkService.findByPriceBetween(minPrice, maxPrice)).thenReturn(Flux.fromIterable(artWorks));
+        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+
+        Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, null, null, null, null, null, maxPrice, minPrice);
+        StepVerifier.create(response)
+                .expectNextCount(2)
                 .verifyComplete();
     }
 
@@ -171,7 +267,7 @@ class ArtWorkControllerTest {
         return artWorkResponse;
     }
 
-    private ArtWorkResponse createArtWorkResponsLeerAttr() {
+    private ArtWorkResponse createArtWorkResponseLeerAttr() {
         ArtWorkResponse artWorkResponse = new ArtWorkResponse();
         // Set necessary properties for the artWorkResponse
         return artWorkResponse;
