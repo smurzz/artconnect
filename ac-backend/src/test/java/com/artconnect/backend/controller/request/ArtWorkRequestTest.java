@@ -4,6 +4,7 @@ import com.artconnect.backend.controller.request.ArtWorkRequest;
 import com.artconnect.backend.model.artwork.ArtDirection;
 import com.artconnect.backend.model.artwork.Dimension;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.mongodb.assertions.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -108,6 +110,26 @@ class ArtWorkRequestTest {
 
         // Assert
         assertEquals(artDirections, artWorkRequest.getArtDirections());
+    }
+
+    @Test
+    void setDescription_ValidInput_Success() {
+        String description = "Test Description";
+        artWorkRequest.setDescription(description);
+        assertEquals(description, artWorkRequest.getDescription());
+    }
+
+    @Test
+    void setDescription_NullInput_Success() {
+        artWorkRequest.setDescription(null);
+        assertNull(artWorkRequest.getDescription());
+    }
+
+    @Test
+    void setLocation_ValidInput_Success() {
+        String location = "Test Location";
+        artWorkRequest.setLocation(location);
+        assertEquals(location, artWorkRequest.getLocation());
     }
 
 }
