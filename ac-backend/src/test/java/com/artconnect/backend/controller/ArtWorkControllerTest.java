@@ -14,9 +14,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.artconnect.backend.controller.request.ArtWorkUpdateRequest;
+import reactor.test.StepVerifier;
+
 
 class ArtWorkControllerTest {
 
@@ -44,7 +47,6 @@ class ArtWorkControllerTest {
         ArtWork artWork = createArtWork();
         when(artWorkService.findById(id)).thenReturn(Mono.just(artWork));
         Mono<ArtWorkResponse> response = artWorkController.getArtWorkById(id);
-        // Assertions and verifications
     }
 
     @Test
@@ -65,7 +67,6 @@ class ArtWorkControllerTest {
         ArtWork artWork = createArtWork();
         when(artWorkService.update(eq(id), any(ArtWork.class), eq(authorization))).thenReturn(Mono.just(artWork));
         Mono<ArtWorkResponse> response = artWorkController.updateMyArtWork(id, artworkRequest, authorization);
-        // Assertions and verifications
     }
 
     @Test
@@ -75,7 +76,6 @@ class ArtWorkControllerTest {
         ArtWork artWork = createArtWork();
         when(artWorkService.addRemoveLike(eq(id), eq(authorization))).thenReturn(Mono.just(artWork));
         Mono<ArtWorkResponse> response = artWorkController.addRemoveLikeByArtWork(id, authorization);
-        // Assertions and verifications
     }
 
     @Test
@@ -93,8 +93,66 @@ class ArtWorkControllerTest {
         String authorization = "Bearer token";
         when(artWorkService.delete(eq(id), eq(authorization))).thenReturn(Mono.empty());
         Mono<Void> response = artWorkController.deleteArtWork(id, authorization);
-        // Assertions and verifications
     }
+
+    @Test
+    void getArtworksByParam_withOwnerId_shouldReturnArtWorksByOwnerId() {
+        String ownerId = "ownerId";
+        ArtWork artWork = createArtWork();
+        ArtWorkResponse artWorkResponse = createArtWorkResponse(artWork);
+        when(artWorkService.findByOwnerId(ownerId)).thenReturn(Flux.just(artWork));
+        when(artWorkService.mapArtWorkToResponse(artWork)).thenReturn(Mono.just(artWorkResponse));
+
+        Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(ownerId, null, null, null, null, null, null, null, null);
+        StepVerifier.create(response)
+                .expectNext(artWorkResponse)
+                .verifyComplete();
+    }
+
+    @Test
+    void addPhotoToArtWork_shouldAddPhotoToArtWork() {
+        String id = "artworkId";
+        String authorization = "Bearer token";
+        FilePart filePart = createFilePart();
+        String expectedResponse = "Image added successfully";
+        when(artWorkService.addImage(eq(id), any(Mono.class), eq(authorization))).thenReturn(Mono.just(expectedResponse));
+
+        Mono<String> response = artWorkController.addPhotoToArtWork(id, Mono.just(filePart), authorization);
+        StepVerifier.create(response)
+                .expectNext(expectedResponse)
+                .verifyComplete();
+    }
+
+    @Test
+    void addPhotosToArtWork_shouldAddPhotosToArtWork() {
+        String id = "artworkId";
+        String authorization = "Bearer token";
+        Flux<FilePart> fileParts = createFileParts();
+        int expectedImageNum = 3;
+        when(artWorkService.addImages(eq(id), any(Flux.class), eq(authorization)))
+                .thenReturn(Mono.just(expectedImageNum));
+
+        Mono<String> response = artWorkController.addPhotosToArtWork(id, fileParts, authorization);
+        StepVerifier.create(response)
+                .expectNext("Images saved for ArtWork.")
+                .verifyComplete();
+    }
+
+    @Test
+    void getArtWorkById_shouldReturnArtWorkResponse() {
+        String artWorkId = "artWorkId";
+        ArtWork artWork = createArtWork();
+        ArtWorkResponse artWorkResponse = createArtWorkResponsLeerAttr();
+        when(artWorkService.findById(artWorkId)).thenReturn(Mono.just(artWork));
+        when(artWorkService.mapArtWorkToResponse(artWork)).thenReturn(Mono.just(artWorkResponse));
+
+        Mono<ArtWorkResponse> response = artWorkController.getArtWorkById(artWorkId);
+        StepVerifier.create(response)
+                .expectNext(artWorkResponse)
+                .verifyComplete();
+    }
+
+
 
     private ArtWork createArtWork() {
         ArtWork artWork = new ArtWork();
@@ -107,21 +165,42 @@ class ArtWorkControllerTest {
         // Set necessary properties for the artWorkRequest
         return artWorkRequest;
     }
+    private ArtWorkResponse createArtWorkResponse(ArtWork artWork) {
+        ArtWorkResponse artWorkResponse = new ArtWorkResponse();
+        // Set necessary properties for the artWorkResponse based on the given artWork
+        return artWorkResponse;
+    }
+
+    private ArtWorkResponse createArtWorkResponsLeerAttr() {
+        ArtWorkResponse artWorkResponse = new ArtWorkResponse();
+        // Set necessary properties for the artWorkResponse
+        return artWorkResponse;
+    }
 
     private FilePart createFilePart() {
-        // Create and return a mock FilePart object
-        return null;
+        FilePart filePart = mock(FilePart.class);
+        // Set necessary properties or behavior for the filePart mock
+        return filePart;
     }
 
     private Flux<FilePart> createFileParts() {
-        // Create and return a mock Flux<FilePart> object
-        return null;
+        Flux<FilePart> fileParts = Flux.just(createFilePart(), createFilePart(), createFilePart());
+        // Set necessary properties or behavior for the fileParts
+        return fileParts;
     }
 
     private ArtWorkUpdateRequest createArtWorkUpdateRequest() {
         ArtWorkUpdateRequest artworkUpdateRequest = new ArtWorkUpdateRequest();
         // Set necessary properties for the artworkUpdateRequest
         return artworkUpdateRequest;
+    }
+
+    // Provide a test implementation for mapArtWorkToResponse method
+    private Mono<ArtWorkResponse> mapArtWorkToResponse(ArtWork artWork) {
+        // Implement the mapping logic here
+        ArtWorkResponse artWorkResponse = new ArtWorkResponse();
+        // Set necessary properties for the artWorkResponse based on the given artWork
+        return Mono.just(artWorkResponse);
     }
 
 }
