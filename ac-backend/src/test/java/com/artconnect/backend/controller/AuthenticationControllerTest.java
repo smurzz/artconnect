@@ -350,4 +350,7 @@ public class AuthenticationControllerTest {
 				+ "</body>\r\n"
 				+ "</html>";
 	}
+
+    public static class ArtWorkControllerTest {
+    }
 }
