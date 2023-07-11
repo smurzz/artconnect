@@ -95,8 +95,10 @@ export default function Gallery() {
             console.log("loggedIn: " + loggedInHeader)
 
             const result = await storageService.getUser();
+            console.log("storage User: "+ result);
             const urlGetUser = `/users?email=${result}`.replace(/"/g, '');
             const userProfile = await ApiService.getDataSecuredWithParameter(urlGetUser);
+            console.log("URL get User: "+ JSON.stringify(userProfile.data));
             setUser(userProfile.data);
             const userGallerieId = await storageService.getGallerieId();
             setGalerieId(userGallerieId);
@@ -107,7 +109,6 @@ export default function Gallery() {
             } else {
                 const artWork = getGalerie.data.artworks;
                 setArtwork(artWork);
-                console.log("artWork: " + JSON.stringify(artWork));
                 gallerie.title = getGalerie.data.title;
                 setGallerie({
                     title: getGalerie.data.title,
