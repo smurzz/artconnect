@@ -10,6 +10,7 @@ import jakarta.validation.ValidatorFactory;
 
 import java.util.Locale;
 
+import static com.mongodb.assertions.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -73,5 +74,26 @@ public class GalleryRequestTest {
 
         assertTrue(violations.isEmpty());
     }
+
+    @Test
+    void shouldInitializeAllFieldsWithAllArgsConstructor() {
+        String id = "id";
+        String ownerId = "ownerId";
+        String ownerName = "ownerName";
+        String title = "title";
+        String description = "description";
+
+        GalleryRequest request = new GalleryRequest(id, ownerId, ownerName, title, description, null, null, null);
+
+        assertEquals(id, request.getId());
+        assertEquals(ownerId, request.getOwnerId());
+        assertEquals(ownerName, request.getOwnerName());
+        assertEquals(title, request.getTitle());
+        assertEquals(description, request.getDescription());
+        assertNull(request.getCategories());
+        assertNull(request.getArtworkIds());
+        assertNull(request.getEvaluations());
+    }
+
 
 }
