@@ -3,6 +3,7 @@ package com.artconnect.backend.service;
 
 import com.artconnect.backend.model.Image;
 import com.artconnect.backend.repository.ImageRepository;
+import com.artconnect.backend.validation.ImageValidation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,7 +22,12 @@ import java.awt.image.DataBuffer;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+
+
 
 class ImageServiceTest {
 
@@ -31,10 +37,18 @@ class ImageServiceTest {
     @InjectMocks
     private ImageService imageService;
 
+
+
+    @Mock
+    private ImageValidation imageValidation;
+
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
+        imageService = new ImageService(imageRepository);
     }
+
+
 
     @Test
     void getPhoto_ValidId_ReturnsMonoImage() {
@@ -100,6 +114,64 @@ class ImageServiceTest {
         StepVerifier.create(result)
                 .verifyComplete();
         verify(imageRepository).deleteAllById(ids);
+    }
+
+
+
+    @Test
+    public void testGetPhoto_ExistingId_ReturnsImage() {
+        String id = "existingId";
+        Image image = new Image();
+        when(imageRepository.findById(id)).thenReturn(Mono.just(image));
+
+        Mono<Image> result = imageService.getPhoto(id);
+
+        StepVerifier.create(result)
+                .expectNext(image)
+                .verifyComplete();
+    }
+
+    @Test
+    public void testGetPhoto_NonExistingId_ReturnsError() {
+        String id = "nonExistingId";
+        when(imageRepository.findById(id)).thenReturn(Mono.empty());
+
+        Mono<Image> result = imageService.getPhoto(id);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException
+                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.NOT_FOUND)
+                .verify();
+    }
+
+    @Test
+    public void testGetPhoto_ValidId_ReturnsImage() {
+        String id = "validId";
+        Image image = new Image();
+        when(imageRepository.findById(id)).thenReturn(Mono.just(image));
+
+        Mono<Image> result = imageService.getPhoto(id);
+
+        StepVerifier.create(result)
+                .expectNext(image)
+                .verifyComplete();
+
+        verify(imageRepository).findById(id);
+    }
+
+    @Test
+    public void testGetPhoto_NullId_ThrowsException() {
+        String id = null;
+        when(imageRepository.findById(id)).thenReturn(Mono.empty());
+
+        Mono<Image> result = imageService.getPhoto(id);
+
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof ResponseStatusException
+                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.NOT_FOUND)
+                .verify();
     }
 
 
