@@ -1,15 +1,12 @@
 package com.artconnect.backend.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import com.artconnect.backend.model.Image;
 import com.artconnect.backend.model.gallery.Gallery;
@@ -38,6 +35,9 @@ import com.artconnect.backend.model.artwork.ArtDirection;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+
+
 
 class ArtWorkServiceTest {
 
@@ -236,6 +236,65 @@ class ArtWorkServiceTest {
         StepVerifier.create(result)
                 .expectNext(artwork)
                 .verifyComplete();
+    }
+
+    @Test
+    void testMapArtWorkToResponse() {
+        ArtWork artwork = mock(ArtWork.class);
+        when(artwork.getId()).thenReturn("artwork123");
+        when(artwork.getTitle()).thenReturn("Artwork Title");
+        // Mock other methods as needed
+
+        User user = new User();
+        user.setEmail("user@example.com");
+
+        ArtWorkResponse expectedResponse = ArtWorkResponse.builder()
+                .id(artwork.getId())
+                .title(artwork.getTitle())
+                .images(Collections.emptyList()) // We are not testing the images here
+                .description(artwork.getDescription())
+                .yearOfCreation(artwork.getYearOfCreation())
+                .materials(artwork.getMaterials())
+                .tags(artwork.getTags())
+                .artDirections(artwork.getArtDirections())
+                .dimension(artwork.getDimension())
+                .price(artwork.getPrice())
+                .location(artwork.getLocation())
+                .createdAt(artwork.getCreatedAt())
+                .comments(artwork.getComments())
+                .ownerId(artwork.getOwnerId())
+                .galleryId(artwork.getGalleryId())
+                .ownerName(artwork.getOwnerName())
+                .galleryTitle(artwork.getGalleryTitle())
+                .likes(artwork.getLikes())
+                .isLikedByCurrentUser(true) // We are assuming the current user likes the artwork
+                .build();
+
+        // Mocking the behavior of userService.getCurrentUser() method
+        when(userService.getCurrentUser()).thenReturn(Mono.just(user));
+
+        // Mocking the behavior of artwork.isArtWorkLikedByUserId() method
+        when(artwork.isArtWorkLikedByUserId(user.getEmail())).thenReturn(true);
+
+        // Call the method to be tested
+        Mono<ArtWorkResponse> result = artWorkService.mapArtWorkToResponse(artwork);
+
+        // Verify the result
+        StepVerifier.create(result)
+                .expectNextMatches(response ->
+                        response.getId().equals(expectedResponse.getId()) &&
+                                response.getTitle().equals(expectedResponse.getTitle()) &&
+                                response.getImages().equals(expectedResponse.getImages()) &&
+                                Objects.equals(response.getDescription(), expectedResponse.getDescription()) && // Compare description using Objects.equals()
+                                // Compare other fields as needed
+                                // Use appropriate assertions for complex objects like Set or List
+                                response.isLikedByCurrentUser() == expectedResponse.isLikedByCurrentUser()
+                )
+                .verifyComplete();
+
+        // Verify the interactions with userService.getCurrentUser() and artwork.isArtWorkLikedByUserId()
+        verify(userService).getCurrentUser();
+        verify(artwork).isArtWorkLikedByUserId(user.getEmail());
     }
 
 }
