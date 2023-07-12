@@ -12,6 +12,7 @@ import {logikService} from  "../../lib/service"
 import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
 import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 import ModalSuccess from "../../components/ModalPopUp/ModalSuccess";
+import Kommentarfunktion from "./kommentarfunktion"
 
 const product = {
     name: 'Olivia Montague',
@@ -343,6 +344,8 @@ export default function Example() {
                                 </div>
                             </section>
                         </div>
+
+                        <Kommentarfunktion id={id}/>
                     </div>
                 </div>
             </div>
