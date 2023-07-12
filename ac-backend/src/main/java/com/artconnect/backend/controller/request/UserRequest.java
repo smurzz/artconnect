@@ -10,6 +10,7 @@ import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.model.user.SocialMedia;
 import com.artconnect.backend.model.user.Status;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
