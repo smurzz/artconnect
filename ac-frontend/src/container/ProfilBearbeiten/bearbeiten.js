@@ -443,8 +443,9 @@ return (
                 <div className="form-inline" key={index}>
                     {
                         index ?
-                            <Button type="button" className="button inputField remove"
-                                    onClick={() => removeExhibitionFields(index)}>Remove</Button>
+                            <button type="button"
+                                    className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                                    onClick={() => removeExhibitionFields(index)}>Remove</button>
                             : null
                     }
 
@@ -517,10 +518,9 @@ return (
        <div className='pt-7'>
        <button
           type="button"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          onClick={() => addExhibitionFields()}
+          className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"          onClick={() => addExhibitionFields()}
         >
-          Hinzufügen
+          add
         </button>
        </div>
 
@@ -535,8 +535,9 @@ return (
                 <div className="form-inline" key={index}>
                     {
                         index ?
-                            <Button type="button" className="button inputField remove"
-                                    onClick={() => removeSocialMediaFields(index)}>Remove</Button>
+                            <button type="button"
+                                    className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                                    onClick={() => removeSocialMediaFields(index)}>Remove</button>
                             : null
                     }
                     <div className="sm:col-span-2 sm:col-start-1">
@@ -579,10 +580,9 @@ return (
        <div className='pt-7'>
        <button
           type="button"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          onClick={() => addSocialMediaField()}
+          className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"          onClick={() => addSocialMediaField()}
         >
-          Hinzufügen
+          Add
         </button>
        </div>
 
@@ -593,12 +593,12 @@ return (
           <button
               type="submit"
               className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-blue-100 mt-7 mb-7"        >
-              save
+              Save
           </button>
         <button type="button"
                 className="inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                onClick={() => {
                     navigate("/galerie");}} >
-          cancel
+          Cancel
         </button>
       </div>
     </form>

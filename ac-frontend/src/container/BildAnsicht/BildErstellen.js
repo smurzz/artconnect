@@ -37,21 +37,25 @@ const MaterialForm = ({materials, setMaterials}) => {
         <div>
             <label>Materials:</label>
             <p>You can add upto 10 Materials</p>
-            <ul>
-                {materials.map((material, index) => (
-                    <li key={index}>
-                        {material}
-                        <button className="btn btn-secondary mx-3" onClick={(event) => handleDeleteMaterials(event,index)}>Delete
-                        </button>
-                    </li>
-                ))}
-            </ul>
             <input
                 type="text"
                 value={newMaterial}
                 onChange={(e) => setNewMaterial(e.target.value)}
             />
-            <button className="btn btn-secondary mx-3" onClick={handleAddMaterial}>Add Material</button>
+            <button
+                className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                onClick={handleAddMaterial}>Add Material</button>
+            <ul>
+                {materials.map((material, index) => (
+                    <li key={index}>
+                        {material}
+                        <button
+                            className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                            onClick={(event) => handleDeleteMaterials(event,index)}>Delete
+                        </button>
+                    </li>
+                ))}
+            </ul>
         </div>
     );
 };
@@ -79,21 +83,25 @@ const TagForm = ({tags, setTags}) => {
                 <div>
                     <label>Tags:</label>
                     <p>You can add upto 10 Tags</p>
-                    <ul>
-                        {tags.map((tag, index) => (
-                            <li key={index}>
-                                {tag}
-                                <button className="btn btn-secondary mx-3" onClick={(event) => handleDeleteTag(event,index)}>Delete
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
                     <input
                         type="text"
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                     />
-                    <button className="btn btn-secondary mx-3" onClick={handleAddTag}>Add Tag</button>
+                    <button
+                        className="mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                        onClick={handleAddTag}>Add Tag</button>
+                    <ul>
+                        {tags.map((tag, index) => (
+                            <li key={index}>
+                                {tag}
+                                <button
+                                    className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                                    onClick={(event) => handleDeleteTag(event,index)}>Delete
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
 
 
@@ -172,7 +180,6 @@ const BildErstellen = () => {
         comments: null,
         likes: 0
     });
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Validate the title
@@ -207,7 +214,7 @@ const BildErstellen = () => {
             ...prevArtwork,
             dimension: {
                 ...prevArtwork.dimension,
-                [property]: parseFloat(value)
+                [property]: parseFloat(value.replace(",", "."))
             }
         }));
     };
@@ -227,8 +234,7 @@ const BildErstellen = () => {
                     <button
                         onClick={()=>{navigate("/galerie")}}
                         type="button"
-                        className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                    >
+                        className="inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                    >
                         <span>Back to Profile</span>
                     </button>
                 </div>
@@ -288,32 +294,41 @@ const BildErstellen = () => {
                         setTags={(tags) => setArtwork({...artwork, tags})}/>
                     <p>Dimensions:</p>
                     <div className="d-flex align-items-center">
-                        <div className="mr-3">
-                        </div>
-                        <div className="d-flex">
+                        <div className="d-flex align-items-start">
+                            <div className="d-flex flex-column mr-3">
+                            <label>Height in cm: </label>
                             <input
                                 type="number"
-                                className="form-control mr-2"
+                                className="form-control "
                                 name="height"
                                 value={artwork.dimension.height}
+                                placeholder="Example 5,25"
                                 onChange={(e) => handleDimensionChange("height", e.target.value)}
                             />
-
+                            </div>
+                            <div className="d-flex flex-column mr-3">
+                            <label>Width in cm:</label>
                             <input
                                 type="number"
-                                className="form-control mr-2"
+                                className="form-control"
                                 name="width"
                                 value={artwork.dimension.width}
+                                placeholder="Example 5,25"
+
                                 onChange={(e) => handleDimensionChange("width", e.target.value)}
                             />
-
+                            </div>
+                            <div className="d-flex flex-column mr-3">
+                            <label>Depth in cm:</label>
                             <input
                                 type="number"
                                 className="form-control"
                                 name="depth"
+                                placeholder="Example 5,25"
                                 value={artwork.dimension.depth}
                                 onChange={(e) => handleDimensionChange("depth", e.target.value)}
                             />
+                            </div>
                         </div>
                     </div>
                     <label>Art Directions:</label>
@@ -344,8 +359,8 @@ const BildErstellen = () => {
                     />
                 </div>
                 <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button type="button" className="text-sm font-semibold leading-6 text-gray-900"
-                            onClick={() => {
+                    <button type="button"
+                            className=" inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                            onClick={() => {
                                 navigate("/galerie");
                             }}
                     >

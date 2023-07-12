@@ -8,12 +8,15 @@ import {StarIcon} from '@heroicons/react/20/solid'
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Image1 from '../../images/defaultArtworkPlaceholder.png';
-import {logikService} from  "../../lib/service"
+import {logikService} from "../../lib/service"
 import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
 import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 import Profil from "../../components/UserProfileHeader/userProfile"
 import {useEffect, useState} from "react";
 import ModalSuccess from "../../components/ModalPopUp/ModalSuccess"
+import {Disclosure, RadioGroup, Tab} from '@headlessui/react'
+import {MinusIcon} from '@heroicons/react/24/outline'
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -22,25 +25,46 @@ const product = {
     rating: 4
 }
 const GalleryHeader = ({gallery, id}) => {
-    const { title, description, categories, ranking} = gallery;
+    const {title, description, categories} = gallery;
     const [openModal, setOpenModal] = useState(false)
-
+    const [starUserRating, setStarUserRating] = useState();
+    const [ranking, setRanking] = useState();
+    const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
+    const galerieId = id;
+
+    useEffect(()=>{
+        async function getGallerieData(){
+            const userGallerieId = await GalerieApiService.getSecuredData("/galleries/myGallery");
+            const result = await GalerieApiService.getSecuredData("/galleries/"+ userGallerieId.data.id);
+            setRanking(result.data.ranking);
+            console.log("getGallerieData: "+ result.data.ranking)
+        }
+        getGallerieData()
+    },[])
     const handleCloseModal = () => {
         setOpenModal(false);
     };
+
     async function deleteGalerie() {
-        const galerieId = id;
+
+        console.log()
         //GalerieApiService.putSecuredParameter("/galleries/64a91ed469a57e1c3a4d54d3/rating?value=3")
-      const result = await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
-      setOpenModal(true);
+        const result = await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
+        setOpenModal(true);
+    }
+
+    async function sendUserRating() {
+        const result = await GalerieApiService.postSecuredData("/galleries/" + galerieId + "/rating?value=" + starUserRating, {});
+        setSuccess(true);
     }
 
 
     return (
         <div>
- <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete gallery" message="Your gallery has been successfully deleted" url="/" />
-            <div className="flex items-center mb-7">
+            <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete gallery"
+                          message="Your gallery has been successfully deleted" url="/"/>
+            <div className="flex items-center ">
                 <h1 className="mr-4">{title}</h1>
                 <button
                     onClick={() => {
@@ -61,20 +85,91 @@ const GalleryHeader = ({gallery, id}) => {
                 </button>
             </div>
             <h3 className="sr-only">Reviews</h3>
+            {categories && <p className="tag tag-sm">{categories}</p>}
+            <p>{description}</p>
             <div className="flex items-center">
                 {[0, 1, 2, 3, 4].map((rating) => (
+
                     <StarIcon
                         key={rating}
                         className={classNames(
-                            product.rating > rating ? 'text-indigo-500' : 'text-gray-300',
+                            ranking > rating ? 'text-indigo-500' : 'text-gray-300',
                             'h-5 w-5 flex-shrink-0'
                         )}
                         aria-hidden="true"
                     />
                 ))}
             </div>
-            <p>{description}</p>
-            {categories && <p className="tag tag-sm">{categories}</p>}
+            {/*dislosure*/}
+            <section aria-labelledby="details-heading" className="mt-7">
+                <div className="divide-y divide-gray-200 border-t">
+                    <Disclosure as="div" key="details">
+                        {({open}) => (
+                            <>
+                            <h3>
+                                <Disclosure.Button
+                                    className="group relative flex w-full items-center justify-between py-1 text-left">
+                            <span
+                                className={classNames(open ? 'text-indigo-600' : 'text-gray-900', 'text-sm font-medium')}>
+                              Add your own ranking
+                            </span>
+                                    <span className="ml-6 flex items-center">
+                              {open ? (
+                                  <MinusIcon
+                                      className="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
+                                      aria-hidden="true"
+                                  />
+                              ) : (
+                                  <PlusIcon
+                                      className="block h-6 w-6 text-gray-400 group-hover:text-gray-500"
+                                      aria-hidden="true"
+                                  />
+                              )}
+                            </span>
+                                </Disclosure.Button>
+                            </h3>
+                            <Disclosure.Panel as="div" className="prose prose-sm pb-6">
+                                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                                    {success && < div className="alert alert-primary" role="alert">
+                                        "Hurray! Thank you for your vote."
+                                    </div>}
+                                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center">
+
+                                        {[0, 1, 2, 3, 4].map((rating, index) => (
+                                            <button
+                                                disabled={success}
+                                            onClick={() => setStarUserRating(index+1)}
+                                    >
+                                        <StarIcon
+                                            key={rating}
+                                            className={classNames(
+                                                starUserRating > rating ? 'text-indigo-500' : 'text-gray-300',
+                                                'h-5 w-5 flex-shrink-0'
+                                            )}
+                                            aria-hidden="true"
+                                        />
+                                    </button>
+                                    ))}
+                                    {!success &&
+                                    <button
+                                        onClick={() => {
+                                            sendUserRating();
+
+                                        }}
+                                        className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                                    >
+                                        Submit
+                                    </button>
+                                    }
+
+                                </div>
+                            </div>
+                            </Disclosure.Panel>
+                            </>
+                            )}
+                    </Disclosure>
+                </div>
+            </section>
         </div>
 
     );
@@ -146,7 +241,7 @@ export default function Gallery() {
 
     return (
         <>
-            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut />}
+            {isLoggedIn ? <HeaderLogedIn/> : <HeaderLogedOut/>}
             <Profil></Profil>
             {emptyGallerie == true ?
                 <div className="text-center">
@@ -181,7 +276,8 @@ export default function Gallery() {
                     <div className="mx-auto max-w-2xl px-4 py-7 sm:px-6 sm:py-7 lg:max-w-7xl">
                         <GalleryHeader gallery={gallerie} id={galerieId}/>
                         <button onClick={() => {
-                            navigate("/newArt")}}
+                            navigate("/newArt")
+                        }}
                                 type="button"
                                 className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7 mb-7"
                         >
@@ -205,9 +301,9 @@ export default function Gallery() {
                                     </div>
                                     <div className="flex flex-col justify-between mt-4 ">
                                         <div className="flex  flex-wrap">
-                                        {product?.artDirections.map((tag) => (
-                                            <span className="tag tag-sm">#{tag}</span>
-                                        ))}
+                                            {product?.artDirections.map((tag) => (
+                                                <span className="tag tag-sm">#{tag}</span>
+                                            ))}
                                         </div>
                                         <div className="d-flex flex-wrap justify-content-between mt-4 mx-7">
                                             <h3 className="link text-lg font-medium text-gray-900 flex-grow-1">{product.title}</h3>
@@ -217,9 +313,9 @@ export default function Gallery() {
                                     </div>
                                 </Link>
 
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
                 </div>
             }
 
