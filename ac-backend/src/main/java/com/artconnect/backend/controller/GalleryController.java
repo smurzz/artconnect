@@ -3,6 +3,7 @@ package com.artconnect.backend.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,6 +55,18 @@ public class GalleryController {
 	public Mono<GalleryResponse> getGalleryById(@PathVariable("id") String id) {
 		return galleryService.findById(id).flatMap(this::mapGalleryToResponse);
 	}
+	
+	@GetMapping("/myGallery")
+	@PreAuthorize("hasAnyRole('USER', 'MANAGER', 'ADMIN')")
+	public Mono<GalleryResponse> getMyGallery() {
+		return galleryService.findMyGallery().flatMap(this::mapGalleryToResponse);
+	}
+	
+	@GetMapping("/user/{id}")
+	public Mono<GalleryResponse> getGalleryByOwner(@PathVariable("id") String userId) {
+		return galleryService.findByOwnerId(userId).flatMap(this::mapGalleryToResponse);
+	}
+	
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)

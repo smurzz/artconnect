@@ -47,6 +47,19 @@ public class GalleryService {
 		return galleryRepository.findById(id)
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Gallery with id <" + id + "> is not found.")));
 	}
+	
+	public Mono<Gallery> findByOwnerId(String ownerId) {
+		return galleryRepository.findByOwnerId(ownerId)
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Gallery with owner id <" + ownerId + "> is not found.")));
+	}
+	
+	public Mono<Gallery> findMyGallery() {
+		return userService.getCurrentUser()
+			.flatMap(user -> {
+				return galleryRepository.findByOwnerId(user.getId())
+						.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "You do not have a gallery yet")));
+			});
+	}
 
 	public Mono<Gallery> create(Gallery gallery, String authorization) {
 		String userEmail = getEmailFromAuthentication(authorization);
