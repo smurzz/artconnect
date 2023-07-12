@@ -105,16 +105,15 @@ function SignUp(props) {
     useEffect(() => {
         if (props.errorSignup !== null ){
             setOpen(true);
-            console.log("inside this method");
-            if( props.errorSignup == "Email already exists") {
-                console.log("Use Effect error sign up: "+ props.errorSignup);
+            if(JSON.stringify(props.errorSignup.message) === "Email already exists") {
+                console.log("error")
+                console.log("Use Effect error sign up: ");
                 setTitel("Your Email is already Registered");
                 setMessage("`Oops! Your email has already been registered. Please proceed to the login page.");
             } else {
                 setOpen(true);
-                console.log("Use Effect error sign up: "+ props.errorSignup);
                 setTitel("Oops! Something went wrong");
-                setMessage(props.errorSignup);
+                setMessage("Your Email has already been registered");
             }
         }
     }, [props.errorSignup]);
@@ -180,6 +179,7 @@ function SignUp(props) {
         if(userDataValid() == true){
             setLoading(true);
             await new Promise((resolve) => setTimeout(resolve, 300));
+            console.log("signupUserAction");
             props.signupUserAction(user);
         }
     }

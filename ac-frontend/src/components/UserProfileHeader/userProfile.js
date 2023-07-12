@@ -56,9 +56,7 @@ const Profile = () => {
                 const url = URL.createObjectURL(blob);
                 setImage(url);
             }
-
         }
-
         getUserData();
 
     }, [])
