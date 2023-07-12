@@ -518,9 +518,9 @@ return (
        <div className='pt-7'>
        <button
           type="button"
-          className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"          onClick={() => addExhibitionFields()}
+          className=" inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"          onClick={() => addExhibitionFields()}
         >
-          add
+          Add
         </button>
        </div>
 
@@ -580,7 +580,7 @@ return (
        <div className='pt-7'>
        <button
           type="button"
-          className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"          onClick={() => addSocialMediaField()}
+          className="inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"          onClick={() => addSocialMediaField()}
         >
           Add
         </button>

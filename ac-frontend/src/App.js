@@ -21,6 +21,9 @@ import editGalerie from "./container/Galerie/editGalerie"
 import BildBearbeiten from "./container/BildAnsicht/BildBearbeiten"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
+import Album from "./container/loggedInUsers/GalleryForAll/GalleryForAll"
+import GallerieOfOtherUser from "./container/loggedInUsers/GalleryForAll/galerieOfOtherUser"
+import AlbumArtWork from "./container/loggedInUsers/ArtworkForAll/ArtWorkGallerie"
 
 function App() {
   return (
@@ -53,6 +56,12 @@ function App() {
             <Route path="/editArt" element ={<BildBearbeiten/>}></Route>
             <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
 
+            {/*GalleryForAll*/}
+            <Route path="/openGallery" element={<Album/>}></Route>
+            <Route path="/galleryOtherUser/:id" element ={<GallerieOfOtherUser/>}></Route>
+
+            {/*Artwork for All*/}
+            <Route path="/openArtwork" element={<AlbumArtWork/>}></Route>
           </Route>
         <Route path='*' element={<NotFound/>}/>
       </Routes>

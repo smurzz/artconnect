@@ -16,9 +16,7 @@ async function getUnsecuredData(url){
             };
             let result = await axios.get(url, _headers);
         return result;
-        console.log("getUnsecuredDataSuccess")
     } catch (error) {
-        console.log("getUnsecuredDataError")
         return null;
     }
 }
@@ -28,9 +26,7 @@ async function getSecuredData(url){
         return null;
     }
     try {
-        console.log("getSecuredData: "+ url)
         const tokenInfo = await storageService.getTokenInformation();
-        console.log("getDataSecured: " + JSON.stringify(tokenInfo));
         if (!tokenInfo) return null;
         const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
         var _headers = {
@@ -38,7 +34,6 @@ async function getSecuredData(url){
                 Authorization: "Bearer " + tokenInfo.accessToken,
             },
         };
-        console.log("getSecuredData: "+url);
           let  result = await axios.get(url, _headers);
         return result;
     } catch (error) {
@@ -52,20 +47,15 @@ async function postSecuredData(url,payload){
         return null;
     }
     const tokenInfo = await storageService.getTokenInformation();
-    console.log("getDataSecured: " + JSON.stringify(tokenInfo));
     if (!tokenInfo) return null;
     try {
         const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
-        console.log("token: "+ tokensValid);
         var _headers = {
             headers: {
                 Authorization: "Bearer " + tokenInfo.accessToken,
             },
         };
-            console.log("inside patch data secured: ");
-            console.log(url)
             let result = await axios.post(url,payload, _headers);
-            console.log("result");
         return result;
     } catch (error) {
         return null;
@@ -76,7 +66,6 @@ async function putSecuredData(url,payload){
         return null;
     }
     const tokenInfo = await storageService.getTokenInformation();
-    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
     if(!tokenInfo) return null;
     try{
         const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
@@ -94,7 +83,6 @@ async function putSecuredData(url,payload){
 
 async function deleteSecuredData(url) {
     const tokenInfo = await storageService.getTokenInformation();
-    console.log("getDataSecured: "+ JSON.stringify(tokenInfo));
     if(!tokenInfo) return null;
     try{
         const tokensValid = await logikService.checkTokens(tokenInfo.accessToken, tokenInfo.refreshToken, tokenInfo.tokenTime, tokenInfo.refreshTime);
@@ -109,10 +97,8 @@ async function deleteSecuredData(url) {
                 console.log("User was deleted");
             })
 
-        console.log("Api Service - sendImage: success")
         return "success";
     }catch(error){
-        console.log("Api Service - sendImage: error")
         return null;
     }
 }

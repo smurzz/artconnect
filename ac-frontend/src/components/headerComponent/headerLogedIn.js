@@ -93,7 +93,13 @@ export default function ResponsiveAppBar() {
                                         to="/galerie"
                                         className="link inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                                     >
-                                        Galerie
+                                        Profil
+                                    </Link>
+                                    <Link
+                                        to="/openGallery"
+                                        className="link inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                    >
+                                        Galleries
                                     </Link>
                                 </div>
                             </div>
@@ -167,7 +173,16 @@ export default function ResponsiveAppBar() {
                                                     <Link to="/galerie"
                                                         className={classNames(active ? 'link bg-gray-100' : '', 'link block px-4 py-2 text-sm text-gray-700')}
                                                     >
-                                                        Your Galerie
+                                                        Profil
+                                                    </Link>
+                                                )}
+                                            </Menu.Item>
+                                            <Menu.Item>
+                                                {({active}) => (
+                                                    <Link to="/openGallery"
+                                                          className={classNames(active ? 'link bg-gray-100' : '', 'link block px-4 py-2 text-sm text-gray-700')}
+                                                    >
+                                                        Galleries
                                                     </Link>
                                                 )}
                                             </Menu.Item>
@@ -205,8 +220,22 @@ export default function ResponsiveAppBar() {
                                 onClick ={() =>{navigate("/galerie")}}
                                 className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
                             >
-                                Galerie
+                                Profile
                             </Disclosure.Button>
+                            <Disclosure.Button
+                                as="a"
+                                onClick ={() =>{navigate("/openGallery")}}
+                                className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+                            >
+                                Galleries
+                            </Disclosure.Button>
+            <Disclosure.Button
+                as="a"
+                onClick ={() =>{navigate("/openArtwork")}}
+                className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+            >
+                Artworks
+            </Disclosure.Button>
                         </div>
                         <div className="border-t border-gray-200 pb-3 pt-4">
                             <div className="flex items-center px-4">
@@ -235,7 +264,7 @@ export default function ResponsiveAppBar() {
                                     onClick ={() =>{navigate("/galerie")}}
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                                 >
-                                    Your Galerie
+                                    Profil
                                 </Disclosure.Button>
 
                                 <Disclosure.Button
