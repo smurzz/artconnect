@@ -13,6 +13,7 @@ import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
 import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 import Profil from "../../components/UserProfileHeader/userProfile"
 import {useEffect, useState} from "react";
+import ModalSuccess from "../../components/ModalPopUp/ModalSuccess"
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
@@ -22,19 +23,24 @@ const product = {
 }
 const GalleryHeader = ({gallery, id}) => {
     const { title, description, categories, ranking} = gallery;
+    const [openModal, setOpenModal] = useState(false)
+
     const navigate = useNavigate();
+    const handleCloseModal = () => {
+        setOpenModal(false);
+    };
     async function deleteGalerie() {
-        const galerieId = id.replace(/"/g, "")
-        GalerieApiService.putSecuredParameter("/galleries/64a91ed469a57e1c3a4d54d3/rating?value=3")
-
-
-     /*   await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
-        navigate("/galerie");*/
+        const galerieId = id;
+        //GalerieApiService.putSecuredParameter("/galleries/64a91ed469a57e1c3a4d54d3/rating?value=3")
+      const result = await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
+      setOpenModal(true);
+        navigate("/galerie");
     }
 
 
     return (
         <div>
+ <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete gallery" message="Your gallery has been successfully deleted" url="/galerie" />
             <div className="flex items-center mb-7">
                 <h1 className="mr-4">{title}</h1>
                 <button
@@ -92,21 +98,17 @@ export default function Gallery() {
             //loggedIn logik
             const loggedInHeader = await logikService.isLoggedIn();
             setIsLoggedIn(loggedInHeader);
-            console.log("loggedIn: " + loggedInHeader)
 
             const result = await storageService.getUser();
-            console.log("storages User: "+ result);
             const urlGetUser = `/users?email=${result}`.replace(/"/g, '');
             const userProfile = await ApiService.getDataSecuredWithParameter(urlGetUser);
-            console.log("URL get User: "+ JSON.stringify(userProfile.data));
             setUser(userProfile.data);
             const userGallerieId = await GalerieApiService.getSecuredData("/galleries/myGallery");
-            setGalerieId(userGallerieId);
-            const userGallerieIdClean = userGallerieId.replace(/"/g, "");
-            const getGalerie = await GalerieApiService.getSecuredData("/galleries/" + userGallerieIdClean);
-            if (getGalerie == null) {
+            if (userGallerieId === null) {
                 setEmptyGallerie(true);
             } else {
+                const getGalerie = await GalerieApiService.getSecuredData("/galleries/" + userGallerieId.data.id);
+                setGalerieId(userGallerieId.data.id);
                 const artWork = getGalerie.data.artworks;
                 setArtwork(artWork);
                 gallerie.title = getGalerie.data.title;
@@ -140,7 +142,6 @@ export default function Gallery() {
             return url;
 
             //Blank Picture
-            console.log("Image undefined.")
         }
     }
 
@@ -170,8 +171,7 @@ export default function Gallery() {
                     <div className="mt-6">
                         <button onClick={navigateToEditGallerie}
                                 type="button"
-                                className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                        >
+                                className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                             <PlusIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true"/>
                             New gallery
                         </button>
@@ -182,8 +182,7 @@ export default function Gallery() {
                     <div className="mx-auto max-w-2xl px-4 py-7 sm:px-6 sm:py-7 lg:max-w-7xl">
                         <GalleryHeader gallery={gallerie} id={galerieId}/>
                         <button onClick={() => {
-                            navigate("/newArt")
-                        }}
+                            navigate("/newArt")}}
                                 type="button"
                                 className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7 mb-7"
                         >
@@ -211,11 +210,11 @@ export default function Gallery() {
                                             <span className="tag tag-sm">#{tag}</span>
                                         ))}
                                         </div>
-                                        <div className="d-flex flex-wrap justify-content-between mt-4">
+                                        <div className="d-flex flex-wrap justify-content-between mt-4 mx-7">
                                             <h3 className="link text-lg font-medium text-gray-900 flex-grow-1">{product.title}</h3>
                                             <p className="link mt-1 text-lg font-medium text-gray-900">{product.price} Euro</p>
                                         </div>
-                                        <p className="link text-sm text-gray-700">{product.description}</p>
+                                        <p className="link text-sm text-gray-700 my-7">{product.description}</p>
                                     </div>
                                 </Link>
 
