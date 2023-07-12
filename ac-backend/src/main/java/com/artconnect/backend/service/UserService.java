@@ -3,6 +3,8 @@ package com.artconnect.backend.service;
 import java.util.Date;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
@@ -28,6 +30,10 @@ public class UserService {
 	private final UserRepository userRepository;
 	
 	private final ImageService imageService;
+	
+	@Autowired
+    @Lazy
+	private GalleryService galleryService;
 	
 	private final JwtService jwtService;
 	
@@ -157,11 +163,22 @@ public class UserService {
 	    return userRepository.findByEmail(userEmail)
 	    		.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")))
 	            .flatMap(foundUser -> {
-	                if (foundUser.getId().equals(id) || foundUser.getRole() == Role.ADMIN) {
-	                    return userRepository.deleteById(id);
-	                } else {
-	                    return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to delete this account."));
-	                }
+	            	 if (foundUser.getId().equals(id) || foundUser.getRole() == Role.ADMIN) {
+	            		 Mono<Void> deleteProfilePhoto = Mono.empty();
+	                     if (foundUser.getProfilePhoto() != null) {
+	                         deleteProfilePhoto = imageService.deleteById(foundUser.getProfilePhoto().getId());
+	                     }
+
+	                     Mono<Void> deleteGallery = Mono.empty();
+	                     if (foundUser.getGalleryId() != null) {
+	                         deleteGallery = galleryService.delete(foundUser.getGalleryId(), authorization);
+	                     }
+
+	                     return Mono.when(deleteProfilePhoto, deleteGallery)
+	                             .then(userRepository.deleteById(id));
+	                 } else {
+	                     return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to delete this account."));
+	                 }
 	            });
 	}
 
