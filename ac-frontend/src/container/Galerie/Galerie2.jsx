@@ -34,13 +34,12 @@ const GalleryHeader = ({gallery, id}) => {
         //GalerieApiService.putSecuredParameter("/galleries/64a91ed469a57e1c3a4d54d3/rating?value=3")
       const result = await GalerieApiService.deleteSecuredData("/galleries/" + galerieId);
       setOpenModal(true);
-        navigate("/galerie");
     }
 
 
     return (
         <div>
- <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete gallery" message="Your gallery has been successfully deleted" url="/galerie" />
+ <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete gallery" message="Your gallery has been successfully deleted" url="/" />
             <div className="flex items-center mb-7">
                 <h1 className="mr-4">{title}</h1>
                 <button
