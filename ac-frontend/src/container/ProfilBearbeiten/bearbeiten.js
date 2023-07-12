@@ -41,7 +41,7 @@ function Bearbeiten(props) {
     const [successMessage, setSuccessMessage] = React.useState("");
     const [success, setSuccess] = useState(false);
     const [constact, setContacts] = useState(false);
-
+    const currentDate = new Date();
     //edit userdata from BE
     const [userBearbeiten, setUserBearbeiten] = useState(
         {
@@ -352,6 +352,7 @@ return (
                         id="birthday"
                         name="birthday"
                         autoComplete="birthday"
+                        maxDate={currentDate}
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         selected={dateOfBirth}
                         onChange={(date) => {
