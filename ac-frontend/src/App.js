@@ -36,6 +36,9 @@ function App() {
         <Route path ="/forgot" element ={<ForgotPassword/>}/>
         <Route path ="/resetSuccess" element ={<ResetPasswortSuccess/>}/>
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
+        {/*GalleryForAll*/}
+        <Route path="/galleryOtherUser/:id" element ={<GallerieOfOtherUser/>}></Route>
+        <Route path="/openGallery" element={<Album/>}></Route>
           {/*User bearbeiten*/}
 
           <Route  element={<ProtectedRoutes />}>
@@ -55,10 +58,6 @@ function App() {
             <Route path="/newArt" element={<BildErstellen/>}></Route>
             <Route path="/editArt" element ={<BildBearbeiten/>}></Route>
             <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
-
-            {/*GalleryForAll*/}
-            <Route path="/openGallery" element={<Album/>}></Route>
-            <Route path="/galleryOtherUser/:id" element ={<GallerieOfOtherUser/>}></Route>
 
             {/*Artwork for All*/}
             <Route path="/openArtwork" element={<AlbumArtWork/>}></Route>

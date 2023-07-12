@@ -20,7 +20,7 @@ import {MinusIcon} from '@heroicons/react/24/outline'
 const product = {
     rating: 4
 }
-const GalleryHeader = ({gallery}) => {
+const GalleryHeader = ({gallery, isLoggedIn}) => {
     const {title, description, categories} = gallery;
     const [starUserRating, setStarUserRating] = useState();
     const [ranking, setRanking] = useState();
@@ -30,7 +30,7 @@ const GalleryHeader = ({gallery}) => {
 
     useEffect(() => {
         async function getGallerieData() {
-            const result = await GalerieApiService.getSecuredData("/galleries/" + id);
+            const result = await GalerieApiService.getUnsecuredData("/galleries/" + id);
             setRanking(result.data.ranking);
         }
 
@@ -66,19 +66,21 @@ const GalleryHeader = ({gallery}) => {
                 ))}
             </div>
             {/*dislosure*/}
-            <section aria-labelledby="details-heading" className="mt-7">
-                <div className="divide-y divide-gray-200 border-t">
-                    <Disclosure as="div" key="details">
-                        {({open}) => (
-                            <>
-                                <h3>
-                                    <Disclosure.Button
-                                        className="group relative flex w-full items-center justify-between py-1 text-left">
+            {isLoggedIn &&
+
+                <section aria-labelledby="details-heading" className="mt-7">
+                    <div className="divide-y divide-gray-200 border-t">
+                        <Disclosure as="div" key="details">
+                            {({open}) => (
+                                <>
+                                    <h3>
+                                        <Disclosure.Button
+                                            className="group relative flex w-full items-center justify-between py-1 text-left">
                             <span
                                 className={classNames(open ? 'text-indigo-600' : 'text-gray-900', 'text-sm font-medium')}>
                               Add your own ranking
                             </span>
-                                        <span className="ml-6 flex items-center">
+                                            <span className="ml-6 flex items-center">
                               {open ? (
                                   <MinusIcon
                                       className="block h-6 w-6 text-indigo-400 group-hover:text-indigo-500"
@@ -91,50 +93,52 @@ const GalleryHeader = ({gallery}) => {
                                   />
                               )}
                             </span>
-                                    </Disclosure.Button>
-                                </h3>
-                                <Disclosure.Panel as="div" className="prose prose-sm pb-6">
-                                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                                        {success && < div className="alert alert-primary" role="alert">
-                                            "Hurray! Thank you for your vote."
-                                        </div>}
-                                        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center">
+                                        </Disclosure.Button>
+                                    </h3>
+                                    <Disclosure.Panel as="div" className="prose prose-sm pb-6">
+                                        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                                            {success && < div className="alert alert-primary" role="alert">
+                                                "Hurray! Thank you for your vote."
+                                            </div>}
+                                            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center">
 
-                                            {[0, 1, 2, 3, 4].map((rating, index) => (
-                                                <button
-                                                    disabled={success}
-                                                    onClick={() => setStarUserRating(index + 1)}
-                                                >
-                                                    <StarIcon
-                                                        key={rating}
-                                                        className={classNames(
-                                                            starUserRating > rating ? 'text-indigo-500' : 'text-gray-300',
-                                                            'h-5 w-5 flex-shrink-0'
-                                                        )}
-                                                        aria-hidden="true"
-                                                    />
-                                                </button>
-                                            ))}
-                                            {!success &&
-                                                <button
-                                                    onClick={() => {
-                                                        sendUserRating();
+                                                {[0, 1, 2, 3, 4].map((rating, index) => (
+                                                    <button
+                                                        disabled={success}
+                                                        onClick={() => setStarUserRating(index + 1)}
+                                                    >
+                                                        <StarIcon
+                                                            key={rating}
+                                                            className={classNames(
+                                                                starUserRating > rating ? 'text-indigo-500' : 'text-gray-300',
+                                                                'h-5 w-5 flex-shrink-0'
+                                                            )}
+                                                            aria-hidden="true"
+                                                        />
+                                                    </button>
+                                                ))}
+                                                {!success &&
+                                                    <button
+                                                        onClick={() => {
+                                                            sendUserRating();
 
-                                                    }}
-                                                    className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
-                                                >
-                                                    Submit
-                                                </button>
-                                            }
+                                                        }}
+                                                        className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                                                    >
+                                                        Submit
+                                                    </button>
+                                                }
 
+                                            </div>
                                         </div>
-                                    </div>
-                                </Disclosure.Panel>
-                            </>
-                        )}
-                    </Disclosure>
-                </div>
-            </section>
+                                    </Disclosure.Panel>
+                                </>
+                            )}
+                        </Disclosure>
+                    </div>
+                </section>
+            }
+
         </div>
 
     );
@@ -357,7 +361,7 @@ export default function GallerieOfOtherUser() {
             const loggedInHeader = await logikService.isLoggedIn();
             setIsLoggedIn(loggedInHeader);
 
-            const result = await GalerieApiService.getSecuredData("/galleries/" + id);
+            const result = await GalerieApiService.getUnsecuredData("/galleries/" + id);
             const urlGetUser = result.data.ownerId;
             const userProfile = await GalerieApiService.getUnsecuredData("/users/" + urlGetUser);
             setUser(userProfile.data);
@@ -403,7 +407,7 @@ export default function GallerieOfOtherUser() {
             <ProfilUser/>
                 <div className="bg-white">
                     <div className="mx-auto max-w-2xl px-4 py-7 sm:px-6 sm:py-7 lg:max-w-7xl">
-                        <GalleryHeader gallery={gallerie}/>
+                        <GalleryHeader gallery={gallerie} isLoggedIn={isLoggedIn}/>
                         <h2 className="sr-only">Products</h2>
 
                         <div

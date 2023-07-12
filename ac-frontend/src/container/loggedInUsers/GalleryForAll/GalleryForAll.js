@@ -40,7 +40,7 @@ export default function Album() {
         async function getUserData() {
             //loggedIn logik
             const loggedInHeader = await logikService.isLoggedIn();
-            const resultGetGallerie =await  GalerieApiService.getSecuredData("/galleries");
+            const resultGetGallerie =await  GalerieApiService.getUnsecuredData("/galleries");
             setGalleries(resultGetGallerie.data);
             setIsLoggedIn(loggedInHeader)
         }
