@@ -605,7 +605,7 @@ class UserControllerTest {
 	    when(filePart.headers()).thenReturn(headers);
 	    when(filePart.filename()).thenReturn("test.jpg");
 	    when(filePart.content()).thenReturn(body);
-	    when(userService.addProfilePhoto(any(Mono.class), anyLong(), anyString())).thenReturn(Mono.just(image));
+	    when(userService.addProfilePhoto(any(Mono.class), anyString())).thenReturn(Mono.just(image));
 
 	    webTestClient = WebTestClient.bindToController(userController).build();
 		
@@ -637,7 +637,7 @@ class UserControllerTest {
 	    when(filePart.filename()).thenReturn("test.jpg");
 	    when(filePart.content()).thenReturn(body);
 	    
-	    when(userService.addProfilePhoto(any(Mono.class), anyLong(), anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
+	    when(userService.addProfilePhoto(any(Mono.class), anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
 
 	    webTestClient = WebTestClient.bindToController(userController).build();
 		
@@ -664,7 +664,7 @@ class UserControllerTest {
 	    when(filePart.filename()).thenReturn("test.jpg");
 	    when(filePart.content()).thenReturn(body);
 	    
-	    when(userService.addProfilePhoto(any(Mono.class), anyLong(), anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
+	    when(userService.addProfilePhoto(any(Mono.class), anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
 
 	    webTestClient = WebTestClient.bindToController(userController).build();
 		
@@ -691,7 +691,7 @@ class UserControllerTest {
 	    when(filePart.filename()).thenReturn("test.jpg");
 	    when(filePart.content()).thenReturn(body);
 	    
-	    when(userService.addProfilePhoto(any(Mono.class), anyLong(), anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
+	    when(userService.addProfilePhoto(any(Mono.class), anyString())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
 
 	    webTestClient = WebTestClient.bindToController(userController).build();
 		

@@ -117,7 +117,7 @@ public class UserService {
 	            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
 
-	public Mono<Image> addProfilePhoto(Mono<FilePart> file, Long fileSize, String authorization) {
+	public Mono<Image> addProfilePhoto(Mono<FilePart> file, String authorization) {
 		if (authorization == null || !authorization.startsWith("Bearer ")) {
 			return Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED));
 		}
@@ -127,8 +127,11 @@ public class UserService {
 				.flatMap(user -> {
 					return imageService.addPhoto(file)
 							.flatMap(image -> {
+								String oldProfilePhotoId = user.getProfilePhoto() != null ? user.getProfilePhoto().getId() : "";
 								user.setProfilePhoto(image);
-								return userRepository.save(user).thenReturn(image);
+								return userRepository.save(user)
+										.then(imageService.deleteById(oldProfilePhotoId))
+										.thenReturn(image);
 							})
 							.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
 				}).switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
