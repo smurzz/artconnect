@@ -200,9 +200,8 @@ export default function ResponsiveAppBar() {
                                 </Disclosure.Button>
                                 <Disclosure.Button
                                     as="a"
-                                    href="/login"
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                                    onClick ={() =>{navigate("/register")}}
+                                    onClick ={()=>{navigate("/register")}}
                                 >
                                     Register
                                 </Disclosure.Button>
