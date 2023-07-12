@@ -1,17 +1,29 @@
 package com.artconnect.backend.controller.response;
 
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.springframework.core.codec.DecodingException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.validation.BindingResult;
 import reactor.core.publisher.Mono;
+
+
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.server.ResponseStatusException;
+
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 public class ValidationHandlerTest {
@@ -65,6 +77,77 @@ public class ValidationHandlerTest {
         );
     }
 
+    @Test
+    void handleDecodingException_shouldReturnBadRequestStatusWithDefaultErrorMessage() {
+        DecodingException exception = mock(DecodingException.class);
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDecodingException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("One of enum value in the list is not valid", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDecodingException_shouldReturnBadRequestStatusWithEnumErrorMessage() {
+        DecodingException exception = new DecodingException("One of enum value in the list is not valid");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDecodingException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("One of enum value in the list is not valid", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDecodingException_shouldReturnBadRequestStatusWithCustomErrorMessage() {
+        DecodingException exception = new DecodingException("Custom error message");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDecodingException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("One of enum value in the list is not valid", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDuplicateKeyException_shouldReturnBadRequestStatusWithEmailErrorMessage() {
+        DuplicateKeyException exception = new DuplicateKeyException("Duplicate key error: email");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDuplicateKeyException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("Email already exists", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDuplicateKeyException_shouldReturnBadRequestStatusWithGalleryErrorMessage() {
+        DuplicateKeyException exception = new DuplicateKeyException("Duplicate key error: ownerId");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDuplicateKeyException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("Gallery already exists for the user", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDuplicateKeyException_shouldReturnBadRequestStatusWithDefaultErrorMessage() {
+        DuplicateKeyException exception = new DuplicateKeyException("Some other duplicate key error");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDuplicateKeyException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("Duplicate key error", responseStatusException.getReason());
+    }
 
 //	private ValidationHandler validationHandler;
 //
