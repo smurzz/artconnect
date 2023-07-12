@@ -36,6 +36,9 @@ public class AuthenticationService {
 	
 	@Value("${backend.base-url}")
 	private String backendBaseUrl;
+	
+	@Value("${frontend.base-url}")
+	private String frontendBaseUrl;
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -234,7 +237,7 @@ public class AuthenticationService {
 				+ "\r\n"
 				+ "	<div class=\"main-content\">\r\n"
 				+ "		<i class=\"fa fa-check main-content__checkmark\" id=\"checkmark\"></i>\r\n"
-				+ "		<p class=\"main-content__body\" data-lead-id=\"main-content-body\">Congratulations! Your registration on ArtConnect platform has been confirmed successfully. You can now log in to your account and start exploring our community of artists and art lovers. Thank you for joining us and we wish you an exciting and creative experience!</p>\r\n"
+				+ "		<p class=\"main-content__body\" data-lead-id=\"main-content-body\">Congratulations! Your registration on ArtConnect platform has been confirmed successfully. You can now <a href=\"" + frontendBaseUrl +  "/login\">log in</a> to your account and start exploring our community of artists and art lovers. Thank you for joining us and we wish you an exciting and creative experience!</p>\r\n"
 				+ "	</div>\r\n"
 				+ "\r\n"
 				+ "	<footer class=\"site-footer\" id=\"footer\">\r\n"
@@ -267,7 +270,7 @@ public class AuthenticationService {
 				+ "\r\n"
 				+ "	<div class=\"main-content\">\r\n"
 				+ "		<i class=\"fa fa-times main-content__checkmark\" id=\"checkmark\"></i>\r\n"
-				+ "		<p class=\"main-content__body\" data-lead-id=\"main-content-body\">We're sorry, but we couldn't confirm your registration on ArtConnect platform because the confirmation link has expired or is not valid anymore. Please make sure to use the latest link that we sent you in the confirmation email.</p>\r\n"
+				+ "		<p class=\"main-content__body\" data-lead-id=\"main-content-body\">We're sorry, but we couldn't confirm your registration on ArtConnect platform because the confirmation link has expired or is not valid anymore. Please make sure to use the latest link that we sent you in the confirmation email or <a href=\"" + frontendBaseUrl +  "/register\">log in</a> again.</p>\r\n"
 				+ "	</div>\r\n"
 				+ "\r\n"
 				+ "	<footer class=\"site-footer\" id=\"footer\">\r\n"
