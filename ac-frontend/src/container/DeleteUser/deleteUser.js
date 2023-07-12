@@ -75,93 +75,38 @@ export default function DeleteUser() {
         event.preventDefault();
     };
 
-    return (
-        <ThemeProvider theme={defaultTheme}>
+    return (<>
             {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
-            <main>
-                <Grid container component="main" sx={{ height: '100vh' }}>
-                    {loading && <CssBaseline/>}
-                    <Grid
-                        item
-                        xs={false}
-                        sm={4}
-                        md={7}
-                        sx={{
-                            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundColor: (t) =>
-                                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                        }}
-                    />
-                    <Grid item xs={12} sm={8} md={5} component={Paper} square>
-                        <Box
-                            sx={{
-                                my: 8,
-                                mx: 4,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                            }}
-                        >
-                            <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
-                                <LockOutlinedIcon />
-                            </Avatar>
+            <div className="container mt-20">
+                <div className="row justify-content-center ">
+                    <div className="col-12 col-sm-10 col-md-8 col-lg-6">
+                        <div className="text-center mt-7">
+                            <h3>We Are Sad to See You Want to Delete Your Account</h3>
+                            <p className="text-base font-semibold text-black">
+                                Please keep in mind that by deleting your account, you will lose access
+                                to all your saved data, preferences, and any contributions you have made
+                                to our platform.
+                            </p>
+                            <p className="text-base font-semibold text-black">
+                                If you have any questions or require further assistance, please don't
+                                hesitate to reach out to our customer support team. Thank you for being
+                                a part of our community.
+                            </p>
+                            <button
+                                className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-blue-100 mt-7 mb-7"
+                                onClick={()=>deleteUser(false)}>
+                                No. I want to stay
+                            </button>
+                            <button
+                                className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                                onClick ={()=>deleteUser(true)}>
+                                Delete my Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                            <Typography component="h1" variant="h5">
-                                Are you sure you want to delete your Account?
-                                {userId}
-                            </Typography>
-                            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-                                <Grid item sm={12}>
-                                    <Box sx={{ width: '100%' }}>
-                                        <LinearProgress />
-                                    </Box>
-                                </Grid>
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    variant="contained"
-                                    onClick ={()=>deleteUser(true)}
-                                    on
-                                    sx={{
-                                        mt: 3,
-                                        mb: 2,
-                                        backgroundColor: '#434544',
-                                        '&:hover': {
-                                            backgroundColor: '#0a0a0a ',
-                                        }
-                                    }}>
-                                    Yes.
-                                </Button>
-                                <Button
-                                    type="button"
-                                    fullWidth
-                                    variant="contained"
-                                    onClick ={()=>deleteUser(false)}
-
-                                    sx={{
-                                        mt: 3,
-                                        mb: 2,
-                                        backgroundColor: '#434544',
-                                        '&:hover': {
-                                            backgroundColor: '#0a0a0a ',
-                                        }
-                                    }}>
-                                    No. I want to stay
-                                </Button>
-                                <Grid container>
-                                    <Grid item xs>
-                                    </Grid>
-
-                                </Grid>
-                                <Copyright sx={{ mt: 5 }} />
-                            </Box>
-                        </Box>
-                    </Grid>
-                </Grid>
-            </main>
-        </ThemeProvider>
+        </>
     );
 }

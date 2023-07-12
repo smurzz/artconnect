@@ -57,37 +57,31 @@ export default function DeleteUserAnswer() {
         getLoggedIn();
     },[])
     return (
-        <ThemeProvider theme={defaultTheme}>
+        <>
             {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
-            <main>
-                <Grid container component="main" sx={{ height: '100vh' }}>
-                    <CssBaseline />
-                    <Grid
-                        item
-                        xs={false}
-                        sm={4}
-                        md={7}
-                        sx={{
-                            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundColor: (t) =>
-                                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                        }}
-                    />
-                    <Grid item xs={12} sm={8} md={5} component={Paper} square>
-                        {userWantsToBeDeleted ? <Typography component="h1" variant="h5">
-                            We are sorry you chose to leave us.
-                        </Typography> :
-                            <Typography component="h1" variant="h5">
-                            We are Glad you are staying.
-                            Navigate to our homepage and enjoy the fascinating Art of all the amazing artists we are hosting on our Webiste.
-                            <Link to="/">Go to our homepage</Link>
-                            </Typography>}
-                    </Grid>
-                </Grid>
-            </main>
-        </ThemeProvider>
+            <div className="container mt-20">
+                <div className="row justify-content-center ">
+                    <div className="col-12 col-sm-10 col-md-8 col-lg-6">
+                        <div className="text-center mt-7">
+                            {userWantsToBeDeleted ?
+                                (<div>
+                                    <h3>We're sorry to see you go.</h3>
+                                <p className="text-base font-semibold text-black">
+                                    Once again, thank you for being a part of our journey. We wish you all the best in your future endeavors.
+                                </p>
+                                </div>)
+                                :
+                                (<div>
+                                    <h3>We are Glad you are staying.</h3>
+                            <p className="text-base font-semibold text-black">
+                                Navigate to our homepage and enjoy the fascinating Art of all the amazing artists we are hosting on our Webiste.
+                                <Link to="/">Go to our homepage</Link>
+                            </p>
+                                </div>)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
     );
 }

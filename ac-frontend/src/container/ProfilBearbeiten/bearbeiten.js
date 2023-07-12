@@ -239,9 +239,8 @@ return (
                       <button
                           onClick={()=>{navigate("/galerie")}}
                           type="button"
-                          className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                      >
-                          <span>Back to Profile</span>
+                          className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                      >
+                          Back to Profile
                       </button>
                   </div>
                   {errorMessage && <div className="alert alert-danger" role="alert">
@@ -591,29 +590,21 @@ return (
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button type="button" className="text-sm font-semibold leading-6 text-gray-900"
-                onClick={() => {
-                    navigate("/galerie");
-                }}
-        >
-          Abbrechen
-        </button>
-        <button
-          type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Speichern
+          <button
+              type="submit"
+              className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-blue-100 mt-7 mb-7"        >
+              save
+          </button>
+        <button type="button"
+                className="inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                onClick={() => {
+                    navigate("/galerie");}} >
+          cancel
         </button>
       </div>
     </form>
     </div>
     </div>
-        <button
-            onClick={() => {
-            navigate("/deleteUser",  { state: { userId: user.id}});
-        }}>
-            Profil löschen
-        </button>
+
     {/* tailwind ui */}
     </>
 );

@@ -50,7 +50,7 @@ const GalleryHeader = ({gallery, id}) => {
                         deleteGalerie();
 
                     }}
-                    className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
+                    className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
                 >
                     Delete Galerie
                 </button>
@@ -95,12 +95,12 @@ export default function Gallery() {
             console.log("loggedIn: " + loggedInHeader)
 
             const result = await storageService.getUser();
-            console.log("storage User: "+ result);
+            console.log("storages User: "+ result);
             const urlGetUser = `/users?email=${result}`.replace(/"/g, '');
             const userProfile = await ApiService.getDataSecuredWithParameter(urlGetUser);
             console.log("URL get User: "+ JSON.stringify(userProfile.data));
             setUser(userProfile.data);
-            const userGallerieId = await storageService.getGallerieId();
+            const userGallerieId = await GalerieApiService.getSecuredData("/galleries/myGallery");
             setGalerieId(userGallerieId);
             const userGallerieIdClean = userGallerieId.replace(/"/g, "");
             const getGalerie = await GalerieApiService.getSecuredData("/galleries/" + userGallerieIdClean);
