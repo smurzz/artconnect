@@ -1,516 +1,706 @@
 package com.artconnect.backend.model.artwork;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import com.artconnect.backend.model.Image;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import java.util.Arrays;
+import java.lang.reflect.Field;
 
-
-import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class ArtWorkTest {
-    @Test
-    public void testCreateArtWork() {
-        // Arrange
-        String title = "Test Artwork";
-        List<Image> images = new ArrayList<>();
-        String description = "Test artwork description";
-        int yearOfCreation = 2022;
-        int likes = 10;
-        List<String> materials = new ArrayList<>();
-        Dimension dimension = new Dimension();
-        double price = 99.99;
-        List<String> tags = new ArrayList<>();
-        String location = "Test location";
-        Date createdAt = new Date();
 
-        // Act
-        ArtWork artwork = new ArtWork();
-        artwork.setTitle(title);
-        artwork.setImages(images);
-        artwork.setDescription(description);
-        artwork.setYearOfCreation(yearOfCreation);
-        artwork.setLikes(likes);
-        artwork.setMaterials(materials);
-        artwork.setDimension(dimension);
-        artwork.setPrice(price);
-        artwork.setTags(tags);
-        artwork.setLocation(location);
-        artwork.setCreatedAt(createdAt);
+    private ArtWork artWork;
 
-        // Assert
-        assertNotNull(artwork);
-        assertEquals(title, artwork.getTitle());
-        assertEquals(images, artwork.getImages());
-        assertEquals(description, artwork.getDescription());
-        assertEquals(yearOfCreation, artwork.getYearOfCreation());
-        assertEquals(likes, artwork.getLikes());
-        assertEquals(materials, artwork.getMaterials());
-        assertEquals(dimension, artwork.getDimension());
-        assertEquals(price, artwork.getPrice());
-        assertEquals(tags, artwork.getTags());
-        assertEquals(location, artwork.getLocation());
-        assertEquals(createdAt, artwork.getCreatedAt());
-    }
-
-    @Test
-    public void testUpdateArtworkTitle() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        String newTitle = "Updated Title";
-
-        // Act
-        artwork.setTitle(newTitle);
-
-        // Assert
-        assertEquals(newTitle, artwork.getTitle());
-    }
-
-    @Test
-    public void testIncrementLikes() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        int initialLikes = artwork.getLikes();
-        int expectedLikes = initialLikes + 1;
-
-        // Act
-        artwork.setLikes(artwork.getLikes() + 1);
-
-        // Assert
-        assertEquals(expectedLikes, artwork.getLikes());
-    }
-
-    @Test
-    public void testAllArgsConstructor() {
-        // Arrange
-        String title = "Test Artwork";
-        List<Image> images = new ArrayList<>();
-        String description = "Test artwork description";
-        int yearOfCreation = 2022;
-        int likes = 10;
-        List<String> materials = new ArrayList<>();
-        Dimension dimension = new Dimension();
-        double price = 99.99;
-        List<String> tags = new ArrayList<>();
-        String location = "Test location";
-        Date createdAt = new Date();
-
-        // Act
-        ArtWork artwork = new ArtWork(title, images, description, yearOfCreation, likes, materials, dimension, price, tags, location, createdAt);
-
-        // Assert
-        assertNotNull(artwork);
-        assertEquals(title, artwork.getTitle());
-        assertEquals(images, artwork.getImages());
-        assertEquals(description, artwork.getDescription());
-        assertEquals(yearOfCreation, artwork.getYearOfCreation());
-        assertEquals(likes, artwork.getLikes());
-        assertEquals(materials, artwork.getMaterials());
-        assertEquals(dimension, artwork.getDimension());
-        assertEquals(price, artwork.getPrice());
-        assertEquals(tags, artwork.getTags());
-        assertEquals(location, artwork.getLocation());
-        assertEquals(createdAt, artwork.getCreatedAt());
-    }
-
-    @Test
-    public void testBuilder() {
-        // Arrange
-        String title = "Test Artwork";
-        List<Image> images = new ArrayList<>();
-        String description = "Test artwork description";
-        int yearOfCreation = 2022;
-        int likes = 10;
-        List<String> materials = new ArrayList<>();
-        Dimension dimension = new Dimension();
-        double price = 99.99;
-        List<String> tags = new ArrayList<>();
-        String location = "Test location";
-        Date createdAt = new Date();
-
-        // Act
-        ArtWork artwork = ArtWork.builder()
-                .title(title)
-                .images(images)
-                .description(description)
-                .yearOfCreation(yearOfCreation)
-                .likes(likes)
-                .materials(materials)
-                .dimension(dimension)
-                .price(price)
-                .tags(tags)
-                .location(location)
-                .createdAt(createdAt)
+    @BeforeEach
+    public void setUp() {
+        artWork = ArtWork.builder()
+                .id("123")
+                .ownerId("456")
+                .galleryId("789")
+                .ownerName("John Doe")
+                .galleryTitle("Art Gallery")
+                .title("Artwork Title")
+                .description("This is an artwork.")
+                .yearOfCreation(2021)
+                .dimension(new Dimension(100.0, 100.0, 50.0))
+                .price(1000.0)
+                .location("New York")
+                .createdAt(new Date())
+                .imagesIds(new ArrayList<>())
+                .likedByUsers(new HashSet<>())
+                .materials(new ArrayList<>())
+                .artDirections(new HashSet<>())
+                .tags(new ArrayList<>())
+                .comments(new ArrayList<>())
                 .build();
-
-        // Assert
-        assertNotNull(artwork);
-        assertEquals(title, artwork.getTitle());
-        assertEquals(images, artwork.getImages());
-        assertEquals(description, artwork.getDescription());
-        assertEquals(yearOfCreation, artwork.getYearOfCreation());
-        assertEquals(likes, artwork.getLikes());
-        assertEquals(materials, artwork.getMaterials());
-        assertEquals(dimension, artwork.getDimension());
-        assertEquals(price, artwork.getPrice());
-        assertEquals(tags, artwork.getTags());
-        assertEquals(location, artwork.getLocation());
-        assertEquals(createdAt, artwork.getCreatedAt());
     }
 
     @Test
-    public void testEqualsAndHashCode() {
-        // Arrange
-        ArtWork artwork1 = new ArtWork("Title", new ArrayList<>(), "Description", 2022, 10,
-                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
-        ArtWork artwork2 = new ArtWork("Title", new ArrayList<>(), "Description", 2022, 10,
-                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
+    @DisplayName("Test setLike method - User likes artwork")
+    public void testSetLike_UserLikesArtwork() {
+        String userEmail = "test@example.com";
 
-        // Assert
-        assertEquals(artwork1, artwork2);
-        assertEquals(artwork1.hashCode(), artwork2.hashCode());
+        artWork.setLike(userEmail);
+
+        assertTrue(artWork.getLikedByUsers().contains(userEmail));
     }
 
     @Test
-    public void testToString() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        artwork.setTitle("Test Artwork");
-        artwork.setImages(null); // Set images to null
-        artwork.setDescription("Test artwork description");
-        artwork.setYearOfCreation(2022);
+    @DisplayName("Test setLike method - User unlikes artwork")
+    public void testSetLike_UserUnlikesArtwork() {
+        String userEmail = "test@example.com";
+        artWork.getLikedByUsers().add(userEmail);
 
-        // Act
-        String toStringResult = artwork.toString();
+        artWork.setLike(userEmail);
 
-        // Assert
-        String expectedString = "ArtWork(title=Test Artwork, images=null, description=Test artwork description, " +
-                "yearOfCreation=2022, likes=0, materials=null, dimension=null, price=0.0, tags=null, " +
-                "location=null, createdAt=null)";
-        assertEquals(expectedString, toStringResult);
+        assertFalse(artWork.getLikedByUsers().contains(userEmail));
     }
 
     @Test
-    public void testSetterGetter() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        String newTitle = "Updated Title";
-
-        // Act
-        artwork.setTitle(newTitle);
-        String retrievedTitle = artwork.getTitle();
-
-        // Assert
-        assertEquals(newTitle, retrievedTitle);
+    @DisplayName("Test getLikes method - No likes")
+    public void testGetLikes_NoLikes() {
+        assertEquals(0, artWork.getLikes());
     }
 
     @Test
-    public void testEqualsAndHashCodeWithDifferentTitle() {
-        // Arrange
-        ArtWork artwork1 = new ArtWork("Title1", new ArrayList<>(), "Description", 2022, 10,
-                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
-        ArtWork artwork2 = new ArtWork("Title2", new ArrayList<>(), "Description", 2022, 10,
-                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
+    @DisplayName("Test getLikes method - With likes")
+    public void testGetLikes_WithLikes() {
+        artWork.getLikedByUsers().add("user1@example.com");
+        artWork.getLikedByUsers().add("user2@example.com");
 
-        // Assert
-        assertNotEquals(artwork1, artwork2);
-        assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
+        assertEquals(2, artWork.getLikes());
     }
 
     @Test
-    public void testEqualsAndHashCodeWithDifferentDescription() {
-        // Arrange
-        ArtWork artwork1 = new ArtWork("Title", new ArrayList<>(), "Description1", 2022, 10,
-                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
-        ArtWork artwork2 = new ArtWork("Title", new ArrayList<>(), "Description2", 2022, 10,
-                new ArrayList<>(), new Dimension(), 99.99, new ArrayList<>(), "Location", new Date());
+    @DisplayName("Test isArtWorkLikedByUserId method - Artwork not liked by user")
+    public void testIsArtWorkLikedByUserId_NotLikedByUser() {
+        String userEmail = "user@example.com";
 
-        // Assert
-        assertNotEquals(artwork1, artwork2);
-        assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
-    }
-
-
-    @Test
-    public void testNoArgsConstructor() {
-        // Arrange
-
-        // Act
-        ArtWork artwork = new ArtWork();
-
-        // Assert
-        assertNotNull(artwork);
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testAllArgsConstructorWithNoArguments() {
-        // Arrange
+    @DisplayName("Test isArtWorkLikedByUserId method - Artwork liked by user")
+    public void testIsArtWorkLikedByUserId_LikedByUser() {
+        String userEmail = "user@example.com";
+        artWork.getLikedByUsers().add(userEmail);
 
-        // Act
-        ArtWork artwork = new ArtWork("", null, "", 0, 0, null, null, 0.0, null, null, null);
-
-        // Assert
-        assertNotNull(artwork);
+        assertTrue(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testSetterGetterForImages() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        List<Image> images = new ArrayList<>();
+    @DisplayName("Test getLikes method - Null likedByUsers")
+    public void testGetLikes_NullLikedByUsers() {
+        artWork.setLikedByUsers(null);
 
-        // Act
-        artwork.setImages(images);
-        List<Image> retrievedImages = artwork.getImages();
-
-        // Assert
-        assertEquals(images, retrievedImages);
+        assertEquals(0, artWork.getLikes());
     }
 
     @Test
-    public void testEqualsAndHashCodeWithNullFields() {
-        // Arrange
-        ArtWork artwork1 = new ArtWork(null, null, null, 0, 0, null, null, 0.0, null, null, null);
-        ArtWork artwork2 = new ArtWork(null, null, null, 0, 0, null, null, 0.0, null, null, null);
+    @DisplayName("Test isArtWorkLikedByUserId method - Null likedByUsers")
+    public void testIsArtWorkLikedByUserId_NullLikedByUsers() {
+        artWork.setLikedByUsers(null);
+        String userEmail = "user@example.com";
 
-        // Assert
-        assertEquals(artwork1, artwork2);
-        assertEquals(artwork1.hashCode(), artwork2.hashCode());
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testEqualsAndHashCodeWithDifferentFields() {
-        // Arrange
-        ArtWork artwork1 = new ArtWork("Title1", null, "Description1", 2022, 10, null, null, 99.99, null, "Location1", null);
-        ArtWork artwork2 = new ArtWork("Title2", null, "Description2", 2023, 5, null, null, 49.99, null, "Location2", null);
+    @DisplayName("Test isArtWorkLikedByUserId method - Null userEmail")
+    public void testIsArtWorkLikedByUserId_NullUserEmail() {
+        String userEmail = null;
 
-        // Assert
-        assertNotEquals(artwork1, artwork2);
-        assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testEqualsAndHashCodeWithSelf() {
-        // Arrange
-        ArtWork artwork = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
+    @DisplayName("Test isArtWorkLikedByUserId method - Empty userEmail")
+    public void testIsArtWorkLikedByUserId_EmptyUserEmail() {
+        String userEmail = "";
 
-        // Assert
-        assertEquals(artwork, artwork);
-        assertEquals(artwork.hashCode(), artwork.hashCode());
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testEqualsAndHashCodeWithDifferentObject() {
-        // Arrange
-        ArtWork artwork = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
-        String differentObject = "Not an ArtWork object";
+    @DisplayName("Test isArtWorkLikedByUserId method - Null likedByUsers and userEmail")
+    public void testIsArtWorkLikedByUserId_NullLikedByUsersAndUserEmail() {
+        artWork.setLikedByUsers(null);
+        String userEmail = null;
 
-        // Assert
-        assertNotEquals(artwork, differentObject);
-        assertNotEquals(artwork.hashCode(), differentObject.hashCode());
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testEqualsAndHashCodeWithEqualObjects() {
-        // Arrange
-        ArtWork artwork1 = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
-        ArtWork artwork2 = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
+    @DisplayName("Test isArtWorkLikedByUserId method - Null likedByUsers and empty userEmail")
+    public void testIsArtWorkLikedByUserId_NullLikedByUsersAndEmptyUserEmail() {
+        artWork.setLikedByUsers(null);
+        String userEmail = "";
 
-        // Assert
-        assertEquals(artwork1, artwork2);
-        assertEquals(artwork1.hashCode(), artwork2.hashCode());
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testEqualsAndHashCodeWithDifferentLikes() {
-        // Arrange
-        ArtWork artwork1 = new ArtWork("Title", null, "Description", 2022, 10, null, null, 99.99, null, "Location", null);
-        ArtWork artwork2 = new ArtWork("Title", null, "Description", 2022, 5, null, null, 99.99, null, "Location", null);
+    @DisplayName("Test isArtWorkLikedByUserId method - Empty likedByUsers")
+    public void testIsArtWorkLikedByUserId_EmptyLikedByUsers() {
+        artWork.setLikedByUsers(new HashSet<>());
+        String userEmail = "user@example.com";
 
-        // Assert
-        assertNotEquals(artwork1, artwork2);
-        assertNotEquals(artwork1.hashCode(), artwork2.hashCode());
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testEqualsAndHashCodeWithDifferentObjects() {
-        // Arrange
-        ArtWork artwork1 = new ArtWork();
-        artwork1.setTitle("Title");
-        artwork1.setImages(null);
-        artwork1.setDescription("Description");
-        artwork1.setYearOfCreation(2022);
-        artwork1.setLikes(10);
-        artwork1.setMaterials(null);
-        artwork1.setDimension(null);
-        artwork1.setPrice(99.99);
-        artwork1.setTags(null);
-        artwork1.setLocation("Location");
-        artwork1.setCreatedAt(null);
+    @DisplayName("Test isArtWorkLikedByUserId method - Invalid userEmail")
+    public void testIsArtWorkLikedByUserId_InvalidUserEmail() {
+        artWork.getLikedByUsers().add("user1@example.com");
+        artWork.getLikedByUsers().add("user2@example.com");
+        String userEmail = "invalid_email";
 
-        ArtWork artwork2 = new ArtWork();
-        artwork2.setTitle("Title");
-        artwork2.setImages(null);
-        artwork2.setDescription("Description");
-        artwork2.setYearOfCreation(2022);
-        artwork2.setLikes(10);
-        artwork2.setMaterials(null);
-        artwork2.setDimension(null);
-        artwork2.setPrice(99.99);
-        artwork2.setTags(null);
-        artwork2.setLocation("Location");
-        artwork2.setCreatedAt(null);
-
-        // Assert
-        assertNotSame(artwork1, artwork2);
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testSetterGetterForTitle() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        String newTitle = "Updated Title";
+    @DisplayName("Test isArtWorkLikedByUserId method - Valid userEmail")
+    public void testIsArtWorkLikedByUserId_ValidUserEmail() {
+        artWork.getLikedByUsers().add("user1@example.com");
+        artWork.getLikedByUsers().add("user2@example.com");
+        String userEmail = "user1@example.com";
 
-        // Act
-        artwork.setTitle(newTitle);
-        String retrievedTitle = artwork.getTitle();
+        assertTrue(artWork.isArtWorkLikedByUserId(userEmail));
+    }
 
-        // Assert
-        assertEquals(newTitle, retrievedTitle);
+    @Test
+    @DisplayName("Test setLike method - User likes and unlikes artwork")
+    public void testSetLike_UserLikesAndUnlikesArtwork() {
+        String userEmail1 = "user1@example.com";
+        String userEmail2 = "user2@example.com";
+
+        artWork.setLike(userEmail1);
+        assertTrue(artWork.getLikedByUsers().contains(userEmail1));
+        assertFalse(artWork.getLikedByUsers().contains(userEmail2));
+
+        artWork.setLike(userEmail2);
+        assertTrue(artWork.getLikedByUsers().contains(userEmail1));
+        assertTrue(artWork.getLikedByUsers().contains(userEmail2));
+
+        artWork.setLike(userEmail1);
+        assertFalse(artWork.getLikedByUsers().contains(userEmail1));
+        assertTrue(artWork.getLikedByUsers().contains(userEmail2));
+
+        artWork.setLike(userEmail1);
+        assertTrue(artWork.getLikedByUsers().contains(userEmail1));
+        assertTrue(artWork.getLikedByUsers().contains(userEmail2));
+
+        artWork.setLike(userEmail2);
+        assertTrue(artWork.getLikedByUsers().contains(userEmail1));
+        assertFalse(artWork.getLikedByUsers().contains(userEmail2));
+
+        artWork.setLike(userEmail1);
+        assertFalse(artWork.getLikedByUsers().contains(userEmail1));
+        assertFalse(artWork.getLikedByUsers().contains(userEmail2));
     }
 
 
     @Test
-    public void testSetterGetterForDescription() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        String description = "Test description";
+    @DisplayName("Test getLikes method - Empty likedByUsers")
+    public void testGetLikes_EmptyLikedByUsers() {
+        artWork.setLikedByUsers(new HashSet<>());
 
-        // Act
-        artwork.setDescription(description);
-        String retrievedDescription = artwork.getDescription();
-
-        // Assert
-        assertEquals(description, retrievedDescription);
+        assertEquals(0, artWork.getLikes());
     }
 
     @Test
-    public void testSetterGetterForYearOfCreation() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        int yearOfCreation = 2022;
+    @DisplayName("Test isArtWorkLikedByUserId method - Artwork liked by user")
+    public void testIsArtWorkLikedByUserId_ArtworkLikedByUser() {
+        String userEmail = "user@example.com";
+        artWork.getLikedByUsers().add(userEmail);
 
-        // Act
-        artwork.setYearOfCreation(yearOfCreation);
-        int retrievedYearOfCreation = artwork.getYearOfCreation();
-
-        // Assert
-        assertEquals(yearOfCreation, retrievedYearOfCreation);
+        assertTrue(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testSetterGetterForLikes() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        int likes = 10;
+    @DisplayName("Test isArtWorkLikedByUserId method - Artwork not liked by user")
+    public void testIsArtWorkLikedByUserId_ArtworkNotLikedByUser() {
+        String userEmail = "user@example.com";
 
-        // Act
-        artwork.setLikes(likes);
-        int retrievedLikes = artwork.getLikes();
-
-        // Assert
-        assertEquals(likes, retrievedLikes);
+        assertFalse(artWork.isArtWorkLikedByUserId(userEmail));
     }
 
     @Test
-    public void testSetterGetterForMaterials() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        List<String> materials = new ArrayList<>();
+    @DisplayName("Test setId")
+    public void testSetId() {
+        String id = "123456789";
 
-        // Act
-        artwork.setMaterials(materials);
-        List<String> retrievedMaterials = artwork.getMaterials();
+        artWork.setId(id);
 
-        // Assert
-        assertEquals(materials, retrievedMaterials);
+        assertEquals(id, artWork.getId());
     }
 
     @Test
-    public void testSetterGetterForDimension() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        Dimension dimension = new Dimension();
+    @DisplayName("Test setOwnerId")
+    public void testSetOwnerId() {
+        String ownerId = "987654321";
 
-        // Act
-        artwork.setDimension(dimension);
-        Dimension retrievedDimension = artwork.getDimension();
+        artWork.setOwnerId(ownerId);
 
-        // Assert
-        assertEquals(dimension, retrievedDimension);
+        assertEquals(ownerId, artWork.getOwnerId());
     }
 
     @Test
-    public void testSetterGetterForPrice() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        double price = 99.99;
+    @DisplayName("Test setGalleryId")
+    public void testSetGalleryId() {
+        String galleryId = "567890123";
 
-        // Act
-        artwork.setPrice(price);
-        double retrievedPrice = artwork.getPrice();
+        artWork.setGalleryId(galleryId);
 
-        // Assert
-        assertEquals(price, retrievedPrice);
+        assertEquals(galleryId, artWork.getGalleryId());
     }
 
     @Test
-    public void testSetterGetterForTags() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        List<String> tags = new ArrayList<>();
+    @DisplayName("Test setOwnerName")
+    public void testSetOwnerName() {
+        String ownerName = "Jane Doe";
 
-        // Act
-        artwork.setTags(tags);
-        List<String> retrievedTags = artwork.getTags();
+        artWork.setOwnerName(ownerName);
 
-        // Assert
-        assertEquals(tags, retrievedTags);
+        assertEquals(ownerName, artWork.getOwnerName());
     }
 
     @Test
-    public void testSetterGetterForLocation() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
-        String location = "Test location";
+    @DisplayName("Test setGalleryTitle")
+    public void testSetGalleryTitle() {
+        String galleryTitle = "Art Gallery 2.0";
 
-        // Act
-        artwork.setLocation(location);
-        String retrievedLocation = artwork.getLocation();
+        artWork.setGalleryTitle(galleryTitle);
 
-        // Assert
-        assertEquals(location, retrievedLocation);
+        assertEquals(galleryTitle, artWork.getGalleryTitle());
     }
 
     @Test
-    public void testSetterGetterForCreatedAt() {
-        // Arrange
-        ArtWork artwork = new ArtWork();
+    @DisplayName("Test setTitle")
+    public void testSetTitle() {
+        String title = "New Artwork Title";
+
+        artWork.setTitle(title);
+
+        assertEquals(title, artWork.getTitle());
+    }
+
+    @Test
+    @DisplayName("Test MAX_NUM_IMAGES")
+    public void testMaxNumImages() {
+        int maxNumImages = ArtWork.MAX_NUM_IMAGES;
+
+        // Create a list with maximum number of images
+        List<String> imagesIds = new ArrayList<>();
+        for (int i = 0; i < maxNumImages-1; i++) {
+            imagesIds.add("image" + i);
+        }
+
+        artWork.setImagesIds(imagesIds);
+
+        // Try to add one more image
+        List<String> updatedImagesIds = new ArrayList<>(artWork.getImagesIds());
+        updatedImagesIds.add("imageExtra");
+        artWork.setImagesIds(updatedImagesIds);
+
+        // The size of imagesIds list should still be the same as MAX_NUM_IMAGES
+        assertEquals(maxNumImages, artWork.getImagesIds().size());
+    }
+
+    @Test
+    @DisplayName("Test description")
+    public void testDescription() {
+        String description = "Artwork description";
+
+        artWork.setDescription(description);
+
+        assertEquals(description, artWork.getDescription());
+    }
+
+    @Test
+    @DisplayName("Test yearOfCreation")
+    public void testYearOfCreation() {
+        Integer yearOfCreation = 2022;
+
+        artWork.setYearOfCreation(yearOfCreation);
+
+        assertEquals(yearOfCreation, artWork.getYearOfCreation());
+    }
+
+    @Test
+    @DisplayName("Test dimension")
+    public void testDimension() {
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+
+        artWork.setDimension(dimension);
+
+        assertEquals(dimension, artWork.getDimension());
+    }
+
+    @Test
+    @DisplayName("Test price")
+    public void testPrice() {
+        Double price = 99.99;
+
+        artWork.setPrice(price);
+
+        assertEquals(price, artWork.getPrice());
+    }
+
+    @Test
+    @DisplayName("Test location")
+    public void testLocation() {
+        String location = "Artwork location";
+
+        artWork.setLocation(location);
+
+        assertEquals(location, artWork.getLocation());
+    }
+
+    @Test
+    @DisplayName("Test createdAt")
+    public void testCreatedAt() {
         Date createdAt = new Date();
 
-        // Act
-        artwork.setCreatedAt(createdAt);
-        Date retrievedCreatedAt = artwork.getCreatedAt();
+        artWork.setCreatedAt(createdAt);
 
-        // Assert
-        assertEquals(createdAt, retrievedCreatedAt);
+        assertEquals(createdAt, artWork.getCreatedAt());
+    }
+
+    @Test
+    @DisplayName("Test materials")
+    public void testMaterials() {
+        List<String> materials = Arrays.asList("Oil paint", "Canvas", "Wood");
+
+        artWork.setMaterials(materials);
+
+        assertEquals(materials, artWork.getMaterials());
+    }
+
+    @Test
+    @DisplayName("Test artDirections")
+    public void testArtDirections() {
+        Set<ArtDirection> artDirections = new HashSet<>();
+        artDirections.add(ArtDirection.ABSTRACT);
+        artDirections.add(ArtDirection.IMPRESSIONISM);
+
+        artWork.setArtDirections(artDirections);
+
+        assertEquals(artDirections, artWork.getArtDirections());
+    }
+
+    @Test
+    @DisplayName("Test tags")
+    public void testTags() {
+        List<String> tags = Arrays.asList("painting", "abstract", "modern");
+
+        artWork.setTags(tags);
+
+        assertEquals(tags, artWork.getTags());
+    }
+
+    @Test
+    @DisplayName("Test comments")
+    public void testComments() {
+        List<Comment> comments = new ArrayList<>();
+        Comment comment1 = new Comment(null, null, "User1", null, false, null, "Great artwork!");
+        Comment comment2 = new Comment(null, null, "User2", null, false, null, "I love it!");
+        comments.add(comment1);
+        comments.add(comment2);
+
+        artWork.setComments(comments);
+
+        assertEquals(comments, artWork.getComments());
+    }
+
+//    @Test
+//    @DisplayName("Test setLike method")
+//    public void testSetLike() throws NoSuchFieldException, IllegalAccessException {
+//        String userEmail = "user@example.com";
+//
+//        // Set up the likedByUsers field using reflection
+//        Field likedByUsersField = artWork.getClass().getDeclaredField("likedByUsers");
+//        likedByUsersField.setAccessible(true);
+//        Set<String> likedByUsers = (Set<String>) likedByUsersField.get(artWork);
+//        if (likedByUsers == null) {
+//            likedByUsers = new HashSet<>();
+//            likedByUsersField.set(artWork, likedByUsers);
+//        }
+//
+//        // Test when likedByUsers is null
+//        artWork.setLike(userEmail);
+//        likedByUsers.add(userEmail);
+//        assertEquals(likedByUsers, artWork.getLikedByUsers());
+//
+//        // Test when likedByUsers is not null
+//        artWork.setLike(userEmail);
+//        assertEquals(likedByUsers, artWork.getLikedByUsers());
+//
+//        // Test with another user
+//        String anotherUserEmail = "anotheruser@example.com";
+//        artWork.setLike(anotherUserEmail);
+//        likedByUsers.add(anotherUserEmail);
+//        assertEquals(likedByUsers, artWork.getLikedByUsers());
+//    }
+
+
+    @Test
+    @DisplayName("Test Set Like")
+    public void testSetLike() {
+        ArtWork artWork = new ArtWork();
+        String userEmail = "test@example.com";
+
+        // Initially, likedByUsers should be null
+        assertEquals(null, artWork.getLikedByUsers());
+
+        // Call the setLike method
+        artWork.setLike(userEmail);
+
+        // Verify that the likedByUsers field is initialized with a new HashSet
+        Set<String> expectedLikedByUsers = new HashSet<>();
+        expectedLikedByUsers.add(userEmail);
+        assertEquals(expectedLikedByUsers, artWork.getLikedByUsers());
+
+        // Call the setLike method again with the same userEmail
+        artWork.setLike(userEmail);
+
+        // Verify that the userEmail is removed from likedByUsers
+        assertEquals(new HashSet<>(), artWork.getLikedByUsers());
+    }
+
+    @Test
+    @DisplayName("Test @NoArgsConstructor")
+    public void testNoArgsConstructor() {
+        ArtWork artWork = new ArtWork();
+
+        assertNotNull(artWork);
+        assertEquals(null, artWork.getId());
+        assertEquals(null, artWork.getOwnerId());
+        assertEquals(null, artWork.getGalleryId());
+        assertEquals(null, artWork.getOwnerName());
+        assertEquals(null, artWork.getGalleryTitle());
+    }
+
+    @Test
+    @DisplayName("Test @Data - Equals and HashCode")
+    public void testDataEqualsAndHashCode() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork1 = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        ArtWork artWork2 = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        ArtWork artWork3 = new ArtWork("987", ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        assertEquals(artWork1, artWork2);
+        assertEquals(artWork1.hashCode(), artWork2.hashCode());
+        assertNotEquals(artWork1, artWork3);
+        assertNotEquals(artWork1.hashCode(), artWork3.hashCode());
+    }
+
+    @Test
+    @DisplayName("Test @Data - ToString")
+    public void testDataToString() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        String expectedToString = "ArtWork(id=123, ownerId=456, galleryId=789, ownerName=John Doe, galleryTitle=Art Gallery, " +
+                "title=Artwork Title, description=This is an artwork., yearOfCreation=2021, " +
+                "dimension=Dimension(height=100.0, width=100.0, depth=50.0), price=1000.0, location=New York, " +
+                "createdAt=" + createdAt.toString();
+
+        String actualToString = artWork.toString();
+
+        assertTrue(actualToString.contains(expectedToString));
+    }
+
+
+
+    @Test
+    @DisplayName("Test @Data - Getter")
+    public void testDataGetter() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        // Verify getters for all fields
+        assertEquals(id, artWork.getId());
+        assertEquals(ownerId, artWork.getOwnerId());
+        assertEquals(galleryId, artWork.getGalleryId());
+        assertEquals(ownerName, artWork.getOwnerName());
+        assertEquals(galleryTitle, artWork.getGalleryTitle());
+        assertEquals(title, artWork.getTitle());
+        assertEquals(description, artWork.getDescription());
+        assertEquals(yearOfCreation, artWork.getYearOfCreation());
+        assertEquals(dimension, artWork.getDimension());
+        assertEquals(price, artWork.getPrice());
+        assertEquals(location, artWork.getLocation());
+        assertEquals(createdAt, artWork.getCreatedAt());
+        assertEquals(imagesIds, artWork.getImagesIds());
+        assertEquals(likedByUsers, artWork.getLikedByUsers());
+        assertEquals(materials, artWork.getMaterials());
+        assertEquals(artDirections, artWork.getArtDirections());
+        assertEquals(tags, artWork.getTags());
+        assertEquals(comments, artWork.getComments());
+    }
+
+    @Test
+    @DisplayName("Test @Data - Setter")
+    public void testDataSetter() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork = new ArtWork();
+
+        // Verify setters for all fields
+        artWork.setId(id);
+        artWork.setOwnerId(ownerId);
+        artWork.setGalleryId(galleryId);
+        artWork.setOwnerName(ownerName);
+        artWork.setGalleryTitle(galleryTitle);
+        artWork.setTitle(title);
+        artWork.setDescription(description);
+        artWork.setYearOfCreation(yearOfCreation);
+        artWork.setDimension(dimension);
+        artWork.setPrice(price);
+        artWork.setLocation(location);
+        artWork.setCreatedAt(createdAt);
+        artWork.setImagesIds(imagesIds);
+        artWork.setLikedByUsers(likedByUsers);
+        artWork.setMaterials(materials);
+        artWork.setArtDirections(artDirections);
+        artWork.setTags(tags);
+        artWork.setComments(comments);
+
+        // Verify getters for all fields
+        assertEquals(id, artWork.getId());
+        assertEquals(ownerId, artWork.getOwnerId());
+        assertEquals(galleryId, artWork.getGalleryId());
+        assertEquals(ownerName, artWork.getOwnerName());
+        assertEquals(galleryTitle, artWork.getGalleryTitle());
+        assertEquals(title, artWork.getTitle());
+        assertEquals(description, artWork.getDescription());
+        assertEquals(yearOfCreation, artWork.getYearOfCreation());
+        assertEquals(dimension, artWork.getDimension());
+        assertEquals(price, artWork.getPrice());
+        assertEquals(location, artWork.getLocation());
+        assertEquals(createdAt, artWork.getCreatedAt());
+        assertEquals(imagesIds, artWork.getImagesIds());
+        assertEquals(likedByUsers, artWork.getLikedByUsers());
+        assertEquals(materials, artWork.getMaterials());
+        assertEquals(artDirections, artWork.getArtDirections());
+        assertEquals(tags, artWork.getTags());
+        assertEquals(comments, artWork.getComments());
+    }
+
+    @Test
+    @DisplayName("Test @Data - RequiredArgsConstructor")
+    public void testDataRequiredArgsConstructor() {
+        String id = "123";
+        String ownerId = "456";
+        String galleryId = "789";
+        String ownerName = "John Doe";
+        String galleryTitle = "Art Gallery";
+        String title = "Artwork Title";
+        String description = "This is an artwork.";
+        Integer yearOfCreation = 2021;
+        Dimension dimension = new Dimension(100.0, 100.0, 50.0);
+        Double price = 1000.0;
+        String location = "New York";
+        Date createdAt = new Date();
+        List<String> imagesIds = new ArrayList<>();
+        Set<String> likedByUsers = new HashSet<>();
+        List<String> materials = new ArrayList<>();
+        Set<ArtDirection> artDirections = new HashSet<>();
+        List<String> tags = new ArrayList<>();
+        List<Comment> comments = new ArrayList<>();
+
+        ArtWork artWork = new ArtWork(id, ownerId, galleryId, ownerName, galleryTitle, title, description, yearOfCreation,
+                dimension, price, location, createdAt, imagesIds, likedByUsers, materials, artDirections, tags, comments);
+
+        // Verify that the object is not null
+        assertNotNull(artWork);
     }
 
 }

@@ -63,9 +63,9 @@ public class DimensionTest {
 
     @Test
     public void testDefaultConstructor() {
-        assertEquals(0.0, dimension.getHeight());
-        assertEquals(0.0, dimension.getWidth());
-        assertEquals(0.0, dimension.getDepth());
+        assertEquals(null, dimension.getHeight());
+        assertEquals(null, dimension.getWidth());
+        assertEquals(null, dimension.getDepth());
     }
 
     @Test
@@ -159,7 +159,7 @@ public class DimensionTest {
 
     @Test
     public void testToStringWithDefaultValues() {
-        String expectedToString = "Dimension(height=0.0, width=0.0, depth=0.0)";
+        String expectedToString = "Dimension(height=null, width=null, depth=null)";
         assertEquals(expectedToString, dimension.toString());
     }
 
