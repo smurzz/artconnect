@@ -157,7 +157,7 @@ public class UserController {
 			@RequestPart Mono<FilePart> file, 
 			@RequestHeader("Content-Length") Long fileSize,
 			@RequestHeader("Authorization") String authorization) {
-		return userService.addProfilePhoto(file, fileSize, authorization)
+		return userService.addProfilePhoto(file, authorization)
 				.map(image -> {
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentType(MediaType.valueOf(image.getContentType()));
