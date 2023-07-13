@@ -41,7 +41,7 @@ public class ArtWorkController {
 	
 	@GetMapping
 	public Flux<ArtWorkResponse> getAllArtWorks() {
-		return artWorkService.findAll().flatMap(this::mapArtWorkToResponse);
+		return artWorkService.findAll().flatMap(this::mapArtWorkToPublicResponse);
 	}
 	
 	@GetMapping("/search")
@@ -56,21 +56,21 @@ public class ArtWorkController {
 	        @RequestParam(required = false) Double maxPrice,
 	        @RequestParam(required = false) Double minPrice) {
 		if (ownerId != null) {
-			return artWorkService.findByOwnerId(ownerId).flatMap(this::mapArtWorkToResponse);
+			return artWorkService.findByOwnerId(ownerId).flatMap(this::mapArtWorkToPublicResponse);
 		} else if (galleryId != null) {
-			return artWorkService.findByGalleryId(galleryId).flatMap(this::mapArtWorkToResponse);
+			return artWorkService.findByGalleryId(galleryId).flatMap(this::mapArtWorkToPublicResponse);
 		} else if (ownerName != null) {
-			return artWorkService.findByOwnerName(ownerName).flatMap(this::mapArtWorkToResponse);
+			return artWorkService.findByOwnerName(ownerName).flatMap(this::mapArtWorkToPublicResponse);
 		} else if (materials != null && materials.size() != 0) {
-			return artWorkService.findByMaterialsIn(materials).flatMap(this::mapArtWorkToResponse);
+			return artWorkService.findByMaterialsIn(materials).flatMap(this::mapArtWorkToPublicResponse);
 		} else if (tags != null && tags.size() != 0) {
-			return artWorkService.findByTagsIn(tags).flatMap(this::mapArtWorkToResponse);
+			return artWorkService.findByTagsIn(tags).flatMap(this::mapArtWorkToPublicResponse);
 		} else if (artDirections != null && artDirections.size() != 0) {
-			return artWorkService.findByArtDirectionsIn(artDirections).flatMap(this::mapArtWorkToResponse);
+			return artWorkService.findByArtDirectionsIn(artDirections).flatMap(this::mapArtWorkToPublicResponse);
 		} else if (priceLessThan != null) {
-			return artWorkService.findByPriceLessThan(priceLessThan).flatMap(this::mapArtWorkToResponse);
+			return artWorkService.findByPriceLessThan(priceLessThan).flatMap(this::mapArtWorkToPublicResponse);
 		} else if (minPrice != null && maxPrice != null) {
-			return artWorkService.findByPriceBetween(minPrice, maxPrice).flatMap(this::mapArtWorkToResponse);
+			return artWorkService.findByPriceBetween(minPrice, maxPrice).flatMap(this::mapArtWorkToPublicResponse);
 		} else {
 			return Flux.empty();
 		}
@@ -78,7 +78,7 @@ public class ArtWorkController {
 	
 	@GetMapping("/{id}")
 	public Mono<ArtWorkResponse> getArtWorkById(@PathVariable("id") String id) {
-		return artWorkService.findById(id).flatMap(this::mapArtWorkToResponse);
+		return artWorkService.findById(id).flatMap(this::mapArtWorkToPublicResponse);
 	}
 	
 	@PostMapping
@@ -149,6 +149,10 @@ public class ArtWorkController {
 	
 	private Mono<ArtWorkResponse> mapArtWorkToResponse(ArtWork artWork) {
         return artWorkService.mapArtWorkToResponse(artWork);
+    }
+	
+	private Mono<ArtWorkResponse> mapArtWorkToPublicResponse(ArtWork artWork) {
+        return artWorkService.mapArtWorkToPublicResponse(artWork);
     }
 	
 }

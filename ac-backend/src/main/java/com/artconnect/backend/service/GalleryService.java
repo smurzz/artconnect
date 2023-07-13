@@ -142,6 +142,7 @@ public class GalleryService {
                 			.flatMap(user -> {
                 				boolean isLikedByCurrentUser = artwork.isArtWorkLikedByUserId(user.getEmail());
                 				if (imageIds != null && !imageIds.isEmpty()) {
+                	                System.out.println("Imagesid: " + imageIds.toString());
 		                			return imageService.getPhotosByIds(imageIds)
 		    	        	                .collectList()
 		    	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images, isLikedByCurrentUser));
@@ -149,6 +150,23 @@ public class GalleryService {
                 					return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), isLikedByCurrentUser));
                 				}	
 	                		});                          
+	            })
+	            .collectList()
+	            .map(artworkResponses -> GalleryResponse.fromGallery(gallery, artworkResponses));
+	}
+	
+	public Mono<GalleryResponse> mapGalleryToPublicResponse(Gallery gallery) {
+	    return artWorkService.findByGalleryId(gallery.getId())
+	            .flatMap(artwork -> {
+	                List<String> imageIds = artwork.getImagesIds();
+    				if (imageIds != null && !imageIds.isEmpty()) {
+    	                System.out.println("Imagesid: " + imageIds.toString());
+            			return imageService.getPhotosByIds(imageIds)
+	        	                .collectList()
+	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images, false));
+    				} else {
+    					return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), false));
+    				}	                         
 	            })
 	            .collectList()
 	            .map(artworkResponses -> GalleryResponse.fromGallery(gallery, artworkResponses));

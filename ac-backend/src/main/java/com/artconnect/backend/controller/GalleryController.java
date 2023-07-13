@@ -38,14 +38,14 @@ public class GalleryController {
 	
 	@GetMapping
 	public Flux<GalleryResponse> getAllGalleries() {
-		return galleryService.findAll().flatMap(this::mapGalleryToResponse);
+		return galleryService.findAll().flatMap(this::mapGalleryToPublicResponse);
 	}
 	
 	@GetMapping("/search")
 	public Flux<GalleryResponse> getGalleriesByParam(
 	        @RequestParam(required = false) List<GalleryCategory> galleryCategories) {
 		if (galleryCategories != null && galleryCategories.size() != 0) {
-			return galleryService.findByCategoriesIn(galleryCategories).flatMap(this::mapGalleryToResponse);
+			return galleryService.findByCategoriesIn(galleryCategories).flatMap(this::mapGalleryToPublicResponse);
 		} else {
 			return Flux.empty();
 		}
@@ -53,7 +53,7 @@ public class GalleryController {
 	
 	@GetMapping("/{id}")
 	public Mono<GalleryResponse> getGalleryById(@PathVariable("id") String id) {
-		return galleryService.findById(id).flatMap(this::mapGalleryToResponse);
+		return galleryService.findById(id).flatMap(this::mapGalleryToPublicResponse);
 	}
 	
 	@GetMapping("/myGallery")
@@ -64,7 +64,7 @@ public class GalleryController {
 	
 	@GetMapping("/user/{id}")
 	public Mono<GalleryResponse> getGalleryByOwner(@PathVariable("id") String userId) {
-		return galleryService.findByOwnerId(userId).flatMap(this::mapGalleryToResponse);
+		return galleryService.findByOwnerId(userId).flatMap(this::mapGalleryToPublicResponse);
 	}
 	
 	
@@ -107,6 +107,10 @@ public class GalleryController {
 	
 	private Mono<GalleryResponse> mapGalleryToResponse(Gallery gallery) {
         return galleryService.mapGalleryToResponse(gallery);
+    }
+	
+	private Mono<GalleryResponse> mapGalleryToPublicResponse(Gallery gallery) {
+        return galleryService.mapGalleryToPublicResponse(gallery);
     }
 	
 }

@@ -9,6 +9,7 @@ import com.artconnect.backend.controller.request.EmailContactAttemptRequest;
 import com.artconnect.backend.model.EmailContactAttempt;
 import com.artconnect.backend.repository.EmailContactAttemptRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
@@ -27,15 +28,19 @@ public class EmailContantAttemptService {
 
 	private final EmailService emailService;
 
-	public Mono<String> create(String artworkId, EmailContactAttemptRequest emailConntectRequest) {
+	public Mono<String> createByArtwork(String artworkId, EmailContactAttemptRequest emailContactRequest) {
 		return userService.getCurrentUser().flatMap(user -> {
 			return artWorkService.findById(artworkId).flatMap(artwork -> {
 				return userService.findById(artwork.getOwnerId()).flatMap(owner -> {
 					EmailContactAttempt emailContactAttempt = EmailContactAttempt.builder().senderId(user.getId())
-							.senderName(user.getFirstname() + " " + user.getLastname()).senderEmail(user.getEmail())
-							.artistId(artwork.getOwnerId()).artistName(artwork.getOwnerName())
+							.senderName(user.getFirstname() + " " + user.getLastname())
+							.senderEmail(user.getEmail())
+							.artistId(artwork.getOwnerId())
+							.artistName(artwork.getOwnerName())
 							.artworkLink(frontendBaseUrl + "/galerie/DetailImage/" + artworkId)
-							.message(emailConntectRequest.getMessage()).sentAt(new Date()).build();
+							.message(emailContactRequest.getMessage())
+							.sentAt(new Date())
+							.build();
 					String messageBodyString = buildEmail(emailContactAttempt);
 					String subject = "Contact Request by ArtConnect!";
 					emailService.sendEmail(owner.getEmail(), subject, messageBodyString);
@@ -44,6 +49,30 @@ public class EmailContantAttemptService {
 							.map(result -> "The contact request was successfully sent to the artist!");
 				});
 			});
+		});
+	}
+	
+
+	public Mono<String> createByUser(String id, EmailContactAttemptRequest emailContactRequest) {
+		return userService.getCurrentUser().flatMap(user -> {
+				return userService.findById(id)
+						.flatMap(foundUser -> {
+							EmailContactAttempt emailContactAttempt = EmailContactAttempt.builder().senderId(user.getId())
+									.senderName(user.getFirstname() + " " + user.getLastname())
+									.senderEmail(user.getEmail())
+									.artistId(id)
+									.artistName(foundUser.getFirstname())
+									.artworkLink("")
+									.message(emailContactRequest.getMessage())
+									.sentAt(new Date())
+									.build();
+							String messageBodyString = buildEmail(emailContactAttempt);
+							String subject = "Contact Request by ArtConnect!";
+							emailService.sendEmail(foundUser.getEmail(), subject, messageBodyString);
+
+							return emailContactRepository.save(emailContactAttempt)
+									.map(result -> "The contact request was successfully sent to the artist!");
+						});
 		});
 	}
 

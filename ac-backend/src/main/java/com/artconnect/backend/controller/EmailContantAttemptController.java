@@ -17,19 +17,26 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/artworks/{id}/contact")
 @RequiredArgsConstructor
 @Validated
 public class EmailContantAttemptController {
 	
 	private final EmailContantAttemptService emailContantAttemptService;
 	
-	@PostMapping
+	@PostMapping("/artworks/{id}/contact")
 	@ResponseStatus(HttpStatus.CREATED)
-	public Mono<String> createEmailContactRequest(
+	public Mono<String> createEmailContactRequestByArtWork(
 			@PathVariable("id") String id,
 			@Valid @RequestBody EmailContactAttemptRequest emailContactRequest) {
-		return emailContantAttemptService.create(id, emailContactRequest);
+		return emailContantAttemptService.createByArtwork(id, emailContactRequest);
+	}
+	
+	@PostMapping("/users/{id}/contact")
+	@ResponseStatus(HttpStatus.CREATED)
+	public Mono<String> createEmailContactRequestByUser(
+			@PathVariable("id") String id,
+			@Valid @RequestBody EmailContactAttemptRequest emailContactRequest) {
+		return emailContantAttemptService.createByUser(id, emailContactRequest);
 	}
 
 }
