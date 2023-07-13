@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import NotFound from "./react/pages/errors/NotFoundPage"
 import * as authActions from './redux/authentication/AuthenticationAction'; 
 import LoadingPage from './react/pages/components/LoadingPage';
+import ArtworkDetailPage from "./react/pages/Artwork/ArtworkDetails"
 /* 
 import ForgotPassword from './react/pages/components/forgotPassword';
 import ResetPasswordForm from './react/pages/components/resetPasswordForm'; */
@@ -35,6 +36,7 @@ function App() {
         <Route exact path='/users' element={< UsersPage/>} />
         <Route exact path='/user/:id' element={< Profile/>} />
         <Route exact path='/artworks' element={<ArtworksPage/>}/>
+        <Route exact path='/artworks/:id' element={<ArtworkDetailPage/>}/>
         <Route path='*' element={<NotFound/>}/>
       
         {/* <Route 

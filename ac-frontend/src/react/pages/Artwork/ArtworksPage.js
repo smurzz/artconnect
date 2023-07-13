@@ -44,7 +44,7 @@ function ArtworksPage() {
         var splitedSeachValue = searchValue.split(' ');
         var arraySplitedSearchValue = [];
 
-        console.log(splitedSeachValue);
+        console.log("Splitted value: " + splitedSeachValue);
         setTags(splitedSeachValue);
         await dispatch(artworkActions.getArtworksByTags(splitedSeachValue));
     };
@@ -93,9 +93,8 @@ function ArtworksPage() {
                                                 <p className="card-text"> {artwork?.description?.substring(0, 20) || "No description "}...</p>
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div className="btn-group">
-                                                        <button type="button"
-                                                                className="btn btn-sm btn-outline-secondary">View
-                                                        </button>
+
+                                                        <p><a className="btn btn-secondary" href={`/artworks/${artwork.id}`}>View</a></p>
                                                     </div>
                                                     <small
                                                         className="text-body-secondary">{artwork?.price ? (artwork.price + "Euro") : null}</small>
