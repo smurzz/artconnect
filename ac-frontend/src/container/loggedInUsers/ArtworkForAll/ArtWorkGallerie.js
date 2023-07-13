@@ -115,7 +115,7 @@ export default function AlbumArtWork() {
                                         </CardContent>
                                         <CardActions>
                                             <Button onClick={()=>{
-                                                navigate("/galleryOtherUser/"+ card.id)
+                                                navigate("/openArtwork/"+ card.id)
                                             }}
 
                                                     size="small">View</Button>

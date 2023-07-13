@@ -24,7 +24,7 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import Album from "./container/loggedInUsers/GalleryForAll/GalleryForAll"
 import GallerieOfOtherUser from "./container/loggedInUsers/GalleryForAll/galerieOfOtherUser"
 import AlbumArtWork from "./container/loggedInUsers/ArtworkForAll/ArtWorkGallerie"
-
+import DetailedImage from"./container/loggedInUsers/ArtworkForAll/DetailedImage"
 function App() {
   return (
     <Layout>
@@ -41,6 +41,7 @@ function App() {
         <Route path="/openGallery" element={<Album/>}></Route>
         {/*Artwork for All*/}
         <Route path="/openArtwork" element={<AlbumArtWork/>}></Route>
+        <Route path="/openArtwork/:id" element={<DetailedImage/>}></Route>
           {/*User bearbeiten*/}
 
           <Route  element={<ProtectedRoutes />}>

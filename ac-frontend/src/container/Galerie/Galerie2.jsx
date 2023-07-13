@@ -1,4 +1,17 @@
 import * as React from 'react';
+import Button from '@mui/material/Button';
+import CameraIcon from '@mui/icons-material/PhotoCamera';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import CssBaseline from '@mui/material/CssBaseline';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
 import {GalerieApiService} from "../../lib/apiGalerie"
 import {storageService} from "../../lib/localStorage"
 import {ApiService} from "../../lib/api";
@@ -6,7 +19,6 @@ import {PlusIcon} from '@heroicons/react/20/solid'
 import {useNavigate, Link} from "react-router-dom";
 import {StarIcon} from '@heroicons/react/20/solid'
 import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import Image1 from '../../images/defaultArtworkPlaceholder.png';
 import {logikService} from "../../lib/service"
 import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
@@ -286,35 +298,40 @@ export default function Gallery() {
                         </button>
                         <h2 className="sr-only">Products</h2>
 
-                        <div
-                            className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                            {artwork.map((product) => (
-                                <Link to={`/galerie/DetailImage/${product.id}`} key={product.id}>
+                            <Container sx={{py: 8}} maxWidth="md">
 
-                                    <div
-                                        className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 xl:aspect-h-8 xl:aspect-w-7">
-                                        <img
-                                            src={product.images[0]?.image.data ? convertImage(product.images[0].image.data) : Image1}
-                                            alt="{product.imageAlt}"
-                                            className="h-full w-full object-cover object-center group-hover:opacity-75"
-                                        />
-                                    </div>
-                                    <div className="flex flex-col justify-between mt-4 ">
-                                        <div className="flex  flex-wrap">
-                                            {product?.artDirections.map((tag) => (
-                                                <span className="tag tag-sm">#{tag}</span>
-                                            ))}
-                                        </div>
-                                        <div className="d-flex flex-wrap justify-content-between ">
-                                            <h3 className="link text-lg font-medium text-gray-900 flex-grow-1">{product.title}</h3>
-                                            <p className="link mt-1 text-lg font-medium text-gray-900">{product.price} Euro</p>
-                                        </div>
-                                        <p className="link text-sm text-gray-700 ">{product.description}</p>
-                                    </div>
-                                </Link>
+                                <Grid spacing={4} className="d-flex">
+                                    {artwork.map((product) => (
+                                        <Grid item key={product.id} xs={12} sm={6} md={4}>
+                                            <Card
+                                                sx={{height: '100%', display: 'flex', flexDirection: 'column'}}
+                                            >
+                                                <img
+                                                    src={product.images[0]?.image.data ? convertImage(product.images[0].image.data) : Image1}
+                                                    alt="{product.imageAlt}"
+                                                    className="h-60 w-full object-cover object-center group-hover:opacity-75"
+                                                />
+                                                <CardContent sx={{flexGrow: 1}}>
+                                                    <Typography gutterBottom variant="h5" component="h2">
+                                                        {product.title}
+                                                    </Typography>
+                                                    {product.tags?.map((tag) => (
+                                                        <span className="tag tag-sm">#{tag}</span>
+                                                    ))}
+                                                    <p className="link mt-1 text-lg font-medium text-gray-900">{product.price} Euro</p>
+                                                </CardContent>
+                                                <CardActions>
+                                                    <Button onClick={()=>{
+                                                        navigate(`/galerie/DetailImage/${product.id}`)
+                                                    }}
 
-                            ))}
-                        </div>
+                                                            size="small">View</Button>
+                                                </CardActions>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </Container>
                     </div>
                 </div>
             }
