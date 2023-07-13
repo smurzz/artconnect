@@ -1,8 +1,0 @@
-@import 'typographie';
-
-  /*fonts*/
-  @mixin fonts( $size, $weight){
-    font-family: $font; 
-    font-size: $size;
-    font-weight: $weight;
-  }
