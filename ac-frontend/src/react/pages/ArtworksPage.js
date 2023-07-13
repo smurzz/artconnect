@@ -13,40 +13,40 @@ import ProfilePhotoDefault from '../images/user.png';
 
 import ImageTMP from '../images/placeholder.jpg';
 
-import * as userActions from '../../redux/user/UserAction';
+import * as artworkActions from '../../redux/artwork/ArtworkAction';
 
 function ArtworksPage() {
     const dispatch = useDispatch();
 
     const [searchValue, setSearchValue] = useState('');
-    const userData = useSelector(state => state.users);
+    const artworkData = useSelector(state => state.artwork);
+    const [tags, setTags]=useState([]);
 
     useEffect(() => {
         if (!searchValue) {
             const fetchData = async () => {
-                await dispatch(userActions.getUsers());
+                await dispatch(artworkActions.getArtworks());
             };
             fetchData();
         }
     }, [dispatch, searchValue]);
 
-    if (!userData.users && !userData.error) {
+    if (!artworkData.artworks && !artworkData.error) {
         return <LoadingPage />;
     }
 
-    if (userData.error) {
+    if (artworkData.error) {
         return <NotFoundPage />;
     }
 
     const handleSearchSubmit = async (event) => {
-        event.preventDefault();
+       event.preventDefault();
         var splitedSeachValue = searchValue.split(' ');
+        var arraySplitedSearchValue =[];
+
         console.log(splitedSeachValue);
-        if (splitedSeachValue.length > 1) {
-            await dispatch(userActions.getUsersByName(splitedSeachValue[0], splitedSeachValue[1]));
-        } else {
-            await dispatch(userActions.getUsersByName(null, splitedSeachValue[0]));
-        }
+        setTags(splitedSeachValue);
+            await dispatch(artworkActions.getArtworksByTags(splitedSeachValue));
     };
 
     return (
@@ -73,27 +73,45 @@ function ArtworksPage() {
                     </div>
                 </section>
 
-                <div className="row mt-5 mb-5">
-                    {userData.users?.length > 0 ? (
-                        userData.users.map((user, index) => (
-                            <div className="col-lg-4"  key={index}>
-                                <img
-                                    src={user?.profilePhoto ? (`data:${user.profilePhoto?.contentType};base64,${user.profilePhoto?.image.data}`) : ProfilePhotoDefault}
-                                    alt="Thumbnail"
-                                    className="rounded-circle"
-                                    style={{
-                                        width: '140px',
-                                        height: '140px',
-                                        objectFit: 'cover',
-                                        objectPosition: 'center',
-                                    }}
-                                />
-                                <h4 className="fw-normal">{user.firstname} {user.lastname}</h4>
-                                {/* <p>Some representative placeholder content for the three columns of text below the carousel. This is the first column.</p> */}
-                                <p><a className="btn btn-secondary" href={`/user/${user.id}`}>View profile &raquo;</a></p>
-                            </div>
-                        ))
-                    ) : (<p>No users found.</p>)}
+                <div className="album py-5">
+                    <div className="container-md">
+
+                        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                             {artworkData.artworks?.length > 0 ? (
+                                     artworkData.artworks.map((artwork, index) => (
+                            <div className="col">
+                                        <div className="card shadow-sm">
+                                            <img
+                                                src={artwork.images?.length > 0 ? (`data:${artwork.images[0]?.contentType};base64,${artwork.images[0]?.image.data}`) : ImageTMP}
+                                                alt="Thumbnail"
+                                                className="card-img-top"
+                                                style={{width: '100%', height: '225px', color: '#eceeef'}}
+                                            />
+                                            <div className="card-body">
+                                                <h5 className="card-title">{artwork.title}</h5>
+                                                <p className="card-text"> {artwork?.description?.substring(0, 20) || "No description"}...</p>
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <div className="btn-group">
+                                                        <button type="button"
+                                                                className="btn btn-sm btn-outline-secondary">View
+                                                        </button>
+                                                    </div>
+                                                    <small
+                                                        className="text-body-secondary">{artwork?.price ? (artwork.price + "Euro") : null}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                             ))
+                            ) : (    <div className="d-flex">
+                                     <p className='lead text-body-secondary'>No artworks found with Tags:</p>
+                                     {tags?.map((tag) => (
+                                         <p className='lead text-body-secondary mx-2'>{tag} </p>
+                                     ))}
+                                 </div>
+                             )}
+                        </div>
+                    </div>
                 </div>
             </div>
             <Footer />

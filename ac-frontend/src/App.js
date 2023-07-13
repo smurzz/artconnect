@@ -13,7 +13,7 @@ import { ForgotPassword } from './react/pages/ForgotPassword';
 import { ResetPassword } from './react/pages/ResetPassword';
 import PrivateRoute from './PrivateRoute';
 import { useDispatch, useSelector } from 'react-redux';
-
+import NotFound from "./react/pages/errors/NotFoundPage"
 import * as authActions from './redux/authentication/AuthenticationAction'; 
 import LoadingPage from './react/pages/components/LoadingPage';
 /* 
@@ -35,6 +35,7 @@ function App() {
         <Route exact path='/users' element={< UsersPage/>} />
         <Route exact path='/user/:id' element={< Profile/>} />
         <Route exact path='/artworks' element={<ArtworksPage/>}/>
+        <Route path='*' element={<NotFound/>}/>
       
         {/* <Route 
           exact path="/home" 
