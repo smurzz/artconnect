@@ -1,11 +1,22 @@
-import Header from "../../components/headerComponent/headerLogedIn"
-import React from "react";
+import React, {useEffect} from "react";
 import { Link } from "react-router-dom";
-
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 export default function PageNotFound() {
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
+
     return (
       <>
-        <Header></Header>
+          {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
         <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
           <div className="text-center">
             <p className="text-base font-semibold text-indigo-600">404</p>

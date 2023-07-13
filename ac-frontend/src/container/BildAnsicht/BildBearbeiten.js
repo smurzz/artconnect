@@ -3,63 +3,13 @@ import {useEffect, useState} from "react";
 import {GalerieApiService} from "../../lib/apiGalerie"
 import {storageService} from "../../lib/localStorage"
 import {ApiService} from "../../lib/api";
-import {useNavigate, Link} from "react-router-dom";
+import {useNavigate, Link, useLocation } from "react-router-dom";
 import {GalerieService} from "../../lib/apiGalerie";
 import PopupModal from "../../components/ModalPopUp/ModalPopUp";
 import {logikService} from  "../../lib/service"
 import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
 import HeaderLogedOut from "../../components/headerComponent/headerLogout"
-const MaterialForm = ({materials, setMaterials}) => {
-    const [newMaterial, setNewMaterial] = useState('');
-    const handleAddMaterial = (event) => {
-        console.log("test");
-        event.preventDefault();
-        if (newMaterial.trim() !== '') {
-            if (materials.length < 10) {
-                setMaterials([...materials, newMaterial]);
-                setNewMaterial('');
-            } else {
-                alert('Oops! We can not let you have to power of adding more then 10 Materials. Sorry!');
-            }
-        }
-    };
-
-
-    const handleDeleteMaterials = (event, index) => {
-        event.preventDefault();
-        console.log("handleDeleteMaterials: "+ index);
-        const updatedMaterials = [...materials];
-        updatedMaterials.splice(index, 1);
-        setMaterials(updatedMaterials);
-    };
-
-    return (
-        <div>
-            <label>Materials:</label>
-            <p>You can add upto 10 Materials</p>
-            <input
-                type="text"
-                value={newMaterial}
-                onChange={(e) => setNewMaterial(e.target.value)}
-            />
-            <button
-                className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
-                onClick={handleAddMaterial}>Add Material</button>
-            <ul>
-                {materials.map((material, index) => (
-                    <li key={index}>
-                        {material}
-                        <button
-                            className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
-                            onClick={(event) => handleDeleteMaterials(event,index)}>Delete
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
-const TagForm = ({tags, setTags}) => {
+const TagForm = ({ oldTags, tags, setTags}) => {
     const [newTag, setNewTag] = useState('');
     const handleAddTag = (event) => {
         event.preventDefault();
@@ -72,6 +22,14 @@ const TagForm = ({tags, setTags}) => {
             }
         }
     };
+
+    useEffect(()=>{
+        if(oldTags.tags.length > 0){
+            setTags([...tags, ...oldTags.tags])
+
+        }
+        console.log("TagForm: "+ JSON.stringify(oldTags));
+    },[])
     const handleDeleteTag = (event,index) => {
         event.preventDefault();
         const updatedTags = [...tags];
@@ -83,25 +41,21 @@ const TagForm = ({tags, setTags}) => {
                 <div>
                     <label>Tags:</label>
                     <p>You can add upto 10 Tags</p>
+                    <ul>
+                        {tags.map((tag, index) => (
+                            <li key={index}>
+                                {tag}
+                                <button className="btn btn-secondary mx-3" onClick={(event) => handleDeleteTag(event,index)}>Delete
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
                     <input
                         type="text"
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                     />
-                    <button
-                        className="mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
-                        onClick={handleAddTag}>Add Tag</button>
-                    <ul>
-                        {tags.map((tag, index) => (
-                            <li key={index}>
-                                {tag}
-                                <button
-                                    className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
-                                    onClick={(event) => handleDeleteTag(event,index)}>Delete
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
+                    <button className="btn btn-secondary mx-3" onClick={handleAddTag}>Add Tag</button>
                 </div>
 
 
@@ -109,15 +63,18 @@ const TagForm = ({tags, setTags}) => {
     );
 };
 
-const BildErstellen = () => {
+const BildBearbeiten = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { artworkOld, artworkId } = location.state;
     const [titleError, setTitleError] = useState("");
     const [isTitleError, setIsTitleError] = useState(false);
     const [openModalPost, setOpenModalPost] = useState(false)
     const [idImage, setIdImage] = useState("");
     const [success, setSuccess]= useState(false);
     const currentYear = new Date().getFullYear();
+
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-    const navigate = useNavigate();
     useEffect(()=>{
         async function getLoggedIn(){
             const loggedInHeader = await logikService.isLoggedIn();
@@ -139,7 +96,6 @@ const BildErstellen = () => {
         "CONCEPTUAL_ART",
         "STREET_ART_GRAFFITI"
     ];
-
     //Modal
     const handleOpenModalPost = () => {
         setOpenModalPost(true);
@@ -180,65 +136,108 @@ const BildErstellen = () => {
         comments: null,
         likes: 0
     });
+
     const handleSubmit = async (e) => {
+        const requestBody = {};
         e.preventDefault();
         // Validate the title
-        if (artwork.title.trim() === "") {
-            setIsTitleError(true);
-            setTitleError("the Title cant be blank. Please Enter a valid title")
-            return;
+        if (artwork.title.trim() !== "") {
+            requestBody.title = artwork.title;
+        }
+        if (artwork.description.trim() !== "") {
+            requestBody.description = artwork.description;
+        }
+        if (artwork.materials.length >0 ) {
+            requestBody.materials = artwork.materials;
+        }
+        if (artwork.tags.length >0 ) {
+            requestBody.tags = artwork.tags;
+        }
+
+        if (artwork.dimension.height !== "") {
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                height: artwork.dimension.height
+            };
+        }else{
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                height: artworkOld.dimension.height
+            };
+        }
+        if (artwork.dimension.width !== "") {
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                width: artwork.dimension.width
+            };
+        }else{
+                requestBody.dimension = {
+                    ...requestBody.dimension,
+                    width: artworkOld.dimension.width
+                };
+            }
+        if (artwork.dimension.depth !== "") {
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                depth: artwork.dimension.depth
+            };
+        }else{
+            requestBody.dimension = {
+                ...requestBody.dimension,
+                depth: artworkOld.dimension.depth
+            };
+        }
+        if (artwork.artDirections.length >0 ) {
+            requestBody.artDirections = artwork.artDirections;
+        }
+
+        if (artwork.price >0 ) {
+            requestBody.price = artwork.price;
+        }
+
+        if (artwork.location.trim() !== "") {
+            requestBody.location = artwork.location;
         }
         if (artwork.yearOfCreation !== "") {
             const year = parseInt(artwork.yearOfCreation, 10);
             if (year > currentYear) {
                 alert(`You cannot be a time traveler! Please choose a year in the present or past.`);
-                return;
+            }else{
+                requestBody.yearOfCreation = artwork.yearOfCreation;
             }
+
         }
-        const result = await GalerieApiService.postSecuredData("/artworks", artwork)
+        console.log("/artworks/"+artworkOld.id +" resposeBody: "+ JSON.stringify(requestBody));
+        const result = await GalerieApiService.putSecuredData("/artworks/"+artworkOld.id,requestBody);
         if(result !== null){
             setIdImage(result.data.id);
-            handleOpenModalPost();
-            setSuccess(true);
+            navigate("/galerie")
         }
         console.log(JSON.stringify(artwork));
     };
-
-    useEffect(() => {
-        setIsTitleError(false);
-        setTitleError("");
-    }, [artwork])
 
     const handleDimensionChange = (property, value) => {
         setArtwork((prevArtwork) => ({
             ...prevArtwork,
             dimension: {
                 ...prevArtwork.dimension,
-                [property]: parseFloat(value.replace(",", "."))
+                [property]: parseFloat(value)
             }
         }));
     };
 
+    const makeItAnArray=(value)=>{
+        const materialsArray = value.split(",");
+        console.log(materialsArray);
+        return materialsArray;
+    }
+
     return (
         <>
         {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-7">
+        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 
         <div>
-        <div>
-
-
-            <div>
-                <p className="text-base font-semibold  text-gray-900">Post artwork</p>
-                <div className="marginBottom">
-                    <button
-                        onClick={()=>{navigate("/galerie")}}
-                        type="button"
-                        className="inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                    >
-                        <span>Back to Profile</span>
-                    </button>
-                </div>
-            </div>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     {isTitleError && <div className="alert alert-danger" role="alert">
@@ -250,7 +249,7 @@ const BildErstellen = () => {
                             type="text"
                             className="form-control"
                             name="title"
-                            value={artwork.title}
+                            defaultValue={artworkOld.title}
                             onChange={(e) => setArtwork({...artwork, title: e.target.value})}
                         />
                     </div>
@@ -260,7 +259,7 @@ const BildErstellen = () => {
                             type="text"
                             className="form-control"
                             name="description"
-                            value={artwork.description}
+                            defaultValue={artworkOld.description}
                             onChange={(e) => setArtwork({...artwork, description: e.target.value})}
                         />
                     </div>
@@ -270,7 +269,7 @@ const BildErstellen = () => {
                             type="number"
                             className="form-control"
                             name="yearOfCreation"
-                            value={artwork.yearOfCreation}
+                            defaultValue={artworkOld.yearOfCreation}
                             onChange={(e) => setArtwork({...artwork, yearOfCreation: e.target.value})}
                         />
                     </div>
@@ -281,58 +280,60 @@ const BildErstellen = () => {
                             type="number"
                             className="form-control"
                             name="yearOfCreation"
-                            value={artwork.price}
+                            defaultValue={artworkOld.price}
                             onChange={(e) => setArtwork({...artwork, price: e.target.value})}
                         />
                     </div>
-                    <MaterialForm
-                        materials={artwork.materials}
-                        setMaterials={(materials) => setArtwork({...artwork, materials})}
-                    />
+
+                    <div className="form-group">
+
+                        <label>Materials:</label>
+                        <p>please seperate the materials with a comma. Example: material1,material2</p>
+                        <input
+                            type="text"
+                            className="form-control"
+                            name="materials"
+                            defaultValue={artworkOld.materials}
+                            onChange={(e) => setArtwork({...artwork, materials: makeItAnArray(e.target.value)})}
+                        />
+                    </div>
                     <TagForm
+                        oldTags={artworkOld}
                         tags={artwork.tags}
                         setTags={(tags) => setArtwork({...artwork, tags})}/>
                     <p>Dimensions:</p>
                     <div className="d-flex align-items-center">
-                        <div className="d-flex align-items-start">
-                            <div className="d-flex flex-column mr-3">
-                            <label>Height in cm: </label>
+                        <div className="mr-3">
+                        </div>
+                        <div className="d-flex">
                             <input
                                 type="number"
-                                className="form-control "
+                                className="form-control mr-2"
                                 name="height"
-                                value={artwork.dimension.height}
-                                placeholder="Example 5,25"
+                                defaultValue={artworkOld.dimension.height}
                                 onChange={(e) => handleDimensionChange("height", e.target.value)}
                             />
-                            </div>
-                            <div className="d-flex flex-column mr-3">
-                            <label>Width in cm:</label>
+
                             <input
                                 type="number"
-                                className="form-control"
+                                className="form-control mr-2"
                                 name="width"
-                                value={artwork.dimension.width}
-                                placeholder="Example 5,25"
-
+                                defaultValue={artworkOld.dimension.width}
                                 onChange={(e) => handleDimensionChange("width", e.target.value)}
                             />
-                            </div>
-                            <div className="d-flex flex-column mr-3">
-                            <label>Depth in cm:</label>
+
                             <input
                                 type="number"
                                 className="form-control"
                                 name="depth"
-                                placeholder="Example 5,25"
-                                value={artwork.dimension.depth}
+                                defaultValue={artworkOld.dimension.depth}
                                 onChange={(e) => handleDimensionChange("depth", e.target.value)}
                             />
-                            </div>
                         </div>
                     </div>
                     <label>Art Directions:</label>
                     <div className="row">
+                        <span>If you want to change the Directions of your Artpiece, you have to select the old and new ones</span>
                         {artDirectionsOptions.map((artDirection) => (
                             <div key={artDirection} className="col-md-3 mb-3">
                                 <div className="form-check">
@@ -354,36 +355,22 @@ const BildErstellen = () => {
                         type="text"
                         className="form-control"
                         name="location"
-                        value={artwork.location}
+                        defaultValue={artworkOld.location}
                         onChange={(e) => setArtwork({...artwork, location: e.target.value})}
                     />
                 </div>
-                <div className="mt-6 flex items-center justify-end gap-x-6">
-                    <button type="button"
-                            className=" inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                            onClick={() => {
-                                navigate("/galerie");
-                            }}
-                    >
-                        cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7 mb-7"
-                    >
-                        save
-                    </button>
-                </div>
-
+                <button type="submit" className="btn btn-primary">
+                    Submit
+                </button>
             </form>
         </div>
             {success && <PopupModal open={openModalPost} handleClose={handleClosePostModal} userId={idImage} />}
 
 
         </div>
-        </div>
         </>
-    )
+            )
 
 };
 
-export default BildErstellen;
+export default BildBearbeiten;

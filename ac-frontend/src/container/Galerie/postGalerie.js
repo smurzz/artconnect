@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate} from 'react-router-dom';
 import Header from "../../components/headerComponent/headerLogedIn";
-import {GalerieApiService} from "../../lib/apiGalerie"
-import {storageService} from "../../lib/localStorage"
+import {GalerieApiService} from "../../lib/apiGalerie";
+import {storageService} from "../../lib/localStorage";
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 const PostGalerie = () => {
     const navigate = useNavigate();
     const { id } = useParams();
@@ -11,7 +14,15 @@ const PostGalerie = () => {
         description: '',
         categories: []
     });
-
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
     //Categorie handeling
     const categoriesOptions = [
         "PRINT",
@@ -52,7 +63,7 @@ const PostGalerie = () => {
 
     return (
         <div className="container">
-            <Header/>
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Title:</label>

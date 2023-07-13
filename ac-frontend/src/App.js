@@ -17,43 +17,50 @@ import DeleteUser from "./container/DeleteUser/deleteUser"
 import DeleteUserAnswer from "./container/DeleteUser/deleteUserAnswer"
 import DetailImage from "./container/BildAnsicht/ImageView"
 import ImageUploadComponent from "./container/BildAnsicht/imageUpload";
-import DetailImage1 from "./container/BildAnsicht/ImageView1"
-import DetailImage2 from "./container/BildAnsicht/ImageView2"
-import DetailImage3 from "./container/BildAnsicht/ImageView3"
-import DetailImage4 from "./container/BildAnsicht/ImageView4"
-import DetailImage5 from "./container/BildAnsicht/ImageView5"
-import DetailImage6 from "./container/BildAnsicht/ImageView6"
-import DetailImage7 from "./container/BildAnsicht/ImageView7"
-import DetailImage8 from "./container/BildAnsicht/ImageView8"
-
+import editGalerie from "./container/Galerie/editGalerie"
+import BildBearbeiten from "./container/BildAnsicht/BildBearbeiten"
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-
+import Album from "./container/loggedInUsers/GalleryForAll/GalleryForAll"
+import GallerieOfOtherUser from "./container/loggedInUsers/GalleryForAll/galerieOfOtherUser"
+import AlbumArtWork from "./container/loggedInUsers/ArtworkForAll/ArtWorkGallerie"
+import DetailedImage from"./container/loggedInUsers/ArtworkForAll/DetailedImage"
 function App() {
   return (
     <Layout>
       <Routes>
         <Route path="/" element={<Home />}></Route>{/*ausgeloggte Homeseite*/}
-          <Route path="/register" element={<Registration />}></Route>
+        <Route path="/register" element={<Registration />}></Route>
         <Route path="/login" element={<Login />} />
-          {/*Forgot Password routes*/}
-          <Route path ="/forgot" element ={<ForgotPassword/>}/>
+        {/*Forgot Password routes*/}
+        <Route path ="/forgot" element ={<ForgotPassword/>}/>
         <Route path ="/resetSuccess" element ={<ResetPasswortSuccess/>}/>
         <Route path ="/reset-password" element ={<ResetPassword/>}/>
-          {/*Galerie*/}
-          <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
-        <Route path="/deleteUser" element ={<DeleteUser/>}></Route>
-        <Route path="/uploadImage/:id" element ={<ImageUploadComponent/>}></Route>
-        <Route path="/newArt" element={<BildErstellen/>}></Route>
-        <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
-
-        <Route path="/deleteUserAnswer" element ={<DeleteUserAnswer/>}></Route>
-        <Route path="/postGalerie/:id" element ={<PostGalerie/>}></Route>
-        <Route path="/editGalerie/:id" element ={<EditGalerie/>}></Route>
+        {/*GalleryForAll*/}
+        <Route path="/galleryOtherUser/:id" element ={<GallerieOfOtherUser/>}></Route>
+        <Route path="/openGallery" element={<Album/>}></Route>
+        {/*Artwork for All*/}
+        <Route path="/openArtwork" element={<AlbumArtWork/>}></Route>
+        <Route path="/openArtwork/:id" element={<DetailedImage/>}></Route>
           {/*User bearbeiten*/}
-            <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
+
           <Route  element={<ProtectedRoutes />}>
               {/*Protected Routes*/}
+            {/*User Routen*/}
+            <Route path="/bearbeiten" element={<Bearbeiten />}></Route>
+            <Route path="/deleteUser" element ={<DeleteUser/>}></Route>
+            <Route path="/deleteUserAnswer" element ={<DeleteUserAnswer/>}></Route>
+
+            {/*Galerie Routen*/}
+            <Route path="/galerie" element={<Galerie2 />}></Route> {/*Galerie eines Künstlers*/}
+            <Route path ="/editGallery" element ={<EditGalerie/>}/>
+            <Route path="/postGalerie/:id" element ={<PostGalerie/>}></Route>
+
+            {/*Artwork Routen*/}
+            <Route path="/uploadImage/:id" element ={<ImageUploadComponent/>}></Route>
+            <Route path="/newArt" element={<BildErstellen/>}></Route>
+            <Route path="/editArt" element ={<BildBearbeiten/>}></Route>
+            <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
           </Route>
         <Route path='*' element={<NotFound/>}/>
       </Routes>

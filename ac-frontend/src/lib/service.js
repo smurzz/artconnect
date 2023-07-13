@@ -38,6 +38,8 @@ async function isLoggedIn(){
         console.log("isLoggedIn: " + JSON.stringify(token));
         return true;
     }catch(error){
+        console.log("isLoggedIn: error ");
+
         return false;
     }
 }

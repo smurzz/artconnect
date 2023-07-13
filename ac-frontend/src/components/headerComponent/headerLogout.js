@@ -71,6 +71,18 @@ export default function ResponsiveAppBar() {
                                         >
                                             Dashboard
                                         </Link>
+                                        <Link to="/openGallery"
+                                              className="link inline-flex items-center border-b-2 border-indigo-500
+                                              px-1 pt-1 text-sm font-medium text-gray-900"
+                                        >
+                                            Galleries
+                                        </Link>
+                                        <Link
+                                            to="/openArtwork"
+                                            className="link inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                        >
+                                            Artworks
+                                        </Link>
                                     </div>
                                 </div>
 
@@ -185,7 +197,22 @@ export default function ResponsiveAppBar() {
                                 {/* Current: "bg-indigo-50 border-indigo-500 text-indigo-700", Default: "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800" */}
                                 <Disclosure.Button
                                     as="a"
-                                    href="/home"
+                                    href="/openGallery"
+                                    className="link block border-l-4 border-indigo-500 bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700"
+                                >
+                                    Galleries
+                                </Disclosure.Button>
+                                <Disclosure.Button
+                                    as="a"
+                                    href="/openArtwork"
+                                    className="link block border-l-4 border-indigo-500 bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700"
+                                >
+                                    Artworks
+                                </Disclosure.Button>
+
+                                <Disclosure.Button
+                                    as="a"
+                                    href="/openGallery"
                                     className="link block border-l-4 border-indigo-500 bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700"
                                 >
                                     Dashboard
@@ -200,9 +227,8 @@ export default function ResponsiveAppBar() {
                                 </Disclosure.Button>
                                 <Disclosure.Button
                                     as="a"
-                                    href="/login"
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                                    onClick ={() =>{navigate("/register")}}
+                                    onClick ={()=>{navigate("/register")}}
                                 >
                                     Register
                                 </Disclosure.Button>

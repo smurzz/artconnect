@@ -16,9 +16,11 @@ import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
+import {logikService} from  "../../lib/service";
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';
-import Header from "../../components/headerComponent/headerLogout"
 
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -60,6 +62,15 @@ export default function ForgotPassword() {
     const [message, setMessage] = React.useState("");
     const [errAlert, seterrAlert] = React.useState("");
     const [success, setSuccess] = React.useState(false);
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
 
     useEffect(() => {
         setErrorMessage(false);
@@ -142,7 +153,7 @@ export default function ForgotPassword() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-        <Header/>
+        {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
         <main>
       <Grid container component="main" sx={{ height: '100vh' }}>
         <CssBaseline />

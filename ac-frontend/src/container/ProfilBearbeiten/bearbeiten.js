@@ -2,11 +2,9 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from "react";
 import {Link, Route, Routes, useNavigate, useLocation} from "react-router-dom";
 import "./bearbeiten.css";
-
 import axios from "../../api/axios";
 import {ApiService} from "../../lib/api";
 import { format } from 'date-fns';
-
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -14,6 +12,9 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -40,7 +41,7 @@ function Bearbeiten(props) {
     const [successMessage, setSuccessMessage] = React.useState("");
     const [success, setSuccess] = useState(false);
     const [constact, setContacts] = useState(false);
-
+    const currentDate = new Date();
     //edit userdata from BE
     const [userBearbeiten, setUserBearbeiten] = useState(
         {
@@ -57,6 +58,15 @@ function Bearbeiten(props) {
             website:""
         }
     )
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
 
     //add ExhibitionValues
     const [exhibitionValues, setExhibitionValues] = useState([{title: "", location: "", year: "", description: ""}])
@@ -217,7 +227,7 @@ console.log("requestBody: "+ JSON.stringify(requestBody));
 
 return (
     <>
-        <Header/>
+        {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
     {/* tailwind ui */}
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}
@@ -227,11 +237,10 @@ return (
                   <p className="text-base font-semibold leading-7 text-gray-900">Edit Profil</p>
                   <div className="marginBottom">
                       <button
-
+                          onClick={()=>{navigate("/galerie")}}
                           type="button"
-                          className="inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                      >
-                          <span>Back to Profile</span>
+                          className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                      >
+                          Back to Profile
                       </button>
                   </div>
                   {errorMessage && <div className="alert alert-danger" role="alert">
@@ -342,6 +351,7 @@ return (
                         id="birthday"
                         name="birthday"
                         autoComplete="birthday"
+                        maxDate={currentDate}
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         selected={dateOfBirth}
                         onChange={(date) => {
@@ -433,8 +443,9 @@ return (
                 <div className="form-inline" key={index}>
                     {
                         index ?
-                            <Button type="button" className="button inputField remove"
-                                    onClick={() => removeExhibitionFields(index)}>Remove</Button>
+                            <button type="button"
+                                    className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                                    onClick={() => removeExhibitionFields(index)}>Remove</button>
                             : null
                     }
 
@@ -507,10 +518,9 @@ return (
        <div className='pt-7'>
        <button
           type="button"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          onClick={() => addExhibitionFields()}
+          className=" inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"          onClick={() => addExhibitionFields()}
         >
-          Hinzufügen
+          Add
         </button>
        </div>
 
@@ -525,8 +535,9 @@ return (
                 <div className="form-inline" key={index}>
                     {
                         index ?
-                            <Button type="button" className="button inputField remove"
-                                    onClick={() => removeSocialMediaFields(index)}>Remove</Button>
+                            <button type="button"
+                                    className=" mx-7 inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"
+                                    onClick={() => removeSocialMediaFields(index)}>Remove</button>
                             : null
                     }
                     <div className="sm:col-span-2 sm:col-start-1">
@@ -569,10 +580,9 @@ return (
        <div className='pt-7'>
        <button
           type="button"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          onClick={() => addSocialMediaField()}
+          className="inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"          onClick={() => addSocialMediaField()}
         >
-          Hinzufügen
+          Add
         </button>
        </div>
 
@@ -580,29 +590,21 @@ return (
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        <button type="button" className="text-sm font-semibold leading-6 text-gray-900"
-                onClick={() => {
-                    navigate("/galerie");
-                }}
-        >
-          Abbrechen
-        </button>
-        <button
-          type="submit"
-          className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Speichern
+          <button
+              type="submit"
+              className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bg-blue-100 mt-7 mb-7"        >
+              Save
+          </button>
+        <button type="button"
+                className="inline-flex items-center rounded-md bg-blue-200 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm hover:bg-blue-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-blue-300 mt-7 mb-7"                onClick={() => {
+                    navigate("/galerie");}} >
+          Cancel
         </button>
       </div>
     </form>
     </div>
     </div>
-        <button
-            onClick={() => {
-            navigate("/deleteUser",  { state: { userId: user.id}});
-        }}>
-            Profil löschen
-        </button>
+
     {/* tailwind ui */}
     </>
 );

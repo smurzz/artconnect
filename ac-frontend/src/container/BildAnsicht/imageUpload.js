@@ -1,99 +1,90 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { GalerieApiService } from '../../lib/apiGalerie';
 import { useParams } from 'react-router-dom';
 import { Card, Button } from 'react-bootstrap';
-
+import {useNavigate, Link} from "react-router-dom";
+import Image2 from '../../images/defaultArtworkPlaceholder.png';
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout"
 export default function ImageUploadComponent() {
-    const [selectedFile, setSelectedFile] = useState(null);
-    const { id } = useParams();
+    const [selectedFileMain, setSelectedFileMain] = useState(null);
+    const [selectedFile1, setSelectedFile1] = useState(null);
+    const [selectedFile2, setSelectedFile2] = useState(null);
+    const [selectedFile3, setSelectedFile3] = useState(null);
+    const [selectedFile4, setSelectedFile4] = useState(null);
+    const[noFileUploaded, setNoFileUploaded] = useState(null);
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+        }
+        getLoggedIn();
+    },[])
 
-    const handleFileChange = (event) => {
+    const { id } = useParams();
+    const handleFileChange = (event, index) => {
         const file = event.target.files[0];
         if (file) {
             const fileSize = file.size / 1024 / 1024; // Size in MB
             const allowedFormats = ['image/jpeg', 'image/jpg', 'image/png'];
 
             if (fileSize <= 5 && allowedFormats.includes(file.type)) {
-                setSelectedFile(file);
+                        setSelectedFileMain(file);
             } else {
-                setSelectedFile(null);
+                        setSelectedFileMain(null);
             }
         }
     };
-
     const handleFileUpload = async (event) => {
+        setNoFileUploaded(false);
         console.log("datarouting");
         event.preventDefault();
-        console.log(selectedFile);
-        if (selectedFile) {
-            const formData = new FormData();
-            formData.append('file', selectedFile);
-            const result = await GalerieApiService.postSecuredImage(`/artworks/add-photo/${id}`, formData);
+        if (selectedFileMain) {
+            console.log("image uploaded Main")
+            let resultMain= await connectionToBackend(selectedFileMain);
         }
+        console.log("image uploaded")
+        navigate("/galerie");
     };
 
+    async function connectionToBackend(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        console.log("connectionToBackend");
+        const result = await GalerieApiService.postSecuredImage(`/artworks/add-photo/${id}`, formData);
+        return result;
+    }
+
     return (
+        <>
+        {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 
-        <div className="col-span-full">
-            <div className="card-group">
+            {noFileUploaded == true && alert("Please Upload a file")}
+            <div className="card-group d-flex justify-content-around">
                 <div className="big-card">
-                    <Card>
-                        <Card.Img variant="top" src={selectedFile !== null ? URL.createObjectURL(selectedFile) : ""} />
-                        <Card.Body>
+                    <Card style={{ marginRight: "2rem" }}>
+                        <Card.Img
+                            className="imageUploadFile"
+                            style={{ height: "30rem"}}
+                            variant="top"
+                            src={selectedFileMain !== null ? URL.createObjectURL(selectedFileMain) : Image2}
+                        />                        <Card.Body>
                             <Card.Title>Big Image</Card.Title>
                             <Card.Text>
-                                Upload a big image here.
+                                Upload Image
                             </Card.Text>
-                            <input type="file" accept=".jpg, .jpeg, .png" onChange={handleFileChange} />
-                            <Button variant="primary" onClick={handleFileUpload}>Upload</Button>
-                        </Card.Body>
-                    </Card>
-                </div>
-                <div className="small-cards">
-                    <Card>
-                        <Card.Img variant="top" src="" />
-                        <Card.Body>
-                            <Card.Title>Small Image 1</Card.Title>
-                            <Card.Text>
-                                Upload a small image here.
-                            </Card.Text>
-                            {/* Add input and button for small image 1 */}
-                        </Card.Body>
-                    </Card>
-                    <Card>
-                        <Card.Img variant="top" src="" />
-                        <Card.Body>
-                            <Card.Title>Small Image 2</Card.Title>
-                            <Card.Text>
-                                Upload a small image here.
-                            </Card.Text>
-                            {/* Add input and button for small image 2 */}
-                        </Card.Body>
-                    </Card>
-                    <Card>
-                        <Card.Img variant="top" src="" />
-                        <Card.Body>
-                            <Card.Title>Small Image 3</Card.Title>
-                            <Card.Text>
-                                Upload a small image here.
-                            </Card.Text>
-                            {/* Add input and button for small image 3 */}
-                        </Card.Body>
-                    </Card>
-                    <Card>
-                        <Card.Img variant="top" src="" />
-                        <Card.Body>
-                            <Card.Title>Small Image 4</Card.Title>
-                            <Card.Text>
-                                Upload a small image here.
-                            </Card.Text>
-                            {/* Add input and button for small image 4 */}
+                            <input type="file" accept=".jpg, .jpeg, .png" onChange={(event)=>{handleFileChange(event,0)}} />
+                        <button                                     className=" mx-7 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7 mb-7"
+                                                                    onClick={handleFileUpload}>Upload</button>
                         </Card.Body>
                     </Card>
                 </div>
             </div>
         </div>
-        </div>
+        </>
     );
 }

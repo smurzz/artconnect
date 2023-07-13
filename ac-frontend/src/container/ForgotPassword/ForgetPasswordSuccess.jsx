@@ -18,7 +18,9 @@ import { ApiService } from "../../lib/api";
 import axios from "../../api/axios";
 import CircularProgress from '@mui/material/CircularProgress';
 import DoneIcon from '@mui/icons-material/Done';
-import Header from "../../components/headerComponent/headerLogout"
+import {logikService} from  "../../lib/service";
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout"
 
 const FORGET_URL = "/forgot-password"
 function Copyright(props) {
@@ -40,9 +42,19 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function ResetPasswortSuccess() {
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
+
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Header/>
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             <main>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />

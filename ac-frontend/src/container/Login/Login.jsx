@@ -18,7 +18,8 @@ import { ApiService } from "../../lib/api";
 //lineaer loading
 import LinearProgress from '@mui/material/LinearProgress';
 import Header from "../../components/headerComponent/headerLogout"
-
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn"
+import {logikService} from  "../../lib/service"
 //Imports Dialog:
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -60,8 +61,17 @@ export default function SignInSide() {
   const [titel, setTitel] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [errAlert, seterrAlert] = React.useState("");
-
+const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   //Immer wenn ein Fehler aus dem Backend kommt, wird der Fehler Dialog angezeigt
+
+  useEffect(()=>{
+    async function getLoggedIn(){
+      const loggedInHeader = await logikService.isLoggedIn();
+      setIsLoggedIn(loggedInHeader);
+      console.log("loggedIn: " + loggedInHeader)
+    }
+    getLoggedIn();
+  },[])
 
   useEffect(() => {
     setErrorMessage(false);
@@ -124,7 +134,8 @@ export default function SignInSide() {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Header />
+      {isLoggedIn? <HeaderLogedIn/>:<Header />}
+
       <Grid container component="main" maxWidth="xs" sx={{ height: '100vh' }}>
         {open &&
           <div >
@@ -166,56 +177,79 @@ export default function SignInSide() {
             backgroundPosition: 'center',
           }}
         />
-        <Grid item xs={12} sm={8} md={5} square>
+        {isLoggedIn?
+            <Grid item xs={12} sm={8} md={5} square>
+              <Box
+                  sx={{
+                    my: 8,
+                    mx: 4,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+              >
+                <Avatar sx={{m: 1, bgcolor: 'secondary.light'}}>
+                  <LockOutlinedIcon/>
+                </Avatar>
+              <Typography component="h1" variant="h5">
+                Du Bist bereits eingeloggt
+              </Typography>
+              </Box>
+            </Grid>
+            : <Grid item xs={12} sm={8} md={5} square>
           <Box
-            sx={{
-              my: 8,
-              mx: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
+              sx={{
+                my: 8,
+                mx: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.light' }}>
-              <LockOutlinedIcon />
+            <Avatar sx={{m: 1, bgcolor: 'secondary.light'}}>
+              <LockOutlinedIcon/>
             </Avatar>
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <Box component="form" noValidate onSubmit={handleSubmit} sx={{mt: 1}}>
               {errorMessage && <div className="alert alert-danger" role="alert">
                 {errAlert}
               </div>}
               <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  autoFocus
+                  onKeyPress={(e) => {
+                    e.key === 'Enter' && e.preventDefault();
+                  }}
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
               />
               <TextField
-                margin="normal"
-                required
-                fullWidth
-                onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-                onChange={(e) => setPwd(e.target.value)}
-                value={pwd}
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
+                  margin="normal"
+                  required
+                  fullWidth
+                  onKeyPress={(e) => {
+                    e.key === 'Enter' && e.preventDefault();
+                  }}
+                  onChange={(e) => setPwd(e.target.value)}
+                  value={pwd}
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
               />
               <Grid item sm={12}>
 
-                <Box sx={{ width: '100%' }}>
-                  {loading &&   <LinearProgress />}
+                <Box sx={{width: '100%'}}>
+                  {loading && <LinearProgress/>}
                 </Box>
 
               </Grid>
@@ -248,10 +282,10 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
               </Grid>
-              <Copyright sx={{ mt: 5 }} />
+              <Copyright sx={{mt: 5}}/>
             </Box>
           </Box>
-        </Grid>
+        </Grid>}
       </Grid>
     </ThemeProvider>
   );

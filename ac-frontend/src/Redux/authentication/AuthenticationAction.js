@@ -46,7 +46,7 @@ export function signupUser(user) {
         };
         axios.post('/auth/register', JSON.stringify(user), _headers)
             .then(response => {
-                console.log(JSON.stringify(response.data));
+                console.log("Response data: "+ JSON.stringify(response.data));
                 dispatch(getSignupSuccessAction(response))
             })
             .catch(error => {

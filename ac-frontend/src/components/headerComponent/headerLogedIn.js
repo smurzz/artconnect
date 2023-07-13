@@ -1,25 +1,20 @@
 import * as React from 'react';
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useNavigate, Link} from "react-router-dom";
 import {logikService} from "../../lib/service";
 import "./header.css"
 import Button from '@mui/material/Button';
-
+import {storageService} from "../../lib/localStorage"
+import {ApiService} from "../../lib/api";
 import {Fragment} from 'react'
 import {Disclosure, Menu, Transition} from '@headlessui/react'
 import {MagnifyingGlassIcon} from '@heroicons/react/20/solid'
 import {Bars3Icon, BellIcon, XMarkIcon} from '@heroicons/react/24/outline'
-
+import Image from "../../images/placeholderUser.png"
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-const navigation = [
-    {name: 'Product', href: '#'},
-    {name: 'Features', href: '#'},
-    {name: 'Marketplace', href: '#'},
-    {name: 'Company', href: '#'},
-]
 const settings = [
     {name: 'Profile', href: '#'},
     {name: 'Logout', href: '#'},
@@ -33,9 +28,43 @@ export default function ResponsiveAppBar() {
         console.log("logout");
         if (logout == "success") {
             console.log("logout");
-            navigate("/home");
+            navigate("/");
         }
     }
+    const [user, setUser] = useState([])
+    const [image, setImage] = useState([]);
+
+    //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
+    useEffect(() => {
+        async function getUserData() {
+            const result = await storageService.getUser();
+            const urlGetUser = `/users?email=${result}`.replace(/"/g, '');
+            const userProfile = await ApiService.getDataSecuredWithParameter(urlGetUser);
+            setUser(userProfile.data);
+            console.log("user Profile: "+ userProfile.data.dateOfBirthday )
+            if (! userProfile.data.profilePhoto?.image?.data ) {
+                setImage(Image);
+
+                //Blank Picture
+                console.log("Image undefined.")
+            } else {
+                const byteCharacters = atob(userProfile.data.profilePhoto.image.data);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                // Create URL for the binary image data
+                const blob = new Blob([byteArray], {type: 'image/png'}); // Adjust the 'type' according to the actual image format
+                const url = URL.createObjectURL(blob);
+                setImage(url);
+            }
+
+        }
+
+        getUserData();
+
+    }, [])
 
 
     return (
@@ -49,7 +78,7 @@ export default function ResponsiveAppBar() {
                                 <div className="flex flex-shrink-0 items-center">
                                     <img
                                         className="block h-8 w-auto lg:hidden"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                                        src={image}
                                         alt="Your Company"
                                     />
                                 </div>
@@ -64,7 +93,20 @@ export default function ResponsiveAppBar() {
                                         to="/galerie"
                                         className="link inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                                     >
-                                        Galerie
+                                        Profil
+                                    </Link>
+                                    <Link
+                                        to="/openGallery"
+                                        className="link inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                    >
+                                        Galleries
+                                    </Link>
+
+                                    <Link
+                                        to="/openArtwork"
+                                        className="link inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                    >
+                                        Artworks
                                     </Link>
                                 </div>
                             </div>
@@ -117,7 +159,7 @@ export default function ResponsiveAppBar() {
                                             <span className="sr-only">Open user menu</span>
                                             <img
                                                 className="h-8 w-8 rounded-full"
-                                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                                src={image}
                                                 alt=""
                                             />
                                         </Menu.Button>
@@ -138,16 +180,25 @@ export default function ResponsiveAppBar() {
                                                     <Link to="/galerie"
                                                         className={classNames(active ? 'link bg-gray-100' : '', 'link block px-4 py-2 text-sm text-gray-700')}
                                                     >
-                                                        Your Galerie
+                                                        Profil
                                                     </Link>
                                                 )}
                                             </Menu.Item>
                                             <Menu.Item>
                                                 {({active}) => (
-                                                    <Link to="/profil"
-                                                        className={classNames(active ? 'link bg-gray-100 fullwidth' : '', 'link block px-4 py-2 text-sm text-gray-700 fullwidth')}
+                                                    <Link to="/openGallery"
+                                                          className={classNames(active ? 'link bg-gray-100' : '', 'link block px-4 py-2 text-sm text-gray-700')}
                                                     >
-                                                        Settings
+                                                        Galleries
+                                                    </Link>
+                                                )}
+                                            </Menu.Item>
+                                            <Menu.Item>
+                                                {({active}) => (
+                                                    <Link to="/openArtwork"
+                                                          className={classNames(active ? 'link bg-gray-100' : '', 'link block px-4 py-2 text-sm text-gray-700')}
+                                                    >
+                                                        Artworks
                                                     </Link>
                                                 )}
                                             </Menu.Item>
@@ -185,21 +236,34 @@ export default function ResponsiveAppBar() {
                                 onClick ={() =>{navigate("/galerie")}}
                                 className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
                             >
-                                Galerie
+                                Profile
                             </Disclosure.Button>
+                            <Disclosure.Button
+                                as="a"
+                                onClick ={() =>{navigate("/openGallery")}}
+                                className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+                            >
+                                Galleries
+                            </Disclosure.Button>
+            <Disclosure.Button
+                as="a"
+                onClick ={() =>{navigate("/openArtwork")}}
+                className="link block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-600 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-800"
+            >
+                Artworks
+            </Disclosure.Button>
                         </div>
                         <div className="border-t border-gray-200 pb-3 pt-4">
                             <div className="flex items-center px-4">
                                 <div className="flex-shrink-0">
                                     <img
                                         className="h-10 w-10 rounded-full"
-                                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                        scr={image}
                                         alt=""
                                     />
                                 </div>
                                 <div className="ml-3">
-                                    <div className="text-base font-medium text-gray-800">Tom Cook</div>
-                                    <div className="text-sm font-medium text-gray-500">tom@example.com</div>
+                                    <div className="text-base font-medium text-gray-800">{user.firstname} {user.lastname}</div>
                                 </div>
                                 <button
                                     type="button"
@@ -216,16 +280,9 @@ export default function ResponsiveAppBar() {
                                     onClick ={() =>{navigate("/galerie")}}
                                     className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
                                 >
-                                    Your Galerie
+                                    Profil
                                 </Disclosure.Button>
-                                <Disclosure.Button
-                                    as="a"
-                                    href="#"
-                                    onClick ={() =>{navigate("/profil")}}
-                                    className="link block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                                >
-                                    Settings
-                                </Disclosure.Button>
+
                                 <Disclosure.Button
                                     as="a"
                                     href="/login"

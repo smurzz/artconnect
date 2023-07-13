@@ -2,11 +2,9 @@ import * as React from 'react';
 import {useState, useEffect, useRef} from "react";
 import {Link, Route, Routes, useNavigate, useLocation} from "react-router-dom";
 import "./bearbeiten.css";
-
 import axios from "../../api/axios";
 import {ApiService} from "../../lib/api";
 import { format } from 'date-fns';
-
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -14,33 +12,28 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
-
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
-import Header from "../../components/headerComponent/headerLogedIn"
+import {logikService} from  "../../lib/service"
+import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../components/headerComponent/headerLogout";
 
 
 function CreateImage(props) {
     const navigate = useNavigate();
-
     //Imageprops, für später, wenn man ein Image bearbeiten will
     const location = useLocation();
     const {user} = location.state;
-
     //DateOfBirthday
     const [dateOfBirth, setDateOfBirth] = useState( new Date());
     const [isDateOfBirthVisible, setIsDateOfBirthVisible] = useState(false);
-
     //file Upload
     const [selectedFile, setSelectedFile] = useState(null);
-
     //Error Handeling fileupload
     const [errorMessage, setErrorMessage] = useState(false);
     const [errAlert, seterrAlert] = React.useState("");
     const [successMessage, setSuccessMessage] = React.useState("");
     const [success, setSuccess] = useState(false);
-
     //edit userdata from BE
     const [bildBearbeiten, setBildBearbeiten] = useState(
         {
@@ -61,6 +54,15 @@ function CreateImage(props) {
             price: 0,
         }
     )
+    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+    useEffect(()=>{
+        async function getLoggedIn(){
+            const loggedInHeader = await logikService.isLoggedIn();
+            setIsLoggedIn(loggedInHeader);
+            console.log("loggedIn: " + loggedInHeader)
+        }
+        getLoggedIn();
+    },[])
 
     //add ExhibitionValues
     const [dimensionValue, setDimensionValue] = useState({height: "", width: "", depth:""})
@@ -221,7 +223,7 @@ function CreateImage(props) {
 
     return (
         <>
-            <Header/>
+            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             {/* tailwind ui */}
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* We've used 3xl here, but feel free to try other max-widths based on your needs */}

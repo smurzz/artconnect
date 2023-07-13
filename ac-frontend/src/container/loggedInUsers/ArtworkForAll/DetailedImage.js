@@ -3,16 +3,16 @@ import {useParams, useNavigate} from 'react-router-dom';
 import {Disclosure, RadioGroup, Tab} from '@headlessui/react'
 import {StarIcon} from '@heroicons/react/20/solid'
 import {HeartIcon, MinusIcon, PlusIcon} from '@heroicons/react/24/outline'
-import {GalerieApiService} from "../../lib/apiGalerie"
-import {storageService} from "../../lib/localStorage"
-import Image1 from '../../images/defaultArtworkPlaceholder.png';
+
+import {GalerieApiService} from "../../../lib/apiGalerie"
+import {storageService} from "../../../lib/localStorage"
+import Image1 from '../../../images/defaultArtworkPlaceholder.png';
 import React from "react";
-import Header from "../../components/headerComponent/headerLogedIn"
-import {logikService} from  "../../lib/service"
-import HeaderLogedIn from "../../components/headerComponent/headerLogedIn";
-import HeaderLogedOut from "../../components/headerComponent/headerLogout";
-import ModalSuccess from "../../components/ModalPopUp/ModalSuccess";
-import Kommentarfunktion from "./kommentarfunktion"
+import Header from "../../../components/headerComponent/headerLogedIn"
+import {logikService} from  "../../../lib/service"
+import HeaderLogedIn from "../../../components/headerComponent/headerLogedIn";
+import HeaderLogedOut from "../../../components/headerComponent/headerLogout";
+import ModalSuccess from "../../../components/ModalPopUp/ModalSuccess";
 
 const product = {
     name: 'Olivia Montague',
@@ -55,62 +55,30 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+export default function DetailedImage() {
     const [selectedColor, setSelectedColor] = useState(product.colors[0])
     const {id} = useParams();
     const [artwork, setArtwork] = useState();
     const navigate = useNavigate();
     const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-    const [success, setSuccess]= React.useState(false);
-    const [failure, setFailure] = React.useState(false);
-    const [openModal, setOpenModal] =React.useState(false);
-    const [successImage, setSuccessImage]= React.useState(false);
-    const [failureImage, setFailureImage] = React.useState(false);
     const [openModalImage, setOpenModalImage] =React.useState(false);
-
-    //Modal
-    const handleOpenModal = () => {
-        setOpenModal(true);
-    };
-
-    const handleOpenModalImage = () => {
-        setOpenModalImage(true);
-    };
-    const handleCloseModalImage = () => {
-        setSuccessImage(false);
-        setFailureImage(false);
-        setOpenModalImage(false);
-    };
-
-
-    const handleCloseModal = () => {
-        setSuccess(false);
-        setFailure(false);
-        setOpenModal(false);
-    };
-
+    const [likecount, setLikeCount] =React.useState(0);
+    const [userLiked, setUserLiked] = React.useState(false);
     useEffect(() => {
         async function getUserData() {
             const loggedInHeader = await logikService.isLoggedIn();
             setIsLoggedIn(loggedInHeader);
-            const getArtwork = await GalerieApiService.getSecuredData("/artworks/" + id);
+            const getArtwork = await GalerieApiService.getUnsecuredData("/artworks/" + id);
             console.log("artwork: " + JSON.stringify(getArtwork.data));
             setArtwork(getArtwork.data);
+            setUserLiked(getArtwork.data.likedByCurrentUser);
+            setLikeCount(getArtwork.data.likes)
         }
 
         getUserData();
 
     }, [])
-   async function deleteImage(idArtwork, idImage){
-        console.log("Image id: "+ JSON.stringify(idImage));
-       const result = await GalerieApiService.deleteSecuredData("/artworks/"+idArtwork+"/images/"+idImage.replace(/"/g, ''));
-       if(result =="success"){
-           setSuccessImage(true);
-           handleOpenModalImage();
-       }else{
-           setFailureImage(true);
-       }
-   }
+
     function convertImage(data) {
         if (data) {
             const byteCharacters = atob(data);
@@ -129,88 +97,42 @@ export default function Example() {
         }
     }
 
-    async function deleteArtwort(id) {
-        console.log("deleteArtwork: " + id);
-        const result = await GalerieApiService.deleteSecuredData("/artworks/" + id);
-        if(result =="success"){
-            setSuccess(true);
-            handleOpenModal();
+    async function setLike(){
+        await GalerieApiService.postSecuredData("/artworks/"+id+"/like",{})
+        setUserLiked(!userLiked);
+        if(userLiked === false){
+            setLikeCount(likecount+1)
         }else{
-            setFailure(true);
+            setLikeCount(likecount-1)
         }
-
     }
 
     return (
-        <>
-            {isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
+        <>{isLoggedIn? <HeaderLogedIn/>:<HeaderLogedOut/>}
             <div className="bg-white">
-                {success && <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete Artwork" message="You have successfully deleted the Artwork" url="/galerie"/>}
-                {failure && <ModalSuccess open={openModal} handleClose={handleCloseModal} meassageHeader="Delete Artwork" message="Opps. Something went wrong, please Try again later!" url="/galerie" />}
-
-
-                {successImage && <ModalSuccess open={openModalImage} handleClose={handleCloseModalImage} meassageHeader="Delete Image" message="You have successfully deleted the Image" url="/galerie"/>}
-                {failureImage && <ModalSuccess open={openModalImage} handleClose={handleCloseModalImage} meassageHeader="Delete Image" message="Opps. Something went wrong, please Try again later!" url="/galerie" />}
                 <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
                     <div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
-                        {/* Image gallery */}
-                        <Tab.Group as="div" className="flex flex-col-reverse">
-                            {/* Image selector */}
+           <Tab.Group as="div" className="flex flex-col-reverse">
                             <Tab.Panels className="aspect-h-1 aspect-w-1 w-full">
                                 {artwork && artwork.images && artwork.images[0] ? (
                                     <Tab.Panel>
                                         <img
                                             src={convertImage(artwork.images[0].image.data)}
                                             className="h-full w-full object-cover object-center sm:rounded-lg"
-                                        />
-                                        <button
-                                            onClick={() => {
-                                                deleteImage( artwork.id, artwork.images[0].id);
-                                            }}
-                                            className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7"
-                                        >
-                                            Delete image
-                                        </button>
+                                        />n>
                                     </Tab.Panel>
                                 ) : <Tab.Panel>
                                     <img
                                         src={Image1}
                                         className="h-full w-full object-cover object-center sm:rounded-lg"
                                     />
-                                    <button
-                                        onClick={() => {
-                                            navigate("/uploadImage/"+ artwork.id);
-                                        }}
-                                        className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7"
-                                    >
-                                        Upload image
-                                    </button>
                                 </Tab.Panel>}
                             </Tab.Panels>
                         </Tab.Group>
 
-                        {/* Product info */}
                         <div className="mt-10 px-4 sm:mt-16 sm:px-0 lg:mt-0">
                             <div className="flex items-center mb-7">
                                 <h1 className="text-3xl font-bold tracking-tight text-gray-900">{artwork?.title}</h1>
-                                <button
-                                    onClick={() => {
-                                        navigate("/editArt", {state: {artworkOld: artwork, artworkId: id}});
-                                    }}
-                                    className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 m-7"
-                                >
-                                    Edit Artwork
-                                </button>
-
-                                <button
-                                    onClick={() => {
-                                        deleteArtwort(id);
-
-                                    }}
-                                    className="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 "
-                                >
-                                    Delete Artwork
-                                </button>
                             </div>
                             <div className="like-count text-gray-400">{artwork?.location === "" ?
                                 <span>unknown, </span> : <span>{artwork?.location}, </span>} {artwork?.yearOfCreation}
@@ -221,7 +143,6 @@ export default function Example() {
 
                             <div className="mt-3">
                                 <h2 className="sr-only">Product information</h2>
-                                {/* <p className="text-3xl tracking-tight text-gray-900">{product.price}</p> */}
                             </div>
 
 
@@ -245,15 +166,28 @@ export default function Example() {
                                             Chat with the Artist
                                         </a>
                                     </button>
+                                    {isLoggedIn ?
+                                        <button
+                                            type="button"
+                                            className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
+                                            onClick ={()=>{setLike()}}
+                                        >
+                                            {userLiked ?
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+                                                    <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
+                                                </svg>
 
-                                    <button
-                                        type="button"
-                                        className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
-                                    >
-                                        <HeartIcon className="h-6 w-6 flex-shrink-0" aria-hidden="true"/>
-                                        <span className="sr-only">Add to favorites</span>
-                                        <span className="like-count"> {artwork?.likes} likes</span>
-                                    </button>
+                                                : <HeartIcon className=" h-6 w-6 flex-shrink-0" aria-hidden="true"/>}
+                                            <span className="sr-only">Add to favorites</span>
+                                            <span className="like-count"> {likecount} likes</span>
+                                        </button> :
+                                        <div className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400">
+                                            <HeartIcon className="h-6 w-6 flex-shrink-0" aria-hidden="true"/>
+                                            <span className="sr-only">Add to favorites</span>
+                                            <span className="like-count"> {artwork?.likes} likes</span>
+                                        </div>
+                                    }
+
 
                                 </div>
                             </form>
@@ -293,12 +227,12 @@ export default function Example() {
                                                 <Disclosure.Panel as="div" className="prose prose-sm pb-6">
                                                     <ul role="list">
                                                         <li>
-                                                           <p className="text-sm font-medium">Dimension </p>
-                                                            <div>Height: {artwork?.dimension.height}</div>
-                                                            <div className="mb-2">Width: {artwork?.dimension.width}</div>
-                                                            <div>Depth: {artwork?.dimension.depth}</div>
+                                                            <p >Dimension </p>
+                                                            <div >Height {artwork?.dimension.height}</div>
+                                                            <div >Width {artwork?.dimension.width}</div>
+                                                            <div>Depth {artwork?.dimension.depth}</div>
                                                         </li>
-                                                        <li> <p className="text-sm font-medium">Price</p> <div className="mb-2">{artwork?.price}Euro </div></li>
+                                                        <li> <p >Price {artwork?.price} Euro </p></li>
                                                     </ul>
                                                 </Disclosure.Panel>
                                             </>
@@ -344,12 +278,9 @@ export default function Example() {
                                 </div>
                             </section>
                         </div>
-
-                        <Kommentarfunktion id={id}/>
                     </div>
                 </div>
             </div>
-
         </>
     )
 }
