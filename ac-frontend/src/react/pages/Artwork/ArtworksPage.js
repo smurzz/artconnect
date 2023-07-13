@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { MenuBar } from './components/MenuBar';
-import { useDispatch, useSelector } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {MenuBar} from '../components/MenuBar';
+import {useDispatch, useSelector} from 'react-redux';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Footer from './components/Footer';
-import LoadingPage from './components/LoadingPage';
-import NotFoundPage from './errors/NotFoundPage';
-import '../layout/css/homePublic.css';
-import '../layout/css/users.css';
+import Footer from '../components/Footer';
+import LoadingPage from '../components/LoadingPage';
+import NotFoundPage from '../errors/NotFoundPage';
+import '../../layout/css/homePublic.css';
+import '../../layout/css/users.css';
 
-import ProfilePhotoDefault from '../images/user.png';
+import ProfilePhotoDefault from '../../images/user.png';
 
-import ImageTMP from '../images/placeholder.jpg';
+import ImageTMP from '../../images/placeholder.jpg';
 
-import * as artworkActions from '../../redux/artwork/ArtworkAction';
+import * as artworkActions from '../../../redux/artwork/ArtworkAction';
 
 function ArtworksPage() {
     const dispatch = useDispatch();
 
     const [searchValue, setSearchValue] = useState('');
     const artworkData = useSelector(state => state.artwork);
-    const [tags, setTags]=useState([]);
+    const [tags, setTags] = useState([]);
 
     useEffect(() => {
         if (!searchValue) {
@@ -32,41 +32,42 @@ function ArtworksPage() {
     }, [dispatch, searchValue]);
 
     if (!artworkData.artworks && !artworkData.error) {
-        return <LoadingPage />;
+        return <LoadingPage/>;
     }
 
     if (artworkData.error) {
-        return <NotFoundPage />;
+        return <NotFoundPage/>;
     }
 
     const handleSearchSubmit = async (event) => {
-       event.preventDefault();
+        event.preventDefault();
         var splitedSeachValue = searchValue.split(' ');
-        var arraySplitedSearchValue =[];
+        var arraySplitedSearchValue = [];
 
         console.log(splitedSeachValue);
         setTags(splitedSeachValue);
-            await dispatch(artworkActions.getArtworksByTags(splitedSeachValue));
+        await dispatch(artworkActions.getArtworksByTags(splitedSeachValue));
     };
 
     return (
         <div className="home-public-container">
-            <MenuBar />
-            <p>Artwork !!!</p>
+            <MenuBar/>
             <div className="container text-center m-auto">
                 <section className="py-3 text-center container">
                     <div className="row py-lg-5">
                         <div className="col-lg-6 col-md-8 mx-auto">
-                            <h1 className="fw-light">Artists and art lovers</h1>
+                            <h1 className="fw-light">Art for art lovers</h1>
                         </div>
                         <Form className="d-flex mt-3" onSubmit={handleSearchSubmit}>
                             <Form.Control
                                 type="search"
-                                placeholder="Search by users"
+                                placeholder="Search by tags"
                                 className="me-2"
                                 aria-label="Search"
                                 value={searchValue}
-                                onChange={async (e) => { setSearchValue(e.target.value); }}
+                                onChange={async (e) => {
+                                    setSearchValue(e.target.value);
+                                }}
                             />
                             <Button variant="outline-secondary" onClick={handleSearchSubmit}>Search</Button>
                         </Form>
@@ -76,10 +77,10 @@ function ArtworksPage() {
                 <div className="album py-5">
                     <div className="container-md">
 
-                        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                             {artworkData.artworks?.length > 0 ? (
-                                     artworkData.artworks.map((artwork, index) => (
-                            <div className="col">
+                        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 justify-content-center">
+                            {artworkData.artworks?.length > 0 ? (
+                                artworkData.artworks.map((artwork, index) => (
+                                    <div className="col">
                                         <div className="card shadow-sm">
                                             <img
                                                 src={artwork.images?.length > 0 ? (`data:${artwork.images[0]?.contentType};base64,${artwork.images[0]?.image.data}`) : ImageTMP}
@@ -89,7 +90,7 @@ function ArtworksPage() {
                                             />
                                             <div className="card-body">
                                                 <h5 className="card-title">{artwork.title}</h5>
-                                                <p className="card-text"> {artwork?.description?.substring(0, 20) || "No description"}...</p>
+                                                <p className="card-text"> {artwork?.description?.substring(0, 20) || "No description "}...</p>
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div className="btn-group">
                                                         <button type="button"
@@ -102,19 +103,21 @@ function ArtworksPage() {
                                             </div>
                                         </div>
                                     </div>
-                             ))
-                            ) : (    <div className="d-flex">
-                                     <p className='lead text-body-secondary'>No artworks found with Tags:</p>
-                                     {tags?.map((tag) => (
-                                         <p className='lead text-body-secondary mx-2'>{tag} </p>
-                                     ))}
-                                 </div>
-                             )}
+                                ))
+                            ) : (<div className="d-flex align-items-center justify-content-center flex-column">
+                                    <p className='lead text-body-secondary'>No artworks found with Tags:</p>
+                                    <div>
+                                        {tags?.map((tag) => (
+                                            <p className='lead text-body-secondary tag tag-sm'>#{tag}</p>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
-            <Footer />
+            <Footer/>
         </div>
     );
 }

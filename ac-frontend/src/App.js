@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import HomePublic from './react/pages/HomePublic';
 import HomePrivate from './react/pages/HomePrivate';
 import UsersPage from './react/pages/UsersPage';
-import ArtworksPage from "./react/pages/ArtworksPage";
+import ArtworksPage from "./react/pages/Artwork/ArtworksPage";
 import Login from './react/pages/Login';
 import MyProfile from './react/pages/MyProfile';
 import Profile from './react/pages/Profile';
