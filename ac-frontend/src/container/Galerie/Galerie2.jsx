@@ -305,11 +305,11 @@ export default function Gallery() {
                                                 <span className="tag tag-sm">#{tag}</span>
                                             ))}
                                         </div>
-                                        <div className="d-flex flex-wrap justify-content-between mt-4 mx-7">
+                                        <div className="d-flex flex-wrap justify-content-between ">
                                             <h3 className="link text-lg font-medium text-gray-900 flex-grow-1">{product.title}</h3>
                                             <p className="link mt-1 text-lg font-medium text-gray-900">{product.price} Euro</p>
                                         </div>
-                                        <p className="link text-sm text-gray-700 my-7">{product.description}</p>
+                                        <p className="link text-sm text-gray-700 ">{product.description}</p>
                                     </div>
                                 </Link>
 

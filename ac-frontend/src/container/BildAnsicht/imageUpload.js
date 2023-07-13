@@ -78,7 +78,8 @@ export default function ImageUploadComponent() {
                                 Upload Image
                             </Card.Text>
                             <input type="file" accept=".jpg, .jpeg, .png" onChange={(event)=>{handleFileChange(event,0)}} />
-                        <button className="btn btn-primary mt-7" onClick={handleFileUpload}>Upload</button>
+                        <button                                     className=" mx-7 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-7 mb-7"
+                                                                    onClick={handleFileUpload}>Upload</button>
                         </Card.Body>
                     </Card>
                 </div>

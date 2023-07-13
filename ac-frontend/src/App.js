@@ -39,6 +39,8 @@ function App() {
         {/*GalleryForAll*/}
         <Route path="/galleryOtherUser/:id" element ={<GallerieOfOtherUser/>}></Route>
         <Route path="/openGallery" element={<Album/>}></Route>
+        {/*Artwork for All*/}
+        <Route path="/openArtwork" element={<AlbumArtWork/>}></Route>
           {/*User bearbeiten*/}
 
           <Route  element={<ProtectedRoutes />}>
@@ -58,9 +60,6 @@ function App() {
             <Route path="/newArt" element={<BildErstellen/>}></Route>
             <Route path="/editArt" element ={<BildBearbeiten/>}></Route>
             <Route path="/galerie/DetailImage/:id" element={<DetailImage/>}></Route>
-
-            {/*Artwork for All*/}
-            <Route path="/openArtwork" element={<AlbumArtWork/>}></Route>
           </Route>
         <Route path='*' element={<NotFound/>}/>
       </Routes>

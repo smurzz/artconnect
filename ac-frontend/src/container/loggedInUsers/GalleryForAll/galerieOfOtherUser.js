@@ -160,7 +160,7 @@ const ProfilUser = () => {
     //lad die Userdaten aus dem Backend, wenn es ein userFoto gibt, convertiert er es in eine brauchbare URL
     useEffect(() => {
         async function getUserData() {
-            const result = await GalerieApiService.getSecuredData("/galleries/" + id);
+            const result = await GalerieApiService.getUnsecuredData("/galleries/" + id);
             const urlGetUser = result.data.ownerId;
             const userProfile = await GalerieApiService.getUnsecuredData("/users/" + urlGetUser);
             console.log("OwnerID: "+ urlGetUser);
@@ -216,7 +216,6 @@ const ProfilUser = () => {
                                 <h1 className="truncate text-2xl font-bold text-gray-900">{(user.firstname ? user.firstname + " " : " ") + (user.lastname ? user.lastname : " ")}</h1>
                                 <p className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"> {user.dateOfBirthday ? formatDate(user.dateOfBirthday) : " "}</p>
                             </div>
->
                         </div>
 
                         <span className="flex-grow">
@@ -316,7 +315,7 @@ const ProfilUser = () => {
                                                                 ))}
                                                             </p>
                                                         ) : (
-                                                            <p>No social media accounts found.</p>
+                                                            <p>No Exhibitions found.</p>
                                                         )}
                                                     </div>
                                                 </Disclosure.Panel>
@@ -366,8 +365,10 @@ export default function GallerieOfOtherUser() {
             const userProfile = await GalerieApiService.getUnsecuredData("/users/" + urlGetUser);
             setUser(userProfile.data);
             const getGalerie = result;
+            console.log("Gallerie: "+ JSON.stringify(result));
             setGalerieId(id);
             const artWork = getGalerie.data.artworks;
+            console.log("artWork: "+ JSON.stringify(artWork));
             setArtwork(artWork);
             gallerie.title = getGalerie.data.title;
             setGallerie({

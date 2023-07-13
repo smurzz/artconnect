@@ -77,6 +77,12 @@ export default function ResponsiveAppBar() {
                                         >
                                             Galleries
                                         </Link>
+                                        <Link
+                                            to="/openArtwork"
+                                            className="link inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                                        >
+                                            Artworks
+                                        </Link>
                                     </div>
                                 </div>
 
@@ -195,6 +201,13 @@ export default function ResponsiveAppBar() {
                                     className="link block border-l-4 border-indigo-500 bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700"
                                 >
                                     Galleries
+                                </Disclosure.Button>
+                                <Disclosure.Button
+                                    as="a"
+                                    href="/openArtwork"
+                                    className="link block border-l-4 border-indigo-500 bg-indigo-50 py-2 pl-3 pr-4 text-base font-medium text-indigo-700"
+                                >
+                                    Artworks
                                 </Disclosure.Button>
 
                                 <Disclosure.Button

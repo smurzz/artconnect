@@ -214,7 +214,7 @@ const Profile = () => {
                                                                 ))}
                                                             </p>
                                                         ) : (
-                                                            <p>No social media accounts found.</p>
+                                                            <p>No Exhibitions found.</p>
                                                         )}
                                                     </div>
                                                 </Disclosure.Panel>
