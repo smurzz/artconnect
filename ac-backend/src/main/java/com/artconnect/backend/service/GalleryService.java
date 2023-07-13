@@ -160,7 +160,6 @@ public class GalleryService {
 	            .flatMap(artwork -> {
 	                List<String> imageIds = artwork.getImagesIds();
     				if (imageIds != null && !imageIds.isEmpty()) {
-    	                System.out.println("Imagesid: " + imageIds.toString());
             			return imageService.getPhotosByIds(imageIds)
 	        	                .collectList()
 	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images, false));
