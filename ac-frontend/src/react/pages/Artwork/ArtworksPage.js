@@ -86,7 +86,7 @@ function ArtworksPage() {
                                                 src={artwork.images?.length > 0 ? (`data:${artwork.images[0]?.contentType};base64,${artwork.images[0]?.image.data}`) : ImageTMP}
                                                 alt="Thumbnail"
                                                 className="card-img-top"
-                                                style={{width: '100%', height: '225px', color: '#eceeef'}}
+                                                style={{ objectFit: 'cover',width: '100%', height: '300px', color: '#eceeef'}}
                                             />
                                             <div className="card-body">
                                                 <h5 className="card-title">{artwork.title}</h5>
