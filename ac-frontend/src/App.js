@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import HomePublic from './react/pages/HomePublic';
 import HomePrivate from './react/pages/HomePrivate';
 import UsersPage from './react/pages/UsersPage';
+import ArtworksPage from "./react/pages/ArtworksPage";
 import Login from './react/pages/Login';
 import MyProfile from './react/pages/MyProfile';
 import Profile from './react/pages/Profile';
@@ -33,6 +34,7 @@ function App() {
         <Route exact path='/profile-edit' element={< MyProfile/>} />
         <Route exact path='/users' element={< UsersPage/>} />
         <Route exact path='/user/:id' element={< Profile/>} />
+        <Route exact path='/artworks' element={<ArtworksPage/>}/>
       
         {/* <Route 
           exact path="/home" 
