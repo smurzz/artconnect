@@ -7,7 +7,6 @@ import Footer from '../components/Footer';
 import LoadingPage from '../components/LoadingPage';
 import NotFoundPage from '../errors/NotFoundPage';
 import '../../layout/css/homePublic.css';
-import EditMaterials from "../components/EditMaterials"
 import '../../layout/css/users.css';
 import {HeartIcon, MinusIcon, PlusIcon} from '@heroicons/react/24/outline'
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -200,7 +199,8 @@ function EditArtWork() {
     }
 
     if (artworkData.error) {
-        return <NotFoundPage/>;
+        alert(artworkData.error)
+        //return <NotFoundPage/>;
     }
 
     return (
@@ -438,13 +438,10 @@ function EditArtWork() {
                                             </div>
                                         </div>
                                     </div>
-                                    {/*materials*/}
-                                    <div className="exhibition-container mb-5">
-                                        <p className="lead fw-normal mb-1">Materials</p>
-                                        <EditMaterials artMaterials={artworkData.artwork?.materials ? artworkData.artwork?.materials : null} onUpdateMaterials={handleMaterialUpdate} />
-                                    </div>
                                     <div style={{ margin: 10 }}>
+                                        <p className="lead fw-normal mb-1 mt-3">Tags</p>
   <div className="input-group">
+
     <InputTags
       /* style={{ backgroundColor: "red" }} */
       values={artworkData.artwork?.tags || []}
@@ -469,6 +466,38 @@ function EditArtWork() {
       ))}
   </ol>
 </div>
+
+                                    <div style={{ margin: 10 }}>
+                                        <p className="lead fw-normal mb-1 mt-3">Materials</p>
+                                        <div className="input-group">
+                                            <InputTags
+                                                /* style={{ backgroundColor: "red" }} */
+                                                values={artworkData.artwork?.materials || []}
+                                                onTags={(value) => setArtwork({ ...artwork, materials: value.values }, console.log(artwork))}
+                                            />
+                                            <button
+                                                className="btn btn-outline-secondary"
+                                                type="button"
+                                                data-testid="button-clearAll"
+                                                onClick={() => {
+                                                    setArtwork({ ...artwork, materials: [] });
+                                                }}
+                                            >
+                                                Delete all
+                                            </button>
+                                        </div>
+                                        <hr />
+                                        <ol>
+                                            {artwork?.materials?.length > 0 &&
+                                                artwork.materials.map((item, index) => (
+                                                    <li key={item + index}>{item}</li>
+                                                ))}
+                                        </ol>
+                                    </div>
+
+
+
+
                                     <div className='biography-container mb-5'>
                                         <p className="lead fw-normal mb-1">artDirections</p>
                                         <div className="p-2" style={{ backgroundColor: '#f8f9fa' }}>
