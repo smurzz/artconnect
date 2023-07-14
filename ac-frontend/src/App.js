@@ -18,7 +18,8 @@ import * as authActions from './redux/authentication/AuthenticationAction';
 import LoadingPage from './react/pages/components/LoadingPage';
 import ArtworkDetailPage from "./react/pages/Artwork/ArtworkDetails";
 import ArtWorkUser from "./react/pages/Artwork/ArtworkDetailsOfUser";
-import ArtworkCreate from "./react/pages/Artwork/ArtworkCreate"
+import ArtworkUpdate from "./react/pages/Artwork/ArtworkCreate"
+import EditArtWork from "./react/pages/Artwork/EditArtwork"
 /* 
 import ForgotPassword from './react/pages/components/forgotPassword';
 import ResetPasswordForm from './react/pages/components/resetPasswordForm'; */
@@ -38,7 +39,7 @@ function App() {
         <Route exact path='/users' element={< UsersPage/>} />
         <Route exact path='/user/:id' element={< Profile/>} />
         <Route exact path='/artworks' element={<ArtworksPage/>}/>
-        <Route exact path='/artworks/:id' element={<ArtworkDetailPage/>}/>
+        <Route exact path='/artworks/:id' element={<EditArtWork/>}/>
         <Route path='*' element={<NotFound/>}/>
       
         {/* <Route 
