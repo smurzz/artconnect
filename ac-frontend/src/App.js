@@ -38,8 +38,7 @@ function App() {
         <Route exact path='/users' element={< UsersPage/>} />
         <Route exact path='/user/:id' element={< Profile/>} />
         <Route exact path='/artworks' element={<ArtworksPage/>}/>
-        <Route exact path='/artworks/:id' element={<ArtworkCreate/>}/>
-        <Route exact path='/artworks/myArt/:id' element={<ArtworkCreate/>}/>
+        <Route exact path='/artworks/:id' element={<ArtworkDetailPage/>}/>
         <Route path='*' element={<NotFound/>}/>
       
         {/* <Route 
