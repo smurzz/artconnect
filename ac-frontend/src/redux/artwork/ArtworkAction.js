@@ -320,6 +320,7 @@ export function addArtworkImage(id, formData) {
             axios.post("/artworks/add-photo/" + id, formData, requestOptions)
             .then(response => {
                 const action = createArtworkIamgeSuccessAction(response);
+                window.location.reload();
                 dispatch(action);
             })
             .catch(error => {
@@ -332,7 +333,7 @@ export function addArtworkImage(id, formData) {
     }
 }
 
-export function addRemoveArtwork(id) {
+export function addRemoveLike(id) {
 
     return async dispatch => {
         dispatch(createArtworkPendingAction());
@@ -345,7 +346,7 @@ export function addRemoveArtwork(id) {
                         'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
                     }
                 };
-                axios.post('/artworks/' + id + '/like', requestOptions)
+                axios.post('/artworks/' + id + '/like', null, requestOptions)
                     .then(response => {
                         const action = createArtworkSuccessAction(response);
                         dispatch(action);
