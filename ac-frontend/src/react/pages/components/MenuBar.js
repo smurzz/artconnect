@@ -69,19 +69,6 @@ export function MenuBar(props) {
                         <Nav.Link href="/home">Home</Nav.Link>
                         <Nav.Link href="/users">Users</Nav.Link>
                         <Nav.Link href="/artworks">Artwoks</Nav.Link>
-                        {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
-                            <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-                            <NavDropdown.Item href="#action4">
-                                Another action
-                            </NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#action5">
-                                Something else here
-                            </NavDropdown.Item>
-                        </NavDropdown>
-                        <Nav.Link href="#" disabled>
-                            Link
-                        </Nav.Link> */}
                         {loginButton}
                         {registerButton}
                         {authUserOptions}
