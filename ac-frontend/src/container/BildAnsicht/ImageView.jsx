@@ -8,6 +8,12 @@ import {storageService} from "../../lib/localStorage"
 import Image1 from './../Galerie/imgSlides/original.jpg';
 import React from "react";
 import Header from "../../components/headerComponent/headerLogedIn"
+import axios from 'axios';
+import './FiveStarRating.css';
+
+
+
+import { FaStar } from 'react-icons/fa';
 
 const product = {
     name: 'Olivia Montague',
@@ -51,7 +57,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+export default function Example({galleryId}) {
     const [selectedColor, setSelectedColor] = useState(product.colors[0])
     const {id} = useParams();
     const [artwork, setArtwork] = useState();
@@ -64,6 +70,36 @@ export default function Example() {
         getUserData();
 
     }, [])
+
+
+    const [selectedRating, setSelectedRating] = useState(0);
+
+    const handleRatingClick = async (rating) => {
+      try {                                                                 // where to get galleryId from.
+        const response = await axios.post(`http://localhost:8080/galleries/${galleryId}/rating`, { rating });
+        console.log(response.data); // Handle the API response as needed
+      } catch (error) {
+        console.error('Error submitting rating:', error);
+      }
+    };
+
+        const renderStars = () => {
+            const stars = [];
+            for (let i = 1; i <= 5; i++) {
+              const starClassName = i <= selectedRating ? 'star selected' : 'star';
+              stars.push(
+                <span
+                  key={i}
+                  className={starClassName}
+                  onClick={() => handleRatingClick(i)}
+                >
+                  ★
+                </span>
+              );
+            }
+            return stars;
+          };
+
 
     return (
         <>
@@ -152,14 +188,20 @@ export default function Example() {
                                         </a>
                                     </button>
 
-                                    <button
+
+                                    {/* Favoriete button */}
+                                        <div className="rating">
+                                            {renderStars()}
+                                        </div>
+
+                                    {/* <button
                                         type="button"
                                         className="ml-4 flex items-center justify-center rounded-md px-3 py-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
                                     >
                                         <HeartIcon className="h-6 w-6 flex-shrink-0" aria-hidden="true"/>
                                         <span className="sr-only">Add to favorites</span>
                                         <span className="like-count"> {artwork?.likes} likes</span>
-                                    </button>
+                                    </button> */}
 
                                 </div>
                             </form>

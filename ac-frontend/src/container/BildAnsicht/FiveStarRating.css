@@ -1,0 +1,9 @@
+.star {
+    color: gray;
+    cursor: pointer;
+  }
+  
+  .star.selected {
+    color: gold;
+  }
+  
