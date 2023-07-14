@@ -13,42 +13,16 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import ProfilePhotoDefault from '../../images/user.png';
 import ImageTMP from '../../images/placeholder.jpg';
 import * as artworkActions from '../../../redux/artwork/ArtworkAction';
-import {useParams} from 'react-router-dom';
-
-function ArtworkDetailPage() {
-    let {id} = useParams();
+import { useParams } from 'react-router-dom';
+function ArtWorkUser() {
+    const [isLoading, setIsLoading] = useState(false);
+    let { id } = useParams();
     const dispatch = useDispatch();
     const artworkData = useSelector(state => state.artwork);
-    var userSession = JSON.parse(localStorage.getItem('userSession'));
-
-    async function setLike() {
-        console.log("setLike")
-        await dispatch(artworkActions.addRemoveLike(id))
-    }
-
-    if (userSession) {
-
-        var likeArtLoggedIn = (
-            <Button
-                onClick={() => {setLike()}}>
-                <div className="card-body">
-                    <span className="bi bi-heart"></span>
-                    <span className="like-count"> {artworkData.artwork?.likes} likes</span>
-                </div>
-            </Button>)
-    } else {
-        var likeArtLoggedOut = (
-            <div className="card-body">
-                <span className="bi bi-heart"></span>
-                <span className="like-count"> {artworkData.artwork?.likes} likes</span>
-            </div>)
-    }
 
     useEffect(() => {
         const fetchData = async () => {
-            console.log("id form Url: " + id);
             await dispatch(artworkActions.getArtwork(id));
-            console.log(artworkData.artwork)
         };
         fetchData();
     }, [dispatch]);
@@ -60,6 +34,10 @@ function ArtworkDetailPage() {
     if (artworkData.error) {
         return <NotFoundPage/>;
     }
+
+    const handleSearchSubmit = async (event) => {
+    };
+
     return (
         <div className="home-public-container">
             <MenuBar/>
@@ -74,7 +52,7 @@ function ArtworkDetailPage() {
                                     <div className="ms-4 d-flex flex-column" style={{marginTop: '8rem', zIndex: '1'}}>
                                         <div className="mb-1">
                                             <img id="profileImage"
-                                                 src={artworkData.artwork?.images?.length > 1 ? (`data:${artworkData.artwork?.images[1]?.contentType};base64,${artworkData.artwork?.images[1]?.image.data}`) : ImageTMP}
+                                                 src={artworkData.artwork?.images?.length > 1?  (`data:${artworkData.artwork?.images[1]?.contentType};base64,${artworkData.artwork?.images[1]?.image.data}`) : ImageTMP}
                                                  alt="Profile"
                                                  className="img-thumbnail"
                                                  style={{
@@ -89,7 +67,7 @@ function ArtworkDetailPage() {
                                     <div className="ms-4 d-flex flex-column" style={{marginTop: '8rem', zIndex: '1'}}>
                                         <div className="mb-1">
                                             <img id="profileImage"
-                                                 src={artworkData.artwork?.images?.length > 2 ? (`data:${artworkData.artwork?.images[2]?.contentType};base64,${artworkData.artwork?.images[2]?.image.data}`) : ImageTMP}
+                                                 src={artworkData.artwork?.images?.length > 2 ?  (`data:${artworkData.artwork?.images[2]?.contentType};base64,${artworkData.artwork?.images[2]?.image.data}`) : ImageTMP}
                                                  alt="Profile"
                                                  className="img-thumbnail"
                                                  style={{
@@ -104,7 +82,7 @@ function ArtworkDetailPage() {
                                     <div className="ms-4 d-flex flex-column" style={{marginTop: '8rem', zIndex: '1'}}>
                                         <div className="mb-1">
                                             <img id="profileImage"
-                                                 src={artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP}
+                                                 src={artworkData.artwork?.images?.length > 3 ?  (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP}
                                                  alt="Profile"
                                                  className="img-thumbnail"
                                                  style={{
@@ -119,7 +97,7 @@ function ArtworkDetailPage() {
                                     <div className="ms-4 d-flex flex-column" style={{marginTop: '8rem', zIndex: '1'}}>
                                         <div className="mb-1">
                                             <img id="profileImage"
-                                                 src={artworkData.artwork?.images?.length > 4 ? (`data:${artworkData.artwork?.images[4]?.contentType};base64,${artworkData.artwork?.images[4]?.image.data}`) : ImageTMP}
+                                                 src={artworkData.artwork?.images?.length > 4 ?  (`data:${artworkData.artwork?.images[4]?.contentType};base64,${artworkData.artwork?.images[4]?.image.data}`) : ImageTMP}
                                                  alt="Profile"
                                                  className="img-thumbnail"
                                                  style={{
@@ -147,8 +125,7 @@ function ArtworkDetailPage() {
                                 <div className="text-center my-5">
                                     <h1 className="fw-bolder">{artworkData.artwork?.title}</h1>
                                     <div className="like-count text-gray-400">{artworkData.artwork?.location === "" ?
-                                        <span>unknown, </span> :
-                                        <span>{artworkData.artwork?.location}, </span>} {artworkData.artwork?.yearOfCreation}
+                                        <span>unknown, </span> : <span>{artworkData.artwork?.location}, </span>} {artworkData.artwork?.yearOfCreation}
                                     </div>
                                     {artworkData.artwork?.artDirections.map((tag) => (
                                         <span className="tag tag-sm">{tag}</span>
@@ -164,7 +141,7 @@ function ArtworkDetailPage() {
                 <div className="row">
                     <div className="col-lg-8">
                         {/*big Image*/}
-                        <div className="card mb-4" style={{width: '52rem', height: '40rem'}}>
+                        <div className="card mb-4" style={{ width: '52rem', height: '40rem' }}>
                             <img
                                 className="card-img-top gradient-custom-2 bg-body-tertiary"
                                 src={
@@ -172,11 +149,9 @@ function ArtworkDetailPage() {
                                         ? `data:${artworkData.artwork?.images[0]?.contentType};base64,${artworkData.artwork?.images[0]?.image.data}`
                                         : ImageTMP
                                 }
-                                style={{
-                                    objectFit: 'contain', width: '100%', height: '100%',
+                                style={{ objectFit: 'contain', width: '100%', height: '100%',
                                     maxHeight: '100%',
-                                    maxWidth: '100%'
-                                }}
+                                    maxWidth: '100%'}}
                             />
                         </div>
                     </div>
@@ -187,12 +162,8 @@ function ArtworkDetailPage() {
                             <div className="card-body">
                                 <div className="card-body d-flex flex-column">
                                     <ul className="list-group list-group-flush flex-grow-1">
-                                        {artworkData.artwork?.price &&
-                                            <li className="list-group-item">Price: {artworkData.artwork.price} Euro</li>}
-                                        {artworkData.artwork?.dimension &&
-                                            <li className="list-group-item">Height: {artworkData.artwork.dimension.height}cm
-                                                Width: {artworkData.artwork.dimension.width}cm
-                                                Depth: {artworkData.artwork.dimension.depth}cm</li>}
+                                        {artworkData.artwork?.price && <li className="list-group-item">Price: {artworkData.artwork.price} Euro</li>}
+                                        {artworkData.artwork?.dimension && <li className="list-group-item">Height: {artworkData.artwork.dimension.height}cm Width: {artworkData.artwork.dimension.width}cm Depth: {artworkData.artwork.dimension.depth}cm</li>}
                                     </ul>
                                 </div>
                             </div>
@@ -233,8 +204,8 @@ function ArtworkDetailPage() {
                         }
                         <div className="card mb-4">
                             <div className="card-body">
-                                {likeArtLoggedOut}
-                                {likeArtLoggedIn}
+                                <span className="bi bi-heart"></span>
+                                <span className="like-count"> {artworkData.artwork?.likes} likes</span>
                             </div>
                         </div>
                     </div>
@@ -245,4 +216,4 @@ function ArtworkDetailPage() {
     );
 }
 
-export default ArtworkDetailPage;
+export default ArtWorkUser;
