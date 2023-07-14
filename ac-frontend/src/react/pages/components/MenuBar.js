@@ -31,7 +31,7 @@ export function MenuBar(props) {
         /* var logoutButton = (<Nav.Link onClick={handleLogout}>Logout</Nav.Link>); */
         var authUserOptions = (
             <NavDropdown align='end' title={<FaUserCircle size={36} />} id="basic-nav-dropdown" flip>
-                <NavDropdown.Item href="/gallery-edit">My Gallery</NavDropdown.Item>
+                <NavDropdown.Item href="/gallery-edit">Gallery</NavDropdown.Item>
                 <NavDropdown.Item href="/profile-edit">
                     Profile
                 </NavDropdown.Item>
@@ -44,7 +44,7 @@ export function MenuBar(props) {
     } else {
         var loginButton = (<Nav.Link href="/login">Login</Nav.Link>);
         var registerButton = (<Nav.Link href="/register">Register</Nav.Link>);
-        var searchBar = (<Form className="d-flex">
+        /* var searchBar = (<Form className="d-flex">
             <Form.Control
                 type="search"
                 placeholder="Search by artworks"
@@ -52,7 +52,7 @@ export function MenuBar(props) {
                 aria-label="Search"
             />
             <Button variant="outline-secondary">Search</Button>
-        </Form>);
+        </Form>); */
     }
     return (
         <Navbar sticky="top" bg="dark" variant="dark" expand="lg">
@@ -61,7 +61,7 @@ export function MenuBar(props) {
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
                     <Nav className="me-auto">
-                        {searchBar}
+                        {/* {searchBar} */}
                     </Nav>
                     <Nav
                         navbarScroll
