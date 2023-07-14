@@ -19,6 +19,7 @@ import ArtWorkUser from "./react/pages/Artwork/ArtworkDetailsOfUser";
 import ArtworkUpdate from "./react/pages/Artwork/ArtworkCreate"
 import EditArtWork from "./react/pages/Artwork/EditArtwork"
 import NewArt from "./react/pages/Artwork/ArtworkNew"
+import ImageUpload from "./react/pages/Artwork/ImageUpload"
 /*
 import ForgotPassword from './react/pages/components/forgotPassword';
 import ResetPasswordForm from './react/pages/components/resetPasswordForm'; */
@@ -41,7 +42,10 @@ function App() {
         <Route exact path='/gallery/:id' element={< Gallery />} />
         <Route exact path='/artworks' element={<ArtworksPage/>}/>
         <Route exact path='/artworks/:id' element={<EditArtWork/>}/>
+
         <Route exact path='/newArtwork' element={<NewArt/>}/>
+        <Route exact path='/uploadImage/:id' element={<ImageUpload/>}/>
+
         <Route path='*' element={<NotFound/>}/>
       
         {/* <Route 
