@@ -345,6 +345,7 @@ export function addArtworkImage(id, formData) {
             axios.post("/artworks/add-photo/" + id, formData, requestOptions)
             .then(response => {
                 const action = createArtworkIamgeSuccessAction(response);
+                window.reload();
                 dispatch(action);
             })
             .catch(error => {

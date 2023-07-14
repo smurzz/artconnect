@@ -90,7 +90,7 @@ function ArtworksPage() {
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div className="btn-group">
 
-                                                        <p><a className="btn btn-secondary" href={`/artworks/${artwork.id}`}>View</a></p>
+                                                        <p><a className="btn btn-secondary" href={`/artwork/${artwork.id}`}>View</a></p>
                                                     </div>
                                                     <small
                                                         className="text-body-secondary">{artwork?.price ? (artwork.price + "Euro") : null}</small>

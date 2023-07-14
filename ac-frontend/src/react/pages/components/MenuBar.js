@@ -31,10 +31,9 @@ export function MenuBar(props) {
         /* var logoutButton = (<Nav.Link onClick={handleLogout}>Logout</Nav.Link>); */
         var authUserOptions = (
             <NavDropdown align='end' title={<FaUserCircle size={36} />} id="basic-nav-dropdown" flip>
+                <NavDropdown.Item href="/profile-edit">Profile</NavDropdown.Item>
                 <NavDropdown.Item href="/gallery-edit">Gallery</NavDropdown.Item>
-                <NavDropdown.Item href="/profile-edit">
-                    Profile
-                </NavDropdown.Item>
+                <NavDropdown.Item href="/artwork-new">Artworks</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogout}>
                     Logout

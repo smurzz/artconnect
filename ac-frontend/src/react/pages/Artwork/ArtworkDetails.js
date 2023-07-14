@@ -97,7 +97,7 @@ function ArtworkDetailPage() {
                                     <div className="ms-4 d-flex flex-column" style={{ marginTop: '8rem', zIndex: '1' }}>
                                         <div className="mb-1">
                                             <img id="profileImage"
-                                                src={artworkData.artwork?.images?.length > 1 ? (`data:${artworkData.artwork?.images[1]?.contentType};base64,${artworkData.artwork?.images[1]?.image.data}`) : ImageTMP}
+                                                src={artworkData.artwork?.images && artworkData.artwork?.images?.length > 1 ? (`data:${artworkData.artwork?.images[1]?.contentType};base64,${artworkData.artwork?.images[1]?.image.data}`) : ImageTMP}
                                                 alt="Profile"
                                                 className="img-thumbnail"
                                                 style={{
@@ -108,7 +108,7 @@ function ArtworkDetailPage() {
                                                     zIndex: '1'
                                                 }}
                                                 onClick={() => {
-                                                    setImageSrc(artworkData.artwork?.images?.length > 1 ? (`data:${artworkData.artwork?.images[1]?.contentType};base64,${artworkData.artwork?.images[1]?.image.data}`) : ImageTMP);
+                                                    setImageSrc(artworkData.artwork?.images && artworkData.artwork?.images?.length > 1 ? (`data:${artworkData.artwork?.images[1]?.contentType};base64,${artworkData.artwork?.images[1]?.image.data}`) : ImageTMP);
                                                     setShowModal(true);
                                                 }}
                                             />
@@ -117,7 +117,7 @@ function ArtworkDetailPage() {
                                     <div className="ms-4 d-flex flex-column" style={{ marginTop: '8rem', zIndex: '1' }}>
                                         <div className="mb-1">
                                             <img id="profileImage"
-                                                src={artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP}
+                                                src={artworkData.artwork?.images && artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP}
                                                 alt="Profile"
                                                 className="img-thumbnail"
                                                 style={{
@@ -128,7 +128,7 @@ function ArtworkDetailPage() {
                                                     zIndex: '1'
                                                 }}
                                                 onClick={() => {
-                                                    setImageSrc(artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP);
+                                                    setImageSrc(artworkData.artwork?.images && artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP);
                                                     setShowModal(true);
                                                 }} />
                                         </div>
@@ -136,7 +136,7 @@ function ArtworkDetailPage() {
                                     <div className="ms-4 d-flex flex-column" style={{ marginTop: '8rem', zIndex: '1' }}>
                                         <div className="mb-1">
                                             <img id="profileImage"
-                                                src={artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP}
+                                                src={artworkData.artwork?.images && artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP}
                                                 alt="Profile"
                                                 className="img-thumbnail"
                                                 style={{
@@ -147,7 +147,7 @@ function ArtworkDetailPage() {
                                                     zIndex: '1'
                                                 }}
                                                 onClick={() => {
-                                                    setImageSrc(artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP);
+                                                    setImageSrc( artworkData.artwork?.images && artworkData.artwork?.images?.length > 3 ? (`data:${artworkData.artwork?.images[3]?.contentType};base64,${artworkData.artwork?.images[3]?.image.data}`) : ImageTMP);
                                                     setShowModal(true);
                                                 }} />
                                         </div>
@@ -155,7 +155,7 @@ function ArtworkDetailPage() {
                                     <div className="ms-4 d-flex flex-column" style={{ marginTop: '8rem', zIndex: '1' }}>
                                         <div className="mb-1">
                                             <img id="profileImage"
-                                                src={artworkData.artwork?.images?.length > 4 ? (`data:${artworkData.artwork?.images[4]?.contentType};base64,${artworkData.artwork?.images[4]?.image.data}`) : ImageTMP}
+                                                src={artworkData.artwork?.images && artworkData.artwork?.images?.length > 4 ? (`data:${artworkData.artwork?.images[4]?.contentType};base64,${artworkData.artwork?.images[4]?.image.data}`) : ImageTMP}
                                                 alt="Profile"
                                                 className="img-thumbnail"
                                                 style={{
@@ -166,7 +166,7 @@ function ArtworkDetailPage() {
                                                     zIndex: '1'
                                                 }}
                                                 onClick={() => {
-                                                    setImageSrc(artworkData.artwork?.images?.length > 2 ? (`data:${artworkData.artwork?.images[4]?.contentType};base64,${artworkData.artwork?.images[4]?.image.data}`) : ImageTMP);
+                                                    setImageSrc(artworkData.artwork?.images && artworkData.artwork?.images?.length > 2 ? (`data:${artworkData.artwork?.images[4]?.contentType};base64,${artworkData.artwork?.images[4]?.image.data}`) : ImageTMP);
                                                     setShowModal(true);
                                                 }} />
                                         </div>
@@ -208,7 +208,7 @@ function ArtworkDetailPage() {
                             <div style={{ position: 'relative', width: '100%', height: '100%' }}>
                                 <img
                                     className="card-img-top gradient-custom-2 bg-body-tertiary"
-                                    src={
+                                    src={artworkData.artwork?.images &&
                                         artworkData.artwork?.images?.length > 0
                                             ? `data:${artworkData.artwork?.images[0]?.contentType};base64,${artworkData.artwork?.images[0]?.image.data}`
                                             : ImageTMP
@@ -234,23 +234,23 @@ function ArtworkDetailPage() {
                                 <div className="card-body d-flex flex-column">
                                     <ul className="list-group list-group-flush flex-grow-1">
                                         {artworkData.artwork?.price &&
-                                            <li className="list-group-item">Price: {artworkData.artwork.price} Euro</li>}
+                                            <li className="list-group-item">Price: {artworkData?.artwork?.price} Euro</li>}
                                         {artworkData.artwork?.dimension &&
-                                            <li className="list-group-item">Height: {artworkData.artwork.dimension.height}cm
-                                                Width: {artworkData.artwork.dimension.width}cm
-                                                Depth: {artworkData.artwork.dimension.depth}cm</li>}
+                                            <li className="list-group-item">Height: {artworkData?.artwork?.dimension?.height}cm
+                                                Width: {artworkData?.artwork?.dimension?.width}cm
+                                                Depth: {artworkData?.artwork?.dimension?.depth}cm</li>}
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                        {artworkData.artwork?.materials.length > 0 &&
+                        {artworkData.artwork?.materials && artworkData.artwork?.materials?.length > 0 &&
                             <div className="card mb-4">
                                 <div className="card-header">Materials</div>
                                 <div className="card-body">
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <ul className="list-unstyled mb-0 d-flex flex-row flex-wrap">
-                                                {artworkData.artwork?.materials?.map((material) => (
+                                                {artworkData?.artwork?.materials?.map((material) => (
 
                                                     <li className="mx-2">{material}</li>
                                                 ))}
@@ -260,14 +260,14 @@ function ArtworkDetailPage() {
                                 </div>
                             </div>
                         }
-                        {artworkData.artwork?.tags.length > 0 &&
+                        {artworkData?.artwork?.tags?.length > 0 &&
                             <div className="card mb-4">
                                 <div className="card-header">Tags</div>
                                 <div className="card-body">
                                     <div className="row">
                                         <div className="col-sm-12">
                                             <ul className="list-unstyled mb-0 d-flex flex-row flex-wrap">
-                                                {artworkData.artwork?.tags?.map((tag) => (
+                                                {artworkData?.artwork?.tags?.map((tag) => (
 
                                                     <li className="mx-2 tag tag-sm">#{tag}</li>
                                                 ))}
@@ -281,7 +281,7 @@ function ArtworkDetailPage() {
                         <div className="card mb-4">
                             <div className="card-header">Contact the artist</div>
                             <div className="card-body">
-                                {artworkData?.artwork && <MessageArtworkModal artwork={artworkData.artwork} />}
+                                {artworkData?.artwork && <MessageArtworkModal artwork={artworkData?.artwork} />}
 
                             </div>
                         </div>
@@ -303,7 +303,7 @@ function ArtworkDetailPage() {
                                         class="form-control" 
                                         placeholder="Type comment..." 
                                         value={comment.textComment}
-                                        onChange={async (e) => { setComment({ ...comment, commentText: e.target.value }) }}
+                                        onChange={async (e) => { e.preventDefault(); setComment({ ...comment, commentText: e.target.value }) }}
                                         />
                                     {/*  <label class="form-label" for="addANote">+ Add a note</label> */}
                                     <button type="button" class="btn btn-outline-secondary mt-2" onClick={handleSubmit}>Comment</button>
@@ -311,7 +311,7 @@ function ArtworkDetailPage() {
 
                                 <div class="card mb-4">
                                     {artworkData.artwork?.comments?.length > 0 ? (
-                                        artworkData.artwork.comments.map((comment, index) => (
+                                        artworkData.artwork?.comments.map((comment, index) => (
                                             <div class="card-body" key={index}>
                                                 <p>{comment.text}</p>
 

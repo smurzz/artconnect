@@ -63,7 +63,7 @@ function HomePrivate() {
     }
 
     let addArtworkButton = gallery ?
-        (<a href="/artwork-edit" className="btn btn-dark m-1">Add Artwork</a>) :
+        (<a  className="btn btn-dark m-1" href="/artwork-new">Add Artwork</a>) :
         (<a href="/gallery-edit" className="btn btn-dark m-1">Create Gallery</a>);
 
     let edditGalleryButton = gallery &&
@@ -125,8 +125,8 @@ function HomePrivate() {
                                                 <p className="card-text">{artwork?.description?.substring(0, 20) || "No description"}...</p>
                                                 <div className="d-flex justify-content-between align-items-center">
                                                     <div className="btn-group">
-                                                        <a as="button" className="btn btn-sm btn-outline-secondary" href={`/artworks/${artwork.id}`}>View</a>
-                                                        <a as="button" className="btn btn-sm btn-outline-secondary">Edit</a>
+                                                        <a as="button" className="btn btn-sm btn-outline-secondary" href={`/artwork/${artwork.id}`}>View</a>
+                                                        <a as="button" className="btn btn-sm btn-outline-secondary" href={`/artworks-edit/${artwork.id}`}>Edit</a>
                                                     </div>
                                                     <small className="text-body-secondary">{artwork?.price ? (artwork.price + "Euro") : null}</small>
                                                 </div>
