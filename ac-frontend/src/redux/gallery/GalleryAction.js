@@ -21,6 +21,10 @@ export const REQUEST_DELETE_GALLERY = 'REQUEST_DELETE_GALLERY';
 export const SUCCESS_DELETE_GALLERY = 'SUCCESS_DELETE_GALLERY';
 export const FAIL_DELETE_GALLERY = 'FAIL_DELETE_GALLERY';
 
+export const REQUEST_PUT_RATING = 'REQUEST_PUT_RATING';
+export const SUCCESS_PUT_RATING= 'SUCCESS_PUT_RATING';
+export const FAIL_PUT_RATING = 'FAIL_PUT_RATING';
+
 export function getGalleriesPendingAction() {
     return {
         type: REQUEST_READ_GALLERIES
@@ -123,6 +127,27 @@ export function deleteGalleryErrorAction(error) {
     }
 }
 
+export function putRatingPendingAction() {
+    return {
+        type: REQUEST_PUT_RATING
+    }
+}
+
+export function putRatingSuccessAction(res) {
+    return {
+        type: SUCCESS_PUT_RATING,
+        status: res.status,
+        gallery: res.data
+    }
+}
+
+export function putRatingErrorAction(error) {
+    return {
+        type: FAIL_PUT_RATING,
+        error: error
+    }
+}
+
 export function getGalleries() {
 
     return async dispatch => {
@@ -135,7 +160,7 @@ export function getGalleries() {
                 dispatch(action);
             })
             .catch(error => {
-                dispatch(getGalleriesErrorAction(error.response.data));
+                dispatch(getGalleriesErrorAction(error.response?.data));
             });
     }
 }
@@ -152,7 +177,7 @@ export function getGallery(id) {
                 dispatch(action);
             })
             .catch(error => {
-                dispatch(getGalleryErrorAction(error.response.data));
+                dispatch(getGalleryErrorAction(error.response?.data));
             });
     }
 }
@@ -177,11 +202,11 @@ export function getMyGallery() {
                 dispatch(action);
             })
             .catch(error => {
-                dispatch(getGalleryErrorAction(error.response.data));
+                dispatch(getGalleryErrorAction(error.response?.data));
             });
         })
         .catch(error => {
-            dispatch(getGalleryErrorAction(error.response.data));
+            dispatch(getGalleryErrorAction(error.response?.data));
         });
     }
 }
@@ -205,11 +230,11 @@ export function createGallery(gallery) {
                         dispatch(action);
                     })
                     .catch(error => {
-                        dispatch(createGalleryErrorAction(error.response.data));
+                        dispatch(createGalleryErrorAction(error.response?.data));
                     })
             })
             .catch(error => {
-                dispatch(createGalleryErrorAction(error.response.data));
+                dispatch(createGalleryErrorAction(error.response?.data));
             });
     }
 }
@@ -233,11 +258,11 @@ export function editGallery(id, gallery) {
                         dispatch(action);
                     })
                     .catch(error => {
-                        dispatch(editGalleryErrorAction(error.response.data));
+                        dispatch(editGalleryErrorAction(error.response?.data));
                     })
             })
             .catch(error => {
-                dispatch(editGalleryErrorAction(error.response.data));
+                dispatch(editGalleryErrorAction(error.response?.data));
             });
     }
 }
@@ -260,12 +285,45 @@ export function deleteGallery(id) {
                     dispatch(action);
                 })
                 .catch(error => {
-                    dispatch(deleteGalleryErrorAction(error));
+                    dispatch(deleteGalleryErrorAction(error.response?.data));
                 })
         })
         .catch(error => {
-            dispatch(editGalleryErrorAction(error));
+            dispatch(editGalleryErrorAction(error.response?.data));
         });
     }
 }
+
+export function putRating(id, valueRating) {
+
+    return async dispatch => {
+        dispatch(putRatingPendingAction());
+
+        await refreshTokenService.checkTockens()
+            .then(() => {
+                const requestOptions = {
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
+                    },
+                    params: {
+                      value: valueRating
+                    }
+                  };
+                  
+                axios.post('/galleries/' + id + '/rating', null, requestOptions)
+                    .then(response => {
+                        const action = putRatingSuccessAction(response);
+                        dispatch(action);
+                    })
+                    .catch(error => {
+                        dispatch(putRatingErrorAction(error.response?.data));
+                    })
+            })
+            .catch(error => {
+                dispatch(putRatingErrorAction(error.response?.data));
+            });
+    }
+}
+
 
