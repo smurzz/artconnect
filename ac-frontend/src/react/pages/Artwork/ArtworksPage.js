@@ -9,9 +9,7 @@ import NotFoundPage from '../errors/NotFoundPage';
 import '../../layout/css/homePublic.css';
 import '../../layout/css/users.css';
 
-import ProfilePhotoDefault from '../../images/user.png';
-
-import ImageTMP from '../../images/placeholder.jpg';
+import ImageTMP from '../../images/images.svg';
 
 import * as artworkActions from '../../../redux/artwork/ArtworkAction';
 
@@ -41,10 +39,8 @@ function ArtworksPage() {
 
     const handleSearchSubmit = async (event) => {
         event.preventDefault();
-        var splitedSeachValue = searchValue.split(' ');
-        var arraySplitedSearchValue = [];
+        var splitedSeachValue = searchValue.split(' ').toString();
 
-        console.log("Splitted value: " + splitedSeachValue);
         setTags(splitedSeachValue);
         await dispatch(artworkActions.getArtworksByTags(splitedSeachValue));
     };
@@ -56,7 +52,7 @@ function ArtworksPage() {
                 <section className="py-3 text-center container">
                     <div className="row py-lg-5">
                         <div className="col-lg-6 col-md-8 mx-auto">
-                            <h1 className="fw-light">Art for art lovers</h1>
+                            <h1 className="fw-light">Artworks</h1>
                         </div>
                         <Form className="d-flex mt-3" onSubmit={handleSearchSubmit}>
                             <Form.Control

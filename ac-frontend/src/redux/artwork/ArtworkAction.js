@@ -29,6 +29,10 @@ export const REQUEST_CREATE_REMOVE_ARTWORK_LIKE = 'REQUEST_CREATE_REMOVE_ARTWORK
 export const SUCCESS_CREATE_REMOVE_ARTWORK_LIKE = 'SUCCESS_CREATE_REMOVE_ARTWORK_LIKE';
 export const FAIL_CREATE_REMOVE_ARTWORK_LIKE = 'FAIL_CREATE_REMOVE_ARTWORK_LIKE';
 
+export const POST_COMMENT_PENDING = 'POST_COMMENT_PENDING';
+export const POST_COMMENT_SUCCESS = 'POST_COMMENT_SUCCESS'
+export const POST_COMMENT_ERROR = 'POST_COMMENT_ERROR'
+
 export function getArtworksPendingAction() {
     return {
         type: REQUEST_READ_ARTWORKS
@@ -171,6 +175,27 @@ export function createRemoveArtworkLikeErrorAction(error) {
     }
 }
 
+export function postCommentPendingAction() {
+    return {
+        type: POST_COMMENT_PENDING
+    }
+}
+
+export function postCommentSuccessAction(res) {
+    return {
+        type: POST_COMMENT_SUCCESS,
+        status: res.status,
+        artwork: res.data
+    }
+}
+
+export function postCommentErrorAction(error) {
+    return {
+        type: POST_COMMENT_ERROR,
+        error: error
+    }
+}
+
 export function getArtworks() {
 
     return async dispatch => {
@@ -183,7 +208,7 @@ export function getArtworks() {
                 dispatch(action);
             })
             .catch(error => {
-                dispatch(getArtworksErrorAction(error.response.data));
+                dispatch(getArtworksErrorAction(error.response?.data));
             });
     }
 }
@@ -200,7 +225,7 @@ export function getArtworksByTags(tagsArray) {
                 dispatch(action);
             })
             .catch(error => {
-                dispatch(getArtworksErrorAction(error.response.data));
+                dispatch(getArtworksErrorAction(error.response?.data));
             });
     }
 }
@@ -217,7 +242,7 @@ export function getArtwork(id) {
                 dispatch(action);
             })
             .catch(error => {
-                dispatch(getArtworkErrorAction(error.response.data));
+                dispatch(getArtworkErrorAction(error.response?.data));
             });
     }
 }
@@ -241,11 +266,11 @@ export function createArtwork(artwork) {
                         dispatch(action);
                     })
                     .catch(error => {
-                        dispatch(createArtworkErrorAction(error.response.data));
+                        dispatch(createArtworkErrorAction(error.response?.data));
                     })
             })
             .catch(error => {
-                dispatch(createArtworkErrorAction(error.response.data));
+                dispatch(createArtworkErrorAction(error.response?.data));
             });
     }
 }
@@ -269,11 +294,11 @@ export function editArtwork(id, artwork) {
                         dispatch(action);
                     })
                     .catch(error => {
-                        dispatch(editArtworkErrorAction(error.response.data));
+                        dispatch(editArtworkErrorAction(error.response?.data));
                     })
             })
             .catch(error => {
-                dispatch(editArtworkErrorAction(error.response.data));
+                dispatch(editArtworkErrorAction(error.response?.data));
             });
     }
 }
@@ -296,7 +321,7 @@ export function deleteArtwork(id) {
                     dispatch(action);
                 })
                 .catch(error => {
-                    dispatch(deleteArtworkErrorAction(error));
+                    dispatch(deleteArtworkErrorAction(error.respone?.data));
                 })
         })
         .catch(error => {
@@ -320,15 +345,14 @@ export function addArtworkImage(id, formData) {
             axios.post("/artworks/add-photo/" + id, formData, requestOptions)
             .then(response => {
                 const action = createArtworkIamgeSuccessAction(response);
-                window.location.reload();
                 dispatch(action);
             })
             .catch(error => {
-                dispatch(createArtworkIamgeErrorAction(error));
+                dispatch(createArtworkIamgeErrorAction(error.response?.data));
             });
         })
         .catch(error => {
-            dispatch(createArtworkIamgeErrorAction(error));
+            dispatch(createArtworkIamgeErrorAction(error.response?.data));
         });
     }
 }
@@ -352,12 +376,38 @@ export function addRemoveLike(id) {
                         dispatch(action);
                     })
                     .catch(error => {
-                        dispatch(createArtworkErrorAction(error.response.data));
+                        dispatch(createArtworkErrorAction(error.response?.data));
                     })
             })
             .catch(error => {
-                dispatch(createArtworkErrorAction(error.response.data));
+                dispatch(createArtworkErrorAction(error.response?.data));
             });
     }
 }
 
+export function postComment(artworkId, commentText) {
+
+    return async dispatch => {
+        dispatch(postCommentPendingAction());
+
+        await refreshTokenService.checkTockens()
+            .then(() => {
+                const requestOptions = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
+                    }
+                };
+                axios.post('/artworks/' + artworkId + '/comments', commentText, requestOptions)
+                    .then(response => {
+                        dispatch(postCommentSuccessAction(response))
+                    })
+                    .catch(error => {
+                        dispatch(postCommentErrorAction(error.response?.data));
+                    });
+            })
+            .catch(error => {
+                dispatch(createArtworkErrorAction(error.response?.data));
+            });
+    }
+}

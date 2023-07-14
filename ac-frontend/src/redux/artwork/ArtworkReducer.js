@@ -147,6 +147,26 @@ export default function artworkReducer(state = initialState, action) {
                 pending: false,
                 error: action.error
             }
+        case artworkActions.POST_COMMENT_PENDING:
+            return {
+                ...state,
+                pending: true,
+                error: null
+            }
+        case artworkActions.POST_COMMENT_SUCCESS:
+            return {
+                ...state,
+                pending: false,
+                status: action.status,
+                artwork: action.artwork,
+                error: null
+            }
+        case artworkActions.POST_COMMENT_ERROR:
+            return {
+                ...state,
+                pending: false,
+                error: action.error
+            }
         default:
             return state;
     }
