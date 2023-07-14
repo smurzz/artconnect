@@ -28,23 +28,18 @@ function ArtworkNew() {
     const [selectedValues, setSelectedValues] = useState(new Set([]));
     const artworkData = useSelector(state => state.artwork);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [id, setId] = useState(null);
+
     const [isLoading, setIsLoading] = useState(false);
     /* add new profile photo */
-    useEffect(() => {
-        const fetchData = async () => {
-            if (selectedFile) {
-                const formData = new FormData();
-                formData.append('file', selectedFile);
-                await dispatch(artworkAction.addArtworkImage(id, formData));
-            }
-        };
 
-
-        fetchData();
-
-
-    }, [selectedFile, dispatch]);
+    const fetchData = async () => {
+        if (selectedFile && artworkData.artwork) {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            await dispatch(artworkAction.addArtworkImage(artworkData.artwork.id, formData));
+            navigate("/home")
+        }
+    };
 
 
     /* set a image-file for updating */
@@ -52,12 +47,12 @@ function ArtworkNew() {
         setSelectedFile(e.target.files[0]);
     }
 
-
-
-
     /* check if the response status is ok */
     useEffect(() => {
         const resSuccess = artworkData.status === 201 || artworkData.status === 200;
+        if(resSuccess){
+
+        }
         setSuccess(resSuccess);
     }, [artworkData.status]);
 
@@ -67,7 +62,7 @@ function ArtworkNew() {
         if (success) {
             setErrorMessage('');
             setSuccessMessage(<Alert className="text-center m-4" key='success' variant='success'>
-                <p> Your changes are successfully saved! </p>
+                <p> Your changes are successfully saved! Please upload up to 5 images</p>
             </Alert>);
         } else {
             setSuccessMessage(null);
@@ -103,22 +98,21 @@ function ArtworkNew() {
     }
 
 
+
     /* add / remove categories */
     const handleCheckboxChange = (e) => {
-        const {value, checked} = e.target;
-        const updatedValues = new Set(selectedValues);
-
-
-        if (checked) {
-            updatedValues.add(value);
-        } else {
-            updatedValues.delete(value);
-        }
-
-
-        setSelectedValues(updatedValues);
-        setArtwork({...artwork, artDirections: Array.from(updatedValues)});
+        const { value, checked } = e.target;
+        setSelectedValues((prevSelectedValues) => {
+            const updatedValues = new Set(prevSelectedValues);
+            if (checked) {
+                updatedValues.add(value);
+            } else {
+                updatedValues.delete(value);
+            }
+            return updatedValues;
+        });
     };
+
 
 
     const handleDimensionChange = (property, value) => {
@@ -479,6 +473,16 @@ function ArtworkNew() {
                                 </div>
                             </div>
                         </div>
+                        {artworkData.artwork ? (<div className='categories-container mb-2'>
+                            <p className="lead fw-normal mb-1">File Upload</p>
+                            <div className="p-2" style={{backgroundColor: '#f8f9fa'}}>
+                                <div className="mb-3">
+                                    <label htmlFor="formFile" className="form-label">File</label>
+                                    <input onChange={handleFileSelect} accept=".jpe, .jpeg, .png"
+                                           className="form-control" type="file" id="formFile" multiple/>
+                                </div>
+                            </div>
+                        </div>) : (null)}
                         <div className='result-container mb-2'>
                             {successMessage}
                             {errorMessage}
@@ -486,7 +490,7 @@ function ArtworkNew() {
 
 
                         <div class="d-grid gap-2">
-                            {success? <Button variant="dark" size="lg" onClick={()=>navigate("/home")}>Upload Images</Button>: <Button variant="dark" size="lg" onClick={handleSubmit}>Save</Button>
+                            {success? <Button variant="dark" size="lg" onClick={()=>fetchData()}>Upload Images</Button>: <Button variant="dark" size="lg" onClick={handleSubmit}>Save</Button>
                             } </div>
                     </div>
                 </div>

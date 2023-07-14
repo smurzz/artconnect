@@ -75,7 +75,7 @@ function UsersPage() {
                 <div className="row mt-5 mb-5">
                     {userData.users?.length > 0 ? (
                         userData.users.map((user, index) => (
-                            <div className="col-lg-4"  key={index}>
+                            <div className="col-lg-2"  key={index}>
                                 <img
                                     src={user?.profilePhoto ? (`data:${user.profilePhoto?.contentType};base64,${user.profilePhoto?.image.data}`) : ProfilePhotoDefault}
                                     alt="Thumbnail"

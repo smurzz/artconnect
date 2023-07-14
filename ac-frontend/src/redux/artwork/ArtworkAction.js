@@ -358,6 +358,34 @@ export function addArtworkImage(id, formData) {
     }
 }
 
+
+export function addArtworkImages(id, files) {
+    return async dispatch => {
+        dispatch(createArtworkIamgePendingAction());
+
+        await refreshTokenService.checkTockens()
+            .then(() => {
+                const requestOptions = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
+                    }
+                };
+                axios.post("/artworks/add-photos/" + id, files, requestOptions)
+                    .then(response => {
+                        const action = createArtworkIamgeSuccessAction(response);
+                        dispatch(action);
+                    })
+                    .catch(error => {
+                        dispatch(createArtworkIamgeErrorAction(error.response?.data));
+                    });
+            })
+            .catch(error => {
+                dispatch(createArtworkIamgeErrorAction(error.response?.data));
+            });
+    }
+}
+
 export function addRemoveLike(id) {
 
     return async dispatch => {

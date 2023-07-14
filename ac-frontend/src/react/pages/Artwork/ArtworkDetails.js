@@ -190,7 +190,7 @@ function ArtworkDetailPage() {
                                         <span>unknown, </span> :
                                         <span>{artworkData.artwork?.location}, </span>} {artworkData.artwork?.yearOfCreation}
                                     </div>
-                                    {artworkData.artwork?.artDirections.map((tag) => (
+                                    {artworkData.artwork?.artDirections?.map((tag) => (
                                         <span className="tag tag-sm">{tag}</span>
                                     ))}
                                     <p className="lead mb-0">{artworkData.artwork?.description}</p>
@@ -311,7 +311,7 @@ function ArtworkDetailPage() {
 
                                 <div class="card mb-4">
                                     {artworkData.artwork?.comments?.length > 0 ? (
-                                        artworkData.artwork?.comments.map((comment, index) => (
+                                        artworkData.artwork?.comments?.map((comment, index) => (
                                             <div class="card-body" key={index}>
                                                 <p>{comment.text}</p>
 
