@@ -16,6 +16,9 @@ import ImageTMP from '../../images/placeholder.jpg';
 import * as artworkActions from '../../../redux/artwork/ArtworkAction';
 import {useParams} from 'react-router-dom';
 
+import { InputTags } from "react-bootstrap-tagsinput";
+import "react-bootstrap-tagsinput/dist/index.css";
+
 
 function EditArtWork() {
     var userSession = JSON.parse(localStorage.getItem('userSession'));
@@ -187,6 +190,7 @@ function EditArtWork() {
     const handleFileSelect = async (e) => {
         setSelectedFile(e.target.files[0]);
     }
+    const [state, setState] = useState([]);
 
 
     /* update user profile */
@@ -439,6 +443,32 @@ function EditArtWork() {
                                         <p className="lead fw-normal mb-1">Materials</p>
                                         <EditMaterials artMaterials={artworkData.artwork?.materials ? artworkData.artwork?.materials : null} onUpdateMaterials={handleMaterialUpdate} />
                                     </div>
+                                    <div style={{ margin: 10 }}>
+  <div className="input-group">
+    <InputTags
+      /* style={{ backgroundColor: "red" }} */
+      values={artworkData.artwork?.tags || []}
+      onTags={(value) => setArtwork({ ...artwork, tags: value.values }, console.log(artwork))}
+    />
+    <button
+      className="btn btn-outline-secondary"
+      type="button"
+      data-testid="button-clearAll"
+      onClick={() => {
+        setArtwork({ ...artwork, tags: [] });
+      }}
+    >
+      Delete all
+    </button>
+  </div>
+  <hr />
+  <ol>
+    {artwork?.tags?.length > 0 &&
+      artwork.tags.map((item, index) => (
+        <li key={item + index}>{item}</li>
+      ))}
+  </ol>
+</div>
                                     <div className='biography-container mb-5'>
                                         <p className="lead fw-normal mb-1">artDirections</p>
                                         <div className="p-2" style={{ backgroundColor: '#f8f9fa' }}>
