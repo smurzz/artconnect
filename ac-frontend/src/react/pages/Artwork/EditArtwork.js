@@ -14,6 +14,10 @@ import ProfilePhotoDefault from '../../images/user.png';
 import ImageTMP from '../../images/placeholder.jpg';
 import * as artworkActions from '../../../redux/artwork/ArtworkAction';
 import {useParams} from 'react-router-dom';
+import {  Alert } from 'react-bootstrap';
+import DeleteArtworkModel from '../../pages/components/DeleteArtworkModel';
+
+
 
 import { InputTags } from "react-bootstrap-tagsinput";
 import "react-bootstrap-tagsinput/dist/index.css";
@@ -22,7 +26,7 @@ import "react-bootstrap-tagsinput/dist/index.css";
 function EditArtWork() {
     var userSession = JSON.parse(localStorage.getItem('userSession'));
     let {id} = useParams();
-
+    const artworkData = useSelector(state => state.artwork);
     const [selectedFile, setSelectedFile] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -30,7 +34,6 @@ function EditArtWork() {
     const [errorMessage, setErrorMessage] = useState('');
     const currentYear = new Date().getFullYear();
     const dispatch = useDispatch();
-    const artworkData = useSelector(state => state.artwork);
     const [artwork, setArtwork] = useState({
         title: "",
         images: [],
@@ -51,26 +54,28 @@ function EditArtWork() {
     });
 
     const handleSubmit = async (e) => {
+        setSuccess(false);
         const requestBody = {};
         e.preventDefault();
         // Validate the title
-        if (artwork.title.trim() !== "") {
+        if (artwork?.title !== "") {
             requestBody.title = artwork.title;
         }
-        if (artwork.description.trim() !== "") {
+        if (artwork?.description !== "") {
             requestBody.description = artwork.description;
         }
-        if (artwork.materials.length > 0) {
+        if (artwork.materials?.length > 0) {
             requestBody.materials = artwork.materials;
         }
-        if (artwork.tags.length > 0) {
+        if (artwork?.tags?.length > 0) {
             requestBody.tags = artwork.tags;
         }
 
-        if (artwork.dimension.height !== "") {
+        if (artwork?.dimension?.height !== "") {
+            console.log("Height: "+artwork?.dimension?.height)
             requestBody.dimension = {
                 ...requestBody.dimension,
-                height: artwork.dimension.height
+                height: artwork.dimension?.height
             };
         } else {
             requestBody.dimension = {
@@ -78,29 +83,29 @@ function EditArtWork() {
                 height: artworkData.artwork.dimension?.height
             };
         }
-        if (artwork.dimension.width !== "") {
+        if (artwork?.dimension?.width !== "") {
             requestBody.dimension = {
                 ...requestBody.dimension,
-                width: artwork.dimension.width
+                width: artwork.dimension?.width
             };
         } else {
             requestBody.dimension = {
                 ...requestBody.dimension,
-                width: artworkData.artwork.dimension?.width
+                width: artworkData?.artwork?.dimension?.width
             };
         }
-        if (artwork.dimension.depth !== "") {
+        if (artwork?.dimension?.depth !== "") {
             requestBody.dimension = {
                 ...requestBody.dimension,
-                depth: artwork.dimension.depth
+                depth: artwork?.dimension?.depth
             };
         } else {
             requestBody.dimension = {
                 ...requestBody.dimension,
-                depth: artworkData.artwork.dimension.depth
+                depth: artworkData.artwork?.dimension?.depth
             };
         }
-        if (artwork.artDirections.length > 0) {
+        if (artwork?.artDirections?.length > 0) {
             requestBody.artDirections = artwork.artDirections;
         }
 
@@ -108,18 +113,20 @@ function EditArtWork() {
             requestBody.price = artwork.price;
         }
 
-        if (artwork.location.trim() !== "") {
+        if (artwork?.location !== "") {
             requestBody.location = artwork.location;
         }
-        if (artwork.yearOfCreation !== "") {
+        if (artwork?.yearOfCreation !== "") {
             const year = parseInt(artwork.yearOfCreation, 10);
             if (year > currentYear) {
                 alert(`You cannot be a time traveler! Please choose a year in the present or past.`);
             } else {
                 requestBody.yearOfCreation = artwork.yearOfCreation;
             }
-
         }
+        await dispatch(artworkActions.editArtwork(id, requestBody))
+        console.log(JSON.stringify(requestBody));
+        setSuccess(true);
     };
 
     //Art direction check Box
@@ -154,6 +161,8 @@ function EditArtWork() {
         }));
     };
 
+
+
     const handleMaterialUpdate = (updatedMaterials) => {
         setArtwork((preArt) => ({
             ...preArt,
@@ -170,6 +179,19 @@ function EditArtWork() {
 
         fetchData();
     }, [dispatch]);
+
+
+
+
+    /* put a message by success */
+    useEffect(() => {
+        if (success) {
+            setErrorMessage('');
+            alert("Your changes are successfully saved!")
+        } else {
+            setSuccessMessage(null);
+        }
+    }, [success]);
 
     /* add new profile photo */
     useEffect(() => {
@@ -359,16 +381,13 @@ function EditArtWork() {
                                                 <div className="form-outline">
                                                     <label className="form-label" htmlFor="fName">Height in cm</label>
                                                     <input
-                                                        type="text"
-                                                        id="fName"
-                                                        className="form-control"
-                                                        name='firstName'
-                                                        defaultValue={artworkData.artwork?.dimension.height}
-                                                        onChange={(e) => setArtwork({
-                                                            ...artwork.dimension,
-                                                            height: e.target.value
-                                                        })}
+                                                        type="number"
+                                                        className="form-control mr-2"
+                                                        name="height"
+                                                        defaultValue={artworkData.artwork?.dimension?.height}
+                                                        onChange={(e) => handleDimensionChange("height", e.target.value)}
                                                     />
+
                                                 </div>
                                             </div>
                                             <div className="col">
@@ -379,10 +398,7 @@ function EditArtWork() {
                                                         className="form-control"
                                                         name="yearOfCreation"
                                                         defaultValue={artworkData.artwork?.dimension?.width}
-                                                        onChange={(e) => setArtwork({
-                                                            ...artwork.dimension,
-                                                            width: e.target.value
-                                                        })}
+                                                        onChange={(e) => handleDimensionChange("width", e.target.value)}
                                                     />
                                                 </div>
                                             </div>
@@ -394,10 +410,7 @@ function EditArtWork() {
                                                         className="form-control"
                                                         name="yearOfCreation"
                                                         defaultValue={artworkData.artwork?.dimension?.depth}
-                                                        onChange={(e) => setArtwork({
-                                                            ...artwork.dimension,
-                                                            depth: e.target.value
-                                                        })}
+                                                        onChange={(e) => handleDimensionChange("depth", e.target.value)}
                                                     />
                                                 </div>
                                             </div>
@@ -609,8 +622,11 @@ function EditArtWork() {
                                             </div>
                                         </div>
                                     </div>
+                                    <div className="d-grid gap-2">
+                                        <Button variant="dark" size="lg" onClick={handleSubmit}>Save</Button>
+                                        {artworkData.artwork ? <DeleteArtworkModel artworkId={artworkData.artwork.id}/> : null}
+                                    </div>
                                 </div>
-
 
                             </div>
                         </div>
