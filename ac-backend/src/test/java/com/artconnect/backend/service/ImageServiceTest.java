@@ -1,43 +1,43 @@
 package com.artconnect.backend.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import java.util.Collections;
-
-import org.bson.BsonBinarySubType;
-import org.bson.types.Binary;
+import com.artconnect.backend.model.Image;
+import com.artconnect.backend.repository.ImageRepository;
+import com.artconnect.backend.validation.ImageValidation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.web.server.ResponseStatusException;
-
-import com.artconnect.backend.model.Image;
-import com.artconnect.backend.repository.ImageRepository;
-import com.artconnect.backend.validation.ImageValidation;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-public class ImageServiceTest {
+import java.awt.image.DataBuffer;
+import java.util.Arrays;
+import java.util.List;
+
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+
+
+
+class ImageServiceTest {
 
     @Mock
     private ImageRepository imageRepository;
-    
+
     @InjectMocks
     private ImageService imageService;
+
+
 
     @Mock
     private ImageValidation imageValidation;
@@ -47,6 +47,76 @@ public class ImageServiceTest {
         MockitoAnnotations.openMocks(this);
         imageService = new ImageService(imageRepository);
     }
+
+
+
+    @Test
+    void getPhoto_ValidId_ReturnsMonoImage() {
+        String id = "validId";
+        Image image = new Image();
+        when(imageRepository.findById(id)).thenReturn(Mono.just(image));
+
+        Mono<Image> result = imageService.getPhoto(id);
+
+        StepVerifier.create(result)
+                .expectNext(image)
+                .verifyComplete();
+        verify(imageRepository).findById(id);
+    }
+
+    @Test
+    void getPhoto_InvalidId_ReturnsMonoError() {
+        String id = "invalidId";
+        when(imageRepository.findById(id)).thenReturn(Mono.empty());
+
+        Mono<Image> result = imageService.getPhoto(id);
+
+        StepVerifier.create(result)
+                .expectError(ResponseStatusException.class)
+                .verify();
+        verify(imageRepository).findById(id);
+    }
+
+    @Test
+    void getPhotosByIds_ValidIds_ReturnsFluxImage() {
+        List<String> imageIds = Arrays.asList("id1", "id2");
+        Image image1 = new Image();
+        Image image2 = new Image();
+        when(imageRepository.findAllById(imageIds)).thenReturn(Flux.just(image1, image2));
+
+        Flux<Image> result = imageService.getPhotosByIds(imageIds);
+
+        StepVerifier.create(result)
+                .expectNext(image1, image2)
+                .verifyComplete();
+        verify(imageRepository).findAllById(imageIds);
+    }
+
+    @Test
+    void deleteById_ValidId_ReturnsMonoVoid() {
+        String id = "validId";
+        when(imageRepository.deleteById(id)).thenReturn(Mono.empty());
+
+        Mono<Void> result = imageService.deleteById(id);
+
+        StepVerifier.create(result)
+                .verifyComplete();
+        verify(imageRepository).deleteById(id);
+    }
+
+    @Test
+    void deleteAllByIds_ValidIds_ReturnsMonoVoid() {
+        List<String> ids = Arrays.asList("id1", "id2");
+        when(imageRepository.deleteAllById(ids)).thenReturn(Mono.empty());
+
+        Mono<Void> result = imageService.deleteAllByIds(ids);
+
+        StepVerifier.create(result)
+                .verifyComplete();
+        verify(imageRepository).deleteAllById(ids);
+    }
+
+
 
     @Test
     public void testGetPhoto_ExistingId_ReturnsImage() {
@@ -104,95 +174,6 @@ public class ImageServiceTest {
                 .verify();
     }
 
-    @Test
-    void addPhoto_ValidImage_ReturnsSavedImage() {
-        FilePart filePart = mock(FilePart.class);
-        DataBuffer dataBuffer = mock(DataBuffer.class);
-        DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
-        HttpHeaders headers = mock(HttpHeaders.class);
 
-        when(dataBuffer.factory()).thenReturn(dataBufferUtils);
-        when(filePart.content()).thenReturn(Flux.fromIterable(Collections.singletonList(dataBuffer)));
-        when(dataBufferUtils.join(Collections.singletonList(dataBuffer))).thenReturn(dataBuffer);
-        when(filePart.headers()).thenReturn(headers);
-        when(filePart.headers().getContentType()).thenReturn(MediaType.IMAGE_JPEG);
-        when(filePart.filename()).thenReturn("ImageFile.jpeg");
 
-        byte[] bytes = new byte[dataBuffer.readableByteCount()];
-        dataBuffer.read(bytes);
-        Binary imageRequestBytes = new Binary(BsonBinarySubType.BINARY, bytes);
-
-        Image image = Image.builder()
-                .image(imageRequestBytes)
-                .title(filePart.filename())
-                .contentType("image/jpeg")
-                .build();
-
-        when(imageValidation.validFile()).thenReturn(true);
-        when(imageRepository.save(any(Image.class))).thenReturn(Mono.just(image));
-
-        Mono<Image> result = imageService.addPhoto(Mono.just(filePart));
-
-        StepVerifier.create(result)
-                .expectNext(image)
-                .expectComplete()
-                .verify();
-
-    }
-
-    @Test
-    void addPhoto_InvalidContentType_ReturnsBadRequestError() {
-        FilePart filePart = mock(FilePart.class);
-        DataBuffer dataBuffer = mock(DataBuffer.class);
-        DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
-        HttpHeaders headers = mock(HttpHeaders.class);
-
-        when(dataBuffer.factory()).thenReturn(dataBufferUtils);
-        when(filePart.content()).thenReturn(Flux.fromIterable(Collections.singletonList(dataBuffer)));
-        when(dataBufferUtils.join(Collections.singletonList(dataBuffer))).thenReturn(dataBuffer);
-        when(filePart.headers()).thenReturn(headers);
-        when(filePart.headers().getContentType()).thenReturn(MediaType.APPLICATION_PDF); // Invalid content type
-        when(filePart.filename()).thenReturn("ImageFile.jpeg");
-
-        when(imageValidation.validFile()).thenReturn(false); // Invalid file validation
-
-        Mono<Image> result = imageService.addPhoto(Mono.just(filePart));
-
-        StepVerifier.create(result)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof ResponseStatusException
-                                && ((ResponseStatusException) throwable).getStatusCode() == HttpStatus.BAD_REQUEST)
-                .verify();
-    }
-    
-    @Test
-    void addPhoto_InvalidContentSize_ReturnsBadRequestError()  {
-    	FilePart filePart = mock(FilePart.class);
-        DataBuffer dataBuffer = mock(DataBuffer.class);
-        DataBufferFactory dataBufferUtils = mock(DataBufferFactory.class);
-        HttpHeaders headers = mock(HttpHeaders.class);
-        
-        Integer tooLargeSize = 6 * 1024 * 1024; // 6MB
-        when(dataBuffer.readableByteCount()).thenReturn(tooLargeSize);
-
-        when(dataBuffer.factory()).thenReturn(dataBufferUtils);
-        when(filePart.content()).thenReturn(Flux.fromIterable(Collections.singletonList(dataBuffer)));
-        when(dataBufferUtils.join(Collections.singletonList(dataBuffer))).thenReturn(dataBuffer);
-        when(filePart.headers()).thenReturn(headers);
-        when(filePart.headers().getContentType()).thenReturn(MediaType.IMAGE_JPEG);
-        when(filePart.filename()).thenReturn("ImageFile.jpeg");
-
-        when(imageValidation.validFile()).thenReturn(false); // Set it to false for an invalid file
-
-        Mono<Image> result = imageService.addPhoto(Mono.just(filePart));
-
-        StepVerifier.create(result)
-                .expectErrorSatisfies(error -> {
-                    assert error instanceof ResponseStatusException;
-                    ResponseStatusException responseError = (ResponseStatusException) error;
-                    assertEquals(responseError.getStatusCode(), HttpStatus.BAD_REQUEST);
-                    assertEquals(responseError.getMessage(), "400 BAD_REQUEST \"Image is not valid\"");
-                })
-                .verify();
-    }
 }

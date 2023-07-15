@@ -43,19 +43,19 @@ import reactor.core.publisher.Mono;
 @WebFluxTest(controllers = ImageController.class)
 @Import({ SecurityConfig.class, ApplicationConfig.class })
 public class ImageControllerTest {
-	
+
 	@MockBean
     private JwtService jwtService;
-	
+
 	@MockBean
 	private UserRepository userRepository;
-	
+
 	@MockBean
     private ImageService imageService;
-    
+
     @InjectMocks
     private ImageController imageController;
-    
+
     @Autowired
     private WebTestClient webTestClient;
 
@@ -88,7 +88,7 @@ public class ImageControllerTest {
 	    when(filePart.headers()).thenReturn(headers);
 	    when(filePart.filename()).thenReturn("test.jpg");
 	    when(filePart.content()).thenReturn(body);
-	    when(imageService.addPhoto(any(Mono.class))).thenReturn(Mono.just(image));
+        when(imageService.addPhoto(any(Mono.class))).thenReturn(Mono.just(image));
 
 	    // Send request and verify response
 	    webTestClient = WebTestClient.bindToController(imageController).build();
@@ -106,7 +106,7 @@ public class ImageControllerTest {
 	            .expectBody(byte[].class)
 	            .value(response -> assertArrayEquals(response, image.getImage().getData()));
 	}
-	
+
 
     @Test
     @WithMockUser
@@ -125,10 +125,9 @@ public class ImageControllerTest {
 	    when(filePart.headers()).thenReturn(headers);
 	    when(filePart.filename()).thenReturn("test.pdf");
 	    when(filePart.content()).thenReturn(body);
-	    when(imageService.addPhoto(any(Mono.class))).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is not valid")));
+        when(imageService.addPhoto(any(Mono.class))).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is not valid")));
 
-	    // Send request and verify response
-
+        // Send request and verify response
 	    webTestClient = WebTestClient.bindToController(imageController).build();
 
 	    webTestClient.post()
@@ -139,14 +138,12 @@ public class ImageControllerTest {
 	            .exchange()
 	            .expectStatus().isBadRequest();
     }
-    
 
     @Test
     @WithMockUser
     public void testAddPhotoImageSizeIsTooBig() {
     	// Mock file part
 	    FilePart filePart = mock(FilePart.class);
-	    
 
 	    // Prepare image data
 	    byte[] imageData = "test".getBytes(StandardCharsets.UTF_8);
@@ -160,10 +157,9 @@ public class ImageControllerTest {
 	    when(filePart.headers()).thenReturn(headers);
 	    when(filePart.filename()).thenReturn("test.png");
 	    when(filePart.content()).thenReturn(body);
-	    when(imageService.addPhoto(any(Mono.class))).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is not valid")));
+        when(imageService.addPhoto(any(Mono.class))).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Image is not valid")));
 
-	    // Send request and verify response
-
+        // Send request and verify response
 	    webTestClient = WebTestClient.bindToController(imageController).build();
 
 	    webTestClient.post()
@@ -173,7 +169,7 @@ public class ImageControllerTest {
 	            .body(BodyInserters.fromMultipartData("file", filePart))
 	            .exchange()
 	            .expectStatus().isBadRequest();
-    }   
+    }
 
 
     @Test
@@ -186,7 +182,6 @@ public class ImageControllerTest {
 	        .contentType("image/jpeg")
 	        .image(new Binary(new byte[]{}))
 	        .build();
-        
 
         when(imageService.getPhoto(anyString())).thenReturn(Mono.just(image));
 
@@ -212,7 +207,6 @@ public class ImageControllerTest {
                 .exchange()
                 .expectStatus().isNotFound();
     }
-    
 
     @Test
     @WithMockUser

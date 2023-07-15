@@ -104,7 +104,7 @@ class ArtWorkControllerTest {
         ArtWork artWork = createArtWork();
         ArtWorkResponse artWorkResponse = createArtWorkResponse(artWork);
         when(artWorkService.findByOwnerId(ownerId)).thenReturn(Flux.just(artWork));
-        when(artWorkService.mapArtWorkToResponse(artWork)).thenReturn(Mono.just(artWorkResponse));
+        when(artWorkService.mapArtWorkToPublicResponse(artWork)).thenReturn(Mono.just(artWorkResponse));
 
         Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(ownerId, null, null, null, null, null, null, null, null);
         StepVerifier.create(response)
@@ -147,7 +147,7 @@ class ArtWorkControllerTest {
         ArtWork artWork = createArtWork();
         ArtWorkResponse artWorkResponse = createArtWorkResponseLeerAttr();
         when(artWorkService.findById(artWorkId)).thenReturn(Mono.just(artWork));
-        when(artWorkService.mapArtWorkToResponse(artWork)).thenReturn(Mono.just(artWorkResponse));
+        when(artWorkService.mapArtWorkToPublicResponse(artWork)).thenReturn(Mono.just(artWorkResponse));
 
         Mono<ArtWorkResponse> response = artWorkController.getArtWorkById(artWorkId);
         StepVerifier.create(response)
@@ -160,7 +160,7 @@ class ArtWorkControllerTest {
         String ownerId = "ownerId";
         List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
         when(artWorkService.findByOwnerId(ownerId)).thenReturn(Flux.fromIterable(artWorks));
-        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+        when(artWorkService.mapArtWorkToPublicResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
 
         Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(ownerId, null, null, null, null, null, null, null, null);
         StepVerifier.create(response)
@@ -173,7 +173,7 @@ class ArtWorkControllerTest {
         String galleryId = "galleryId";
         List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
         when(artWorkService.findByGalleryId(galleryId)).thenReturn(Flux.fromIterable(artWorks));
-        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+        when(artWorkService.mapArtWorkToPublicResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
 
         Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, galleryId, null, null, null, null, null, null, null);
         StepVerifier.create(response)
@@ -186,7 +186,7 @@ class ArtWorkControllerTest {
         String ownerName = "ownerName";
         List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
         when(artWorkService.findByOwnerName(ownerName)).thenReturn(Flux.fromIterable(artWorks));
-        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+        when(artWorkService.mapArtWorkToPublicResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
 
         Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, ownerName, null, null, null, null, null, null);
         StepVerifier.create(response)
@@ -199,7 +199,7 @@ class ArtWorkControllerTest {
         List<String> materials = Arrays.asList("material1", "material2");
         List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
         when(artWorkService.findByMaterialsIn(materials)).thenReturn(Flux.fromIterable(artWorks));
-        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+        when(artWorkService.mapArtWorkToPublicResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
 
         Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, null, materials, null, null, null, null, null);
         StepVerifier.create(response)
@@ -212,7 +212,7 @@ class ArtWorkControllerTest {
         List<String> tags = Arrays.asList("tag1", "tag2");
         List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
         when(artWorkService.findByTagsIn(tags)).thenReturn(Flux.fromIterable(artWorks));
-        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+        when(artWorkService.mapArtWorkToPublicResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
 
         Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, null, null, tags, null, null, null, null);
         StepVerifier.create(response)
@@ -226,7 +226,7 @@ class ArtWorkControllerTest {
         double priceLessThan = 100.0;
         List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
         when(artWorkService.findByPriceLessThan(priceLessThan)).thenReturn(Flux.fromIterable(artWorks));
-        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+        when(artWorkService.mapArtWorkToPublicResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
 
         Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, null, null, null, null, priceLessThan, null, null);
         StepVerifier.create(response)
@@ -240,7 +240,7 @@ class ArtWorkControllerTest {
         double maxPrice = 150.0;
         List<ArtWork> artWorks = Arrays.asList(createArtWork(), createArtWork());
         when(artWorkService.findByPriceBetween(minPrice, maxPrice)).thenReturn(Flux.fromIterable(artWorks));
-        when(artWorkService.mapArtWorkToResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
+        when(artWorkService.mapArtWorkToPublicResponse(any(ArtWork.class))).thenReturn(Mono.just(createArtWorkResponseLeerAttr()));
 
         Flux<ArtWorkResponse> response = artWorkController.getArtworksByParam(null, null, null, null, null, null, null, maxPrice, minPrice);
         StepVerifier.create(response)
@@ -292,7 +292,7 @@ class ArtWorkControllerTest {
     }
 
     // Provide a test implementation for mapArtWorkToResponse method
-    private Mono<ArtWorkResponse> mapArtWorkToResponse(ArtWork artWork) {
+    private Mono<ArtWorkResponse> mapArtWorkToPublicResponse(ArtWork artWork) {
         // Implement the mapping logic here
         ArtWorkResponse artWorkResponse = new ArtWorkResponse();
         // Set necessary properties for the artWorkResponse based on the given artWork
