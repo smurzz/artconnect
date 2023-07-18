@@ -53,7 +53,7 @@ spring:
       import: env.properties
    data:
        mongodb:
-         uri: mongodb+srv://artconnect:${MONGO_PASSWORD}@artconnetc-cluster.hh5a4oh.mongodb.net/test?retryWrites=true&w=majority
+         uri: mongodb+srv://artconnect:${MONGO_PASSWORD}@artconnetc-cluster.hh5a4oh.mongodb.net/?retryWrites=true&w=majority
          database: artconnect-db
          auto-index-creation: true
    mail:
