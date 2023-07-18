@@ -1,133 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
-
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-
-/*damit die die Länge nach dem Margin berechnet wird*/
-*,
-*::before,
-*::after{
-    box-sizing: border-box
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/*übersicht unserer Farben bitte verwenden*/
-:root {
-    /*colors*/
-    --orange__dark: #f19166;
-    --orange__light: #ffcab2;
-    --black: #000000;
-    --gray__light: #000000;
-    --gray__dark: #c4c4c4;
-    --white: #f4f4f4;
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
-
-/*typografie*/
-
-.link {
-    text-decoration: none;
-}
-.h1__thin {
-    font-family: "Roboto", sans-serif;
-    font-size: 4em;
-    font-weight: 400;
-}
-
-.h2__thin {
-    font-family: "Roboto", sans-serif;
-    font-size: 2em;
-    font-weight: 400;
-    line-height: 1.1;
-}
-
-.h3__thin {
-    font-family: "Roboto", sans-serif;
-    font-size: 1.5em;
-    font-weight: 400;
-    line-height: 1.1;
-}
-
-.h1__bold {
-    font-family: "Roboto", sans-serif;
-    font-size: 4em;
-    font-weight: 700;
-    line-height: 1.1;
-}
-
-.h2__bold {
-    font-family: "Roboto", sans-serif;
-    font-size: 2em;
-    font-weight: 700;
-    line-height: 1.1;
-}
-
-.h3__bold {
-    font-family: "Roboto", sans-serif;
-    font-size: 1.5em;
-    font-weight: 700;
-    line-height: 1.1;
-}
-
-.text__regular {
-    font-family: "Roboto", sans-serif;
-    font-size:  1.125em;
-    font-weight: 400;
-    line-height: 1.1;
-}
-
-.text__large {
-    font-family: "Roboto", sans-serif;
-    font-size:  1.25em;
-    font-weight: 400;
-    line-height: 1.1;
-}
-
-.text__footnote {
-    font-family: "Roboto", sans-serif;
-    font-size:   0.75em;
-    font-weight: 400;
-    line-height: 1.1;
-}
-
-html,
-body{
-    height: 100%;
-}
-
-/*container einheitlicher margin an den Seiten*/
-.container{
-    width: min(1110px, 100% - 1rem *2);
-}
-
-.marginBetweenContainer{
-    margin-top: 2em;
-}
-
-.marginBetweenComponentes{
-    margin-bottom: 1.5em;
-}
-
-.bold-text {
-    font-weight: bold;
-}
-
 
 .tag.tag-sm {
-    display: inline-block;
-    border: 1px solid #b2becd;
-    border-radius: 4px;
-    padding: 0.1em 0.3em;
-    background: none;
-    color: #b2becd;
-    font-weight: 600;
-    margin: 0.25em 0.1em;
-    font-size: 0.7em;
+  display: inline-block;
+  border: 1px solid #b2becd;
+  border-radius: 4px;
+  padding: 0.1em 0.3em;
+  background: none;
+  color: #b2becd;
+  margin: 0.25em 0.1em;
 }
-
-.imageUploadFile{
-    object-fit: contain !important;
-}
-
-
-
-
