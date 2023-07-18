@@ -17,7 +17,6 @@ import ProfilePhotoDefault from '../../images/user.png';
 import '../../layout/css/homePublic.css';
 import '../../layout/css/users.css';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import * as artworkActions from '../../../redux/artwork/ArtworkAction';
 

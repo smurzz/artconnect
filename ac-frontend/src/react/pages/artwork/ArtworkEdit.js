@@ -12,7 +12,6 @@ import { InputTags } from "react-bootstrap-tagsinput";
 
 import ImageTMP from '../../images/no-image.png';
 import "react-bootstrap-tagsinput/dist/index.css";
-import 'bootstrap-icons/font/bootstrap-icons.css';
 import '../../layout/css/homePublic.css';
 import '../../layout/css/users.css';
 
