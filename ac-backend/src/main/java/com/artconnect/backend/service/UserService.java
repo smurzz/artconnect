@@ -66,6 +66,10 @@ public class UserService {
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User is not found.")));
 	}
 	
+	public Flux<User> searchUsers(String keyword) {
+        return userRepository.searchUsersByKeyword(keyword);
+    }
+	
 	public Mono<User> getCurrentUser() {
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)

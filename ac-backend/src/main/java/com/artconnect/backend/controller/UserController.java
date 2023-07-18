@@ -47,14 +47,13 @@ public class UserController {
 	
 	@GetMapping("/search")
 	public Flux<UserResponse> getUsersByFirstnameAndOrLastname(
+			@RequestParam(required = false, value = "q")  String keyword,
 	        @RequestParam(required = false, value = "firstname") String firstname,
 	        @RequestParam(required = false, value = "lastname") String lastname) {
 	    if (firstname != null && lastname != null) {
 	        return userService.findByFirstnameAndLastname(firstname, lastname).map(UserResponse::fromUser);
-	    } else if (firstname != null) {
-	        return userService.findByFirstname(firstname).map(UserResponse::fromUser);
-	    } else if (lastname != null) {
-	        return userService.findByLastname(lastname).map(UserResponse::fromUser);
+	    } else if (keyword != null) {
+	    	return userService.searchUsers(keyword).map(UserResponse::fromUser);
 	    } else {
 	        return Flux.empty();
 	    }
