@@ -8,7 +8,7 @@ application:
          confirm-token: 
             validityInMs: 900000   # 15 minutes
 frontend:
-  base-url: http://localhost:3000
+  base-url: http://localhost:3001
 backend:
   base-url: http://localhost:8080
 server:
