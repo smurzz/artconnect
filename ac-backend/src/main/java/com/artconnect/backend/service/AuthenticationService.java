@@ -36,7 +36,7 @@ public class AuthenticationService {
 	
 	@Value("${backend.base-url}")
 	private String backendBaseUrl;
-	
+
 	@Value("${frontend.base-url}")
 	private String frontendBaseUrl;
 
