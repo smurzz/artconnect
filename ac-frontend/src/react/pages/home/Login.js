@@ -39,12 +39,34 @@ function Login(props) {
         setErrorMessage("");
     }, [props.status, props.loginUserAction]);
 
+    const userDataValid = () => {
+        const errArray = [];
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user.email);
+        const isValidPassword = user.password.length >= 3;
+
+        if (!user.email.trim() | !isValidEmail) {
+            errArray.push("Invalid email address")
+        }
+        if (!user.password.trim() | !isValidPassword) {
+            errArray.push("Password should contain at least 3 characters")
+        }
+        if (errArray.length > 0) {
+            setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>{errArray.map(str => <p>{str}</p>)}</Alert>);
+            return false;
+        } else {
+            return true;
+        }
+    }
+    useEffect(()=>{
+        setErrorMessage("");
+    }, [user])
+
     useEffect(() => {
         if(props.error){
             const errResult = props.error;
             setError(errResult);
-            setErrorMessage(props.error?.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
-            {props.error?.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Login </Alert>));
+            setErrorMessage(props.error ? (<Alert className="alarm text-center mt-3" variant='danger'>
+            {props.error?.status === 401 ? "Opps! Either your E-Mail or password is not correct" : "Error by Login"} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Login </Alert>));
         }
         setIsLoading(false);
     }, [props.error, error]);
@@ -52,7 +74,10 @@ function Login(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        props.loginUserAction(user);
+        const userValidTest = userDataValid();
+        if(userValidTest){
+            props.loginUserAction(user);
+        }
         setIsLoading(false);
     }
 

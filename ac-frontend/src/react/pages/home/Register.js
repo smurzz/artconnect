@@ -36,6 +36,7 @@ export default function Register() {
         else if(userDataValidTest) {
             setIsLoading(true);
             await dispatch(authActions.signupUser(user));
+        }else{
             setIsLoading(false);
         }
     }
@@ -109,7 +110,6 @@ export default function Register() {
                 <div className='form-container w-100 m-auto'>
                     <form>
                         <h1 className="h3 mb-3 fw-normal">Please sign up</h1>
-
                         <div className="form-floating mb-1">
                             <input
                                 type="text"
@@ -119,8 +119,7 @@ export default function Register() {
                                 placeholder="John"
                                 value={user.firstname}
                                 onChange={async (e) => { setUser({ ...user, firstname: e.target.value }); }}
-                                required
-                            />
+                                required />
                             <label for="floatingFname">First name</label>
                         </div>
                         <div className="form-floating mb-1">
