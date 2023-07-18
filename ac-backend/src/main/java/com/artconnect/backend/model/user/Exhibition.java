@@ -1,7 +1,5 @@
 package com.artconnect.backend.model.user;
 
-import com.artconnect.backend.validation.MaxYear;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

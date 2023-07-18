@@ -142,7 +142,6 @@ public class GalleryService {
                 			.flatMap(user -> {
                 				boolean isLikedByCurrentUser = artwork.isArtWorkLikedByUserId(user.getEmail());
                 				if (imageIds != null && !imageIds.isEmpty()) {
-                	                System.out.println("Imagesid: " + imageIds.toString());
 		                			return imageService.getPhotosByIds(imageIds)
 		    	        	                .collectList()
 		    	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images, isLikedByCurrentUser));
