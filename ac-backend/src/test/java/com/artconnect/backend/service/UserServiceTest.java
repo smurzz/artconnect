@@ -207,14 +207,15 @@ public class UserServiceTest {
         String userEmail = "user@example.com";
 
         when(jwtService.extractUsername("<token>")).thenReturn(userEmail);
-        when(userRepository.findByEmail(userEmail)).thenReturn(Mono.just(user));
+        when(userRepository.findByEmail(anyString())).thenReturn(Mono.just(user));
+        when(userRepository.findById(anyString())).thenReturn(Mono.just(user)); 
         when(userRepository.save(user)).thenReturn(Mono.just(user));
 
         Mono<User> result = userService.update(id, user, authorization);
 
         StepVerifier.create(result)
-        	.expectNext(user)
-        	.verifyComplete();
+            .expectNext(user)
+            .verifyComplete();
     }
     
     @Test
@@ -285,25 +286,32 @@ public class UserServiceTest {
     
     @Test
     void testAddProfilePhoto_ReturnProfilePhoto() {
-    	FilePart filePart = mock(FilePart.class);
-    	Long imageSize = 3456545L;
-        String authorization = "Bearer <token>";
+    	 FilePart filePart = mock(FilePart.class);
+    	    String authorization = "Bearer <token>";
 
-        String email = "example@test.com";
-        User user = User.builder().email(email).build();             
-        Image image = new Image();
-        user.setProfilePhoto(image);
-        
-        when(jwtService.extractUsername("<token>")).thenReturn(email);
-        when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
-        when(imageService.addPhoto(any(Mono.class), anyLong())).thenReturn(Mono.just(image));
-        when(userRepository.save(user)).thenReturn(Mono.just(user));
-        
-        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), imageSize, authorization);
+    	    String email = "example@test.com";
+    	    String oldImageId = "oldProfilePhotoId";
+    	    User user = User.builder().email(email).build();
+    	    Image oldProfilePhoto = new Image();
+    	    oldProfilePhoto.setId(oldImageId);
+    	    user.setProfilePhoto(oldProfilePhoto);
 
-        StepVerifier.create(result)
-                .expectNext(image)
-                .verifyComplete();
+    	    Image newProfilePhoto = new Image();
+    	    newProfilePhoto.setId("newProfilePhotoId");
+
+    	    when(jwtService.extractUsername("<token>")).thenReturn(email);
+    	    when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
+    	    when(imageService.addPhoto(any(Mono.class))).thenReturn(Mono.just(newProfilePhoto));
+    	    when(userRepository.save(user)).thenReturn(Mono.just(user));
+    	    when(imageService.deleteById(oldImageId)).thenReturn(Mono.empty());
+
+    	    Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), authorization);
+
+    	    StepVerifier.create(result)
+    	            .expectNextMatches(actualImage -> actualImage.getId().equals(newProfilePhoto.getId()))
+    	            .verifyComplete();
+
+    	    verify(imageService).deleteById(oldImageId);
     }
 
     @Test
@@ -312,7 +320,7 @@ public class UserServiceTest {
     	Long imageSize = 3456545L;
         String authorization = "";
 
-        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), imageSize, authorization);
+        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), authorization);
 
         StepVerifier.create(result)
         .expectErrorSatisfies(error -> {
@@ -336,9 +344,9 @@ public class UserServiceTest {
         
         when(jwtService.extractUsername("<token>")).thenReturn(email);
         when(userRepository.findByEmail(email)).thenReturn(Mono.just(user));
-        when(imageService.addPhoto(any(Mono.class), anyLong())).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
+        when(imageService.addPhoto(any(Mono.class))).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to insert profile photo.")));
         
-        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), imageSize, authorization);
+        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), authorization);
 
         StepVerifier.create(result)
         .expectErrorSatisfies(error -> {
@@ -364,7 +372,7 @@ public class UserServiceTest {
         when(jwtService.extractUsername("<token>")).thenReturn(email);
         when(userRepository.findByEmail(email)).thenReturn(Mono.error(new ResponseStatusException(HttpStatus.UNAUTHORIZED)));
        
-        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), imageSize, authorization);
+        Mono<Image> result = userService.addProfilePhoto(Mono.just(filePart), authorization);
 
         StepVerifier.create(result)
         .expectErrorSatisfies(error -> {

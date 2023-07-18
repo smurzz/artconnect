@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -60,6 +61,9 @@ class AuthenticationServiceTest {
 
     @InjectMocks
     private AuthenticationService authenticationService;
+    
+    @Value("${frontend.base-url}")
+	private String frontendBaseUrl;
 
     @BeforeEach
     void init() {
@@ -127,6 +131,7 @@ class AuthenticationServiceTest {
         String userEmail = "test@example.com";
         UserDetails userDetails = mock(UserDetails.class);
         User user = mock(User.class);
+        user.setFirstname("John");
 
         when(jwtService.extractUsername(confirmToken)).thenReturn(userEmail);
         when(userDetailsService.findByUsername(userEmail)).thenReturn(Mono.just(userDetails));
@@ -156,7 +161,7 @@ class AuthenticationServiceTest {
 				+ "\r\n"
 				+ "	<div class=\"main-content\">\r\n"
 				+ "		<i class=\"fa fa-check main-content__checkmark\" id=\"checkmark\"></i>\r\n"
-				+ "		<p class=\"main-content__body\" data-lead-id=\"main-content-body\">Congratulations! Your registration on ArtConnect platform has been confirmed successfully. You can now log in to your account and start exploring our community of artists and art lovers. Thank you for joining us and we wish you an exciting and creative experience!</p>\r\n"
+				+ "		<p class=\"main-content__body\" data-lead-id=\"main-content-body\">Congratulations! Your registration on ArtConnect platform has been confirmed successfully. You can now <a href=\"" + frontendBaseUrl +  "/login\">log in</a> to your account and start exploring our community of artists and art lovers. Thank you for joining us and we wish you an exciting and creative experience!</p>\r\n"
 				+ "	</div>\r\n"
 				+ "\r\n"
 				+ "	<footer class=\"site-footer\" id=\"footer\">\r\n"
@@ -414,7 +419,7 @@ class AuthenticationServiceTest {
     }
     
     private String failedConfirmEmail() {
-		return "<html lang=\"en\">\r\n"
+    	return "<html lang=\"en\">\r\n"
 				+ "<head>\r\n"
 				+ "	<meta charset=\"utf-8\" />\r\n"
 				+ "	<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\" />\r\n"
@@ -436,7 +441,7 @@ class AuthenticationServiceTest {
 				+ "\r\n"
 				+ "	<div class=\"main-content\">\r\n"
 				+ "		<i class=\"fa fa-times main-content__checkmark\" id=\"checkmark\"></i>\r\n"
-				+ "		<p class=\"main-content__body\" data-lead-id=\"main-content-body\">We're sorry, but we couldn't confirm your registration on ArtConnect platform because the confirmation link has expired or is not valid anymore. Please make sure to use the latest link that we sent you in the confirmation email.</p>\r\n"
+				+ "		<p class=\"main-content__body\" data-lead-id=\"main-content-body\">We're sorry, but we couldn't confirm your registration on ArtConnect platform because the confirmation link has expired or is not valid anymore. Please make sure to use the latest link that we sent you in the confirmation email or <a href=\"" + frontendBaseUrl +  "/register\">log in</a> again.</p>\r\n"
 				+ "	</div>\r\n"
 				+ "\r\n"
 				+ "	<footer class=\"site-footer\" id=\"footer\">\r\n"
