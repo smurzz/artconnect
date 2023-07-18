@@ -111,12 +111,12 @@ class UserControllerTest {
 		user2.setLastname("Smith");
 		user2.setEmail("jane@example.com");
 
-		when(userService.findByFirstname("Jane")).thenReturn(Flux.just(user2));
+		when(userService.searchUsers("Jane")).thenReturn(Flux.just(user2));
 
 		webTestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path("/users/search")
-						.queryParam("firstname", "Jane")
+						.queryParam("q", "Jane")
 						.build())
 				.exchange()
 				.expectStatus().isOk()
@@ -141,12 +141,12 @@ class UserControllerTest {
 		user.setEmail("kate@example.com");
 
 
-		when(userService.findByLastname(anyString())).thenReturn(Flux.just(user, user2));
+		when(userService.searchUsers(anyString())).thenReturn(Flux.just(user, user2));
 
 		webTestClient.get()
 				.uri(uriBuilder -> uriBuilder
 						.path("/users/search")
-						.queryParam("lastname", "smith")
+						.queryParam("q", "smith")
 						.build())
 				.exchange()
 				.expectStatus().isOk()
