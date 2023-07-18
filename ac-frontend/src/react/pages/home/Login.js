@@ -16,11 +16,7 @@ const mapStateToPrors = state => {
 }
 
 function Login(props) {
-    var errorMessage;
-
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const authData = useSelector(state => state.auth);
 
     const [user, setUser] = useState(
         {
@@ -29,6 +25,8 @@ function Login(props) {
         });
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const resSuccess = props.status === 200;
@@ -38,7 +36,18 @@ function Login(props) {
             email: "",
             password: ""
         });
+        setErrorMessage("");
     }, [props.status, props.loginUserAction]);
+
+    useEffect(() => {
+        if(props.error){
+            const errResult = props.error;
+            setError(errResult);
+            setErrorMessage(props.error?.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
+            {props.error?.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Login </Alert>));
+        }
+        setIsLoading(false);
+    }, [props.error, error]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -49,11 +58,6 @@ function Login(props) {
 
     if(success === true) {
         navigate('/home');
-    }
-
-    if (props.error) {
-        errorMessage = props.error.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
-            {props.error.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Login </Alert>);
     }
 
     return (

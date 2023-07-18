@@ -198,8 +198,7 @@ export function getUsersByName(fname, lname) {
 
         axios.get('/users/search', { params: { firstname: fname, lastname: lname } })
             .then(response => {
-                const users = response.data;
-                const action = getUsersSuccessAction(users);
+                const action = getUsersSuccessAction(response);
                 dispatch(action);
             })
             .catch(error => {
@@ -216,8 +215,7 @@ export function getUsersByFirsnameOrLastname(name) {
 
         axios.get('/users/search', { params: { q: name} })
             .then(response => {
-                const users = response.data;
-                const action = getUsersSuccessAction(users);
+                const action = getUsersSuccessAction(response);
                 dispatch(action);
             })
             .catch(error => {

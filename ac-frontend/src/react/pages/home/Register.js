@@ -24,6 +24,7 @@ export default function Register() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
     const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
     const handleSubmit = async (e) => {
@@ -49,13 +50,21 @@ export default function Register() {
             password: ""
         });
         setErrorMessage("");
-        
+
     }, [authData.status]);
 
-    if (authData.error) {
-        setErrorMessage(authData.error.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
-            {authData.error.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Signup </Alert>));
-    }
+    useEffect(() => {
+        const errResult = authData.error;
+        setError(errResult);
+        setIsLoading(false);
+        setIsTermsAccepted(false);
+        setErrorMessage(authData.error?.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
+            {authData.error?.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Signup </Alert>));
+    }, [authData.error, error]);
+
+    useEffect(()=>{
+        setErrorMessage("");
+    }, [user])
 
     const handleModalClose = () => {
         setSuccess(false);
@@ -149,7 +158,7 @@ export default function Register() {
                         <p className="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
                     </form>
                 </div>
-                {success && <RegisterModel handleClose={handleModalClose}/>}
+                {success && <RegisterModel handleClose={handleModalClose} />}
             </main>
             <Footer />
         </div>
