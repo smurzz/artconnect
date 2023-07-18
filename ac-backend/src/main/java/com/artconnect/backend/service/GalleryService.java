@@ -47,6 +47,19 @@ public class GalleryService {
 		return galleryRepository.findById(id)
 				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Gallery with id <" + id + "> is not found.")));
 	}
+	
+	public Mono<Gallery> findByOwnerId(String ownerId) {
+		return galleryRepository.findByOwnerId(ownerId)
+				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Gallery with owner id <" + ownerId + "> is not found.")));
+	}
+	
+	public Mono<Gallery> findMyGallery() {
+		return userService.getCurrentUser()
+			.flatMap(user -> {
+				return galleryRepository.findByOwnerId(user.getId())
+						.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "You do not have a gallery yet")));
+			});
+	}
 
 	public Mono<Gallery> create(Gallery gallery, String authorization) {
 		String userEmail = getEmailFromAuthentication(authorization);
@@ -136,6 +149,22 @@ public class GalleryService {
                 					return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), isLikedByCurrentUser));
                 				}	
 	                		});                          
+	            })
+	            .collectList()
+	            .map(artworkResponses -> GalleryResponse.fromGallery(gallery, artworkResponses));
+	}
+	
+	public Mono<GalleryResponse> mapGalleryToPublicResponse(Gallery gallery) {
+	    return artWorkService.findByGalleryId(gallery.getId())
+	            .flatMap(artwork -> {
+	                List<String> imageIds = artwork.getImagesIds();
+    				if (imageIds != null && !imageIds.isEmpty()) {
+            			return imageService.getPhotosByIds(imageIds)
+	        	                .collectList()
+	        	                .map(images -> ArtWorkResponse.fromArtWork(artwork, images, false));
+    				} else {
+    					return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), false));
+    				}	                         
 	            })
 	            .collectList()
 	            .map(artworkResponses -> GalleryResponse.fromGallery(gallery, artworkResponses));

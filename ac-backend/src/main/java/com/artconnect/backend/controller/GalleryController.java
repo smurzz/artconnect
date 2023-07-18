@@ -3,6 +3,7 @@ package com.artconnect.backend.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,14 +38,14 @@ public class GalleryController {
 	
 	@GetMapping
 	public Flux<GalleryResponse> getAllGalleries() {
-		return galleryService.findAll().flatMap(this::mapGalleryToResponse);
+		return galleryService.findAll().flatMap(this::mapGalleryToPublicResponse);
 	}
 	
 	@GetMapping("/search")
 	public Flux<GalleryResponse> getGalleriesByParam(
 	        @RequestParam(required = false) List<GalleryCategory> galleryCategories) {
 		if (galleryCategories != null && galleryCategories.size() != 0) {
-			return galleryService.findByCategoriesIn(galleryCategories).flatMap(this::mapGalleryToResponse);
+			return galleryService.findByCategoriesIn(galleryCategories).flatMap(this::mapGalleryToPublicResponse);
 		} else {
 			return Flux.empty();
 		}
@@ -52,8 +53,20 @@ public class GalleryController {
 	
 	@GetMapping("/{id}")
 	public Mono<GalleryResponse> getGalleryById(@PathVariable("id") String id) {
-		return galleryService.findById(id).flatMap(this::mapGalleryToResponse);
+		return galleryService.findById(id).flatMap(this::mapGalleryToPublicResponse);
 	}
+	
+	@GetMapping("/myGallery")
+	@PreAuthorize("hasAnyRole('USER', 'MANAGER', 'ADMIN')")
+	public Mono<GalleryResponse> getMyGallery() {
+		return galleryService.findMyGallery().flatMap(this::mapGalleryToResponse);
+	}
+	
+	@GetMapping("/user/{id}")
+	public Mono<GalleryResponse> getGalleryByOwner(@PathVariable("id") String userId) {
+		return galleryService.findByOwnerId(userId).flatMap(this::mapGalleryToPublicResponse);
+	}
+	
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -94,6 +107,10 @@ public class GalleryController {
 	
 	private Mono<GalleryResponse> mapGalleryToResponse(Gallery gallery) {
         return galleryService.mapGalleryToResponse(gallery);
+    }
+	
+	private Mono<GalleryResponse> mapGalleryToPublicResponse(Gallery gallery) {
+        return galleryService.mapGalleryToPublicResponse(gallery);
     }
 	
 }

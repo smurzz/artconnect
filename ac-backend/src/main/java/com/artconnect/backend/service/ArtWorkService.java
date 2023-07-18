@@ -19,6 +19,7 @@ import com.artconnect.backend.model.user.Role;
 import com.artconnect.backend.repository.ArtWorkRepository;
 import com.artconnect.backend.repository.GalleryRepository;
 
+import jakarta.mail.Flags.Flag;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -264,6 +265,16 @@ public class ArtWorkService {
 					}
 				})
 				.switchIfEmpty(Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), false)));
+	}
+	
+	public Mono<ArtWorkResponse> mapArtWorkToPublicResponse(ArtWork artwork) {
+		List<String> imageIds = artwork.getImagesIds();
+		if (imageIds != null && !imageIds.isEmpty()) {
+			return imageService.getPhotosByIds(imageIds).collectList()
+					.map(images -> ArtWorkResponse.fromArtWork(artwork, images, false));
+		} else {
+			return Mono.just(ArtWorkResponse.fromArtWork(artwork, Collections.emptyList(), false));
+		}
 	}
 	
 	private String getEmailFromAuthentication(String authorization) {

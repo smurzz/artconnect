@@ -38,7 +38,7 @@ public class GalleryControllerTest {
         GalleryResponse response1 = createGalleryResponse("1", "Gallery 1");
         GalleryResponse response2 = createGalleryResponse("2", "Gallery 2");
         when(galleryService.findAll()).thenReturn(Flux.fromIterable(galleries));
-        when(galleryService.mapGalleryToResponse(any())).thenAnswer(invocation -> {
+        when(galleryService.mapGalleryToPublicResponse(any())).thenAnswer(invocation -> {
             Gallery gallery = invocation.getArgument(0);
             return Mono.just(createGalleryResponse(gallery.getId(), gallery.getTitle()));
         });
@@ -61,7 +61,7 @@ public class GalleryControllerTest {
         GalleryResponse response1 = createGalleryResponse("1", "Gallery 1");
         GalleryResponse response2 = createGalleryResponse("2", "Gallery 2");
         when(galleryService.findByCategoriesIn(categories)).thenReturn(Flux.fromIterable(galleries));
-        when(galleryService.mapGalleryToResponse(any())).thenAnswer(invocation -> {
+        when(galleryService.mapGalleryToPublicResponse(any())).thenAnswer(invocation -> {
             Gallery gallery = invocation.getArgument(0);
             return Mono.just(createGalleryResponse(gallery.getId(), gallery.getTitle()));
         });
@@ -94,7 +94,7 @@ public class GalleryControllerTest {
         Gallery gallery = createGallery(galleryId, "Gallery 1");
         GalleryResponse response = createGalleryResponse(galleryId, "Gallery 1");
         when(galleryService.findById(galleryId)).thenReturn(Mono.just(gallery));
-        when(galleryService.mapGalleryToResponse(gallery)).thenReturn(Mono.just(response));
+        when(galleryService.mapGalleryToPublicResponse(gallery)).thenReturn(Mono.just(response));
 
         Mono<GalleryResponse> result = galleryController.getGalleryById(galleryId);
 
