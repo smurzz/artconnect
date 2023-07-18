@@ -11,7 +11,6 @@ import HomePublic from '../home/HomePublic';
 
 import '../../layout/css/homePublic.css';
 import '../../layout/css/users.css';
-import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import * as artworkAction from '../../../redux/artwork/ArtworkAction';
 import * as authActions from '../../../redux/authentication/AuthenticationAction';

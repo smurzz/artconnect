@@ -19,6 +19,7 @@ function Gallery() {
     const galleryData = useSelector(state => state.gallery);
     const [rating, setRating] = useState(null);
     const [error, setError] = useState();
+    const [success, setSuccess] = useState();
     const [gallery, setGallery] = useState(null);
 
     /* get gallery by id */
@@ -28,39 +29,43 @@ function Gallery() {
         };
 
         fetchData();
-    }, [dispatch, id]);
+    }, [dispatch, galleryData?.gallery?.ranking]);
 
     useEffect(() => {
         const fetchData = async () => {
             if(rating && userSession){
                 await dispatch(galleryActions.putRating(id, parseInt(rating)));
-                window.location.reload();
+                success ?? window.location.reload();
             }
         };
 
         fetchData();
-    }, [dispatch, id, rating]);
+    }, [dispatch, rating]);
 
     useEffect(() => {
         if (galleryData.gallery) {
-            console.log(galleryData.gallery);
             setGallery(galleryData.gallery);
         }
     }, [galleryData.status, galleryData.gallery, error]);
 
     useEffect(() => {
+        if (galleryData.status === 200) {
+            setSuccess(true);
+            window.location.reload();
+        }
+    }, [galleryData.status]);
+
+    useEffect(() => {
         if (galleryData.error) {
-            console.log(galleryData.error);
             setError(galleryData.error);
         }
     }, [galleryData.error]);
 
     const onChangeRating = async (e) => {
-        console.log(e.target.value);
         setRating(e.target.value);
     }
 
-    if (!gallery && !error) {
+    if (galleryData.pending) {
         return <LoadingPage />;
     }
 
@@ -80,11 +85,11 @@ function Gallery() {
                             <p className="lead text-body-secondary mt-3">{gallery?.description ? gallery.description : ("No description.")} </p>
                             <div class="container">
                                 {<div class="starrating risingstar d-flex justify-content-center flex-row-reverse" onChange={onChangeRating}>
-                                    <input type="radio" id="star5" name="rating" value={5} checked={gallery.ranking <= 5 && gallery.ranking > 4} /><label for="star5" title="5 star"></label>
-                                    <input type="radio" id="star4" name="rating" value={4} checked={gallery.ranking <= 4 && gallery.ranking > 3} /><label for="star4" title="4 star"></label>
-                                    <input type="radio" id="star3" name="rating" value={3} checked={gallery.ranking <= 3 && gallery.ranking > 2} /><label for="star3" title="3 star"></label>
-                                    <input type="radio" id="star2" name="rating" value={2} checked={gallery.ranking <= 2 && gallery.ranking > 1} /><label for="star2" title="2 star"></label>
-                                    <input type="radio" id="star1" name="rating" value={1} checked={gallery.ranking === 1} /><label for="star1" title="1 star"></label>
+                                    <input type="radio" id="star5" name="rating" value={5} checked={gallery?.ranking <= 5 && gallery?.ranking > 4} /><label for="star5" title="5 star"></label>
+                                    <input type="radio" id="star4" name="rating" value={4} checked={gallery?.ranking <= 4 && gallery?.ranking > 3} /><label for="star4" title="4 star"></label>
+                                    <input type="radio" id="star3" name="rating" value={3} checked={gallery?.ranking <= 3 && gallery?.ranking > 2} /><label for="star3" title="3 star"></label>
+                                    <input type="radio" id="star2" name="rating" value={2} checked={gallery?.ranking <= 2 && gallery?.ranking > 1} /><label for="star2" title="2 star"></label>
+                                    <input type="radio" id="star1" name="rating" value={1} checked={gallery?.ranking === 1} /><label for="star1" title="1 star"></label>
                                 </div>}
                             </div>
                         </div>
@@ -95,8 +100,8 @@ function Gallery() {
                     <div className="container-md">
 
                         <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-                            {gallery.artworks?.length > 0 ? (
-                                gallery.artworks.map((artwork, index) => (
+                            {gallery?.artworks?.length > 0 ? (
+                                gallery?.artworks.map((artwork, index) => (
                                     <div className="col" key={index}>
                                         <div className="card">
                                             <img
