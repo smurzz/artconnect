@@ -16,7 +16,7 @@ import jakarta.validation.ConstraintViolationException;
 import reactor.core.publisher.Mono;
 
 @ControllerAdvice
-public class ValidationHandler extends ResponseEntityExceptionHandler {
+public class ValidationHandler {
 
     @ExceptionHandler(WebExchangeBindException.class)
     public Mono<String> handleException(WebExchangeBindException e) {
