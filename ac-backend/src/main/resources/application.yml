@@ -52,14 +52,9 @@ spring:
          on-profile: docker
       import: env.properties
    data:
-      mongodb:
-         # url: mongodb+srv://artconnect:${MONGO_PASSWORD}@artconnetc-cluster.hh5a4oh.mongodb.net/?retryWrites=true&w=majority
-         host: mongo
-         port: 27018
+       mongodb:
+         uri: mongodb+srv://artconnect:${MONGO_PASSWORD}@artconnetc-cluster.hh5a4oh.mongodb.net/test?retryWrites=true&w=majority
          database: artconnect-db
-         username: admin
-         password: password
-         authentication-database: admin
          auto-index-creation: true
    mail:
       host: smtp.gmail.com

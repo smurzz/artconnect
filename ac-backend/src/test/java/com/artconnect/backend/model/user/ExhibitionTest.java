@@ -486,4 +486,3 @@ public class ExhibitionTest {
 
 }
 
-

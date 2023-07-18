@@ -1,50 +1,31 @@
 package com.artconnect.backend.controller.response;
 
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.core.MethodParameter;
+import org.springframework.core.codec.DecodingException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.reactive.server.WebTestClient;
+
 import org.springframework.validation.BindingResult;
+import reactor.core.publisher.Mono;
+
+
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.artconnect.backend.controller.AuthenticationController;
-import com.artconnect.backend.controller.request.RegisterRequest;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-import jakarta.validation.ConstraintViolationException;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-
-//NEED TO BE CORRECTED
 public class ValidationHandlerTest {
 
     @InjectMocks
@@ -54,64 +35,6 @@ public class ValidationHandlerTest {
     @BeforeEach
     public void setup() {
         validationHandler = new ValidationHandler();
-    }
-
-    @Test
-    public void handleImageUploadException_ReturnsBadRequestStatus() {
-        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
-        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
-        ResponseEntity<String> result = response.block();
-
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-    }
-
-    @Test
-    public void handleImageUploadException_ReturnsExpectedErrorMessage() {
-        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
-        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
-        ResponseEntity<String> result = response.block();
-
-        Assertions.assertEquals("Image is bigger than 5Mb or is not PNG, JPEG, or JPG", result.getBody());
-    }
-
-    @Test
-    public void handleImageUploadException_ReturnsMonoWithExpectedValue() {
-        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
-        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
-
-        Assertions.assertNotNull(response);
-        Assertions.assertTrue(response instanceof Mono);
-    }
-
-    @Test
-    public void handleImageUploadException_ReturnsExpectedResponseEntity() {
-        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
-        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
-        ResponseEntity<String> result = response.block();
-
-        Assertions.assertNotNull(result);
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
-        Assertions.assertEquals("Image is bigger than 5Mb or is not PNG, JPEG, or JPG", result.getBody());
-    }
-
-    @Test
-    public void handleImageUploadException_DoesNotThrowException() {
-        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
-
-        Assertions.assertDoesNotThrow(() -> {
-            validationHandler.handleImageUploadException(exception).block();
-        }, "Expected no exception to be thrown");
-    }
-
-    @Test
-    public void handleImageUploadException_ReturnsMonoWithValueSet() {
-        ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
-        Mono<ResponseEntity<String>> response = validationHandler.handleImageUploadException(exception);
-
-        String expectedErrorMessage = "Image is bigger than 5Mb or is not PNG, JPEG, or JPG";
-        Mono<String> expectedMono = Mono.just(expectedErrorMessage);
-
-        Assertions.assertEquals(expectedMono.block(), response.map(ResponseEntity::getBody).block());
     }
 
     @Test
@@ -154,6 +77,77 @@ public class ValidationHandlerTest {
         );
     }
 
+    @Test
+    void handleDecodingException_shouldReturnBadRequestStatusWithDefaultErrorMessage() {
+        DecodingException exception = mock(DecodingException.class);
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDecodingException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("One of enum value in the list is not valid", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDecodingException_shouldReturnBadRequestStatusWithEnumErrorMessage() {
+        DecodingException exception = new DecodingException("One of enum value in the list is not valid");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDecodingException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("One of enum value in the list is not valid", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDecodingException_shouldReturnBadRequestStatusWithCustomErrorMessage() {
+        DecodingException exception = new DecodingException("Custom error message");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDecodingException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("One of enum value in the list is not valid", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDuplicateKeyException_shouldReturnBadRequestStatusWithEmailErrorMessage() {
+        DuplicateKeyException exception = new DuplicateKeyException("Duplicate key error: email");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDuplicateKeyException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("Email already exists", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDuplicateKeyException_shouldReturnBadRequestStatusWithGalleryErrorMessage() {
+        DuplicateKeyException exception = new DuplicateKeyException("Duplicate key error: ownerId");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDuplicateKeyException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("Gallery already exists for the user", responseStatusException.getReason());
+    }
+
+    @Test
+    void handleDuplicateKeyException_shouldReturnBadRequestStatusWithDefaultErrorMessage() {
+        DuplicateKeyException exception = new DuplicateKeyException("Some other duplicate key error");
+
+        ValidationHandler validationHandler = new ValidationHandler();
+        Mono<ResponseEntity<String>> result = validationHandler.handleDuplicateKeyException(exception);
+
+        ResponseStatusException responseStatusException = assertThrows(ResponseStatusException.class, result::block);
+        assertEquals(HttpStatus.BAD_REQUEST, responseStatusException.getStatusCode());
+        assertEquals("Duplicate key error", responseStatusException.getReason());
+    }
 
 //	private ValidationHandler validationHandler;
 //

@@ -1,5 +1,6 @@
 package com.artconnect.backend.repository;
 
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import com.artconnect.backend.model.user.Status;
@@ -17,6 +18,9 @@ public interface UserRepository extends ReactiveMongoRepository<User, String>{
 	 Flux<User> findByFirstnameIgnoreCase(String firstname);
 	 
 	 Flux<User> findByLastnameIgnoreCase(String lastname);
+	 
+	 @Query("{ $or: [ { firstname: { $regex: ?0, $options: 'i' } }, { lastname: { $regex: ?0, $options: 'i' } } ] }")
+	 Flux<User> searchUsersByKeyword(String keyword);
 	 
 	 Flux<User> findByFirstnameIgnoreCaseAndLastnameIgnoreCase(String firstname, String lastname);
 

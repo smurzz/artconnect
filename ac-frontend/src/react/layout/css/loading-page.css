@@ -1,0 +1,44 @@
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+  height: 100%;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #999999;
+}
+
+/* Custom page CSS
+  -------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+body>.container-fluid {
+  padding-top: 50px;
+}
+
+.container-fluid .col-sm-6 {
+  padding: 0;
+}
+
+.navbar {
+  margin-bottom: 0;
+}
+
+.footer {
+  padding: 15px 0;
+}
+
+.main-content {
+  background: #efefef;
+  padding: 20px;
+  height: calc(100vh - 144px);
+}

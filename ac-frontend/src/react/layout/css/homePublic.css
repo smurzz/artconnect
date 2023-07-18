@@ -1,0 +1,76 @@
+/* */
+
+html,
+body {
+  height: 100vh;
+}
+
+#root {
+  height: 100vh;
+}
+
+main{
+  min-height: 100%;
+}
+
+.home-public-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.image-slider-container {
+  flex: 1;
+}
+
+.carousel-background-image {
+  height: 100vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.carousel-caption {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  bottom: initial;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+}
+
+.carousel-item {
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+
+@import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
+
+/* Styling h1 and links
+––––––––––––––––––––––––––––––––– */
+
+.starrating > input {display: none;}  /* Remove radio buttons */
+
+.starrating > label:before { 
+  content: "\f005"; /* Star */
+  margin: 2px;
+  font-size: 1.5em;
+  font-family: FontAwesome;
+  display: inline-block; 
+}
+
+.starrating > label
+{
+  color: #222222; /* Start color when not clicked */
+}
+
+.starrating > input:checked ~ label
+{ color: #ffca08 ; } /* Set yellow color when star checked */
+
+.starrating > input:hover ~ label
+{ color: #ffca08 ;  } /* Set yellow color when star hover */
