@@ -1,21 +1,12 @@
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
 import { FaUserCircle } from 'react-icons/fa';
-
-import Image from 'react-bootstrap/Image';
-import { connect } from 'react-redux';
-
-import Avatar from '../../../logo.svg'
+import {Nav, Navbar, NavDropdown} from 'react-bootstrap';
 
 import * as authActions from '../../../redux/authentication/AuthenticationAction';
 
-export function MenuBar(props) {
+export default function MenuBar(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -31,9 +22,10 @@ export function MenuBar(props) {
         /* var logoutButton = (<Nav.Link onClick={handleLogout}>Logout</Nav.Link>); */
         var authUserOptions = (
             <NavDropdown align='end' title={<FaUserCircle size={36} />} id="basic-nav-dropdown" flip>
-                <NavDropdown.Item href="/profile-edit">Profile</NavDropdown.Item>
                 <NavDropdown.Item href="/gallery-edit">Gallery</NavDropdown.Item>
-                <NavDropdown.Item href="/artwork-new">Artworks</NavDropdown.Item>
+                <NavDropdown.Item href="/profile-edit">
+                    Profile
+                </NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item onClick={handleLogout}>
                     Logout
@@ -41,8 +33,8 @@ export function MenuBar(props) {
             </NavDropdown>
         );
     } else {
-        var loginButton = (<Nav.Link href="/login">Login</Nav.Link>);
-        var registerButton = (<Nav.Link href="/register">Register</Nav.Link>);
+        var loginButton = (<Nav.Link className='link-light' href="/login">Login</Nav.Link>);
+        var registerButton = (<Nav.Link className='link-light' href="/register">Register</Nav.Link>);
         /* var searchBar = (<Form className="d-flex">
             <Form.Control
                 type="search"
@@ -61,13 +53,26 @@ export function MenuBar(props) {
                 <Navbar.Collapse id="navbarScroll">
                     <Nav className="me-auto">
                         {/* {searchBar} */}
+                        <Nav.Link href="/home">Home</Nav.Link>
+                        <Nav.Link href="/users">Users</Nav.Link>
+                        <Nav.Link href="/artworks">Artwoks</Nav.Link>
                     </Nav>
                     <Nav
                         navbarScroll
                     >
-                        <Nav.Link href="/home">Home</Nav.Link>
-                        <Nav.Link href="/users">Users</Nav.Link>
-                        <Nav.Link href="/artworks">Artwoks</Nav.Link>
+                        {/* <NavDropdown title="Link" id="navbarScrollingDropdown">
+                            <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
+                            <NavDropdown.Item href="#action4">
+                                Another action
+                            </NavDropdown.Item>
+                            <NavDropdown.Divider />
+                            <NavDropdown.Item href="#action5">
+                                Something else here
+                            </NavDropdown.Item>
+                        </NavDropdown>
+                        <Nav.Link href="#" disabled>
+                            Link
+                        </Nav.Link> */}
                         {loginButton}
                         {registerButton}
                         {authUserOptions}

@@ -33,16 +33,21 @@ export const POST_COMMENT_PENDING = 'POST_COMMENT_PENDING';
 export const POST_COMMENT_SUCCESS = 'POST_COMMENT_SUCCESS'
 export const POST_COMMENT_ERROR = 'POST_COMMENT_ERROR'
 
+export const REQUEST_DELETE_IMAGE_ARTWORK = 'REQUEST_DELETE_IMAGE_ARTWORK';
+export const SUCCESS_DELETE_IMAGE_ARTWORK = 'SUCCESS_DELETE_IMAGE_ARTWORK';
+export const FAIL_DELETE_IMAGE_ARTWORK = 'FAIL_DELETE_IMAGE_ARTWORK';
+
 export function getArtworksPendingAction() {
     return {
         type: REQUEST_READ_ARTWORKS
     }
 }
 
-export function getArtworksSuccessAction(artworks) {
+export function getArtworksSuccessAction(result) {
     return {
         type: SUCCESS_READ_ARTWORKS,
-        artworks: artworks
+        artworks: result.data,
+        status: result.status
     }
 }
 
@@ -196,6 +201,26 @@ export function postCommentErrorAction(error) {
     }
 }
 
+export function deleteImagePendingAction() {
+    return {
+        type: REQUEST_DELETE_IMAGE_ARTWORK
+    }
+}
+
+export function deleteImageSuccessAction(res) {
+    return {
+        type: SUCCESS_DELETE_IMAGE_ARTWORK,
+        status: res.status
+    }
+}
+
+export function deleteImageErrorAction(error) {
+    return {
+        type: FAIL_DELETE_IMAGE_ARTWORK,
+        error: error
+    }
+}
+
 export function getArtworks() {
 
     return async dispatch => {
@@ -203,8 +228,7 @@ export function getArtworks() {
 
         axios.get('/artworks')
             .then(response => {
-                const artworks = response.data;
-                const action = getArtworksSuccessAction(artworks);
+                const action = getArtworksSuccessAction(response);
                 dispatch(action);
             })
             .catch(error => {
@@ -218,10 +242,9 @@ export function getArtworksByTags(tagsArray) {
     return async dispatch => {
         dispatch(getArtworksPendingAction());
 
-        axios.get('/artworks/search', { params: { tags: tagsArray }})
+        axios.get('/artworks/search', { params: { tags: tagsArray } })
             .then(response => {
-                const artworks = response.data;
-                const action = getArtworksSuccessAction(artworks);
+                const action = getArtworksSuccessAction(response);
                 dispatch(action);
             })
             .catch(error => {
@@ -235,15 +258,41 @@ export function getArtwork(id) {
     return async dispatch => {
         dispatch(getArtworkPendingAction());
 
-        axios.get('/artworks/' + id)
-            .then(response => {
-                const artwork = response.data;
-                const action = getArtworkSuccessAction(artwork);
-                dispatch(action);
+        const tokens = JSON.parse(localStorage.getItem('userSession'));
+
+        if(tokens){
+            await refreshTokenService.checkTockens()
+            .then(() => {
+                const requestOptions = {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
+                    }
+                };
+                axios.get('/artworks/' + id, requestOptions)
+                    .then(response => {
+                        const artwork = response.data;
+                        const action = getArtworkSuccessAction(artwork);
+                        dispatch(action);
+                    })
+                    .catch(error => {
+                        dispatch(getArtworkErrorAction(error.response?.data));
+                    });
             })
             .catch(error => {
-                dispatch(getArtworkErrorAction(error.response?.data));
+                dispatch(createArtworkErrorAction(error.response?.data));
             });
+        } else {
+            axios.get('/artworks/' + id)
+                    .then(response => {
+                        const artwork = response.data;
+                        const action = getArtworkSuccessAction(artwork);
+                        dispatch(action);
+                    })
+                    .catch(error => {
+                        dispatch(getArtworkErrorAction(error.response?.data));
+                    });
+        }
     }
 }
 
@@ -304,29 +353,29 @@ export function editArtwork(id, artwork) {
 }
 
 export function deleteArtwork(id) {
-    
+
     return async dispatch => {
         dispatch(deleteArtworkPendingAction());
 
         await refreshTokenService.checkTockens()
-        .then(() => {
-            const requestOptions = {
-                headers: {
-                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
-                }
-            };
-            axios.delete('/artworks/' + id, requestOptions)
-                .then(response => {
-                    const action = deleteArtworkSuccessAction(response);
-                    dispatch(action);
-                })
-                .catch(error => {
-                    dispatch(deleteArtworkErrorAction(error.respone?.data));
-                })
-        })
-        .catch(error => {
-            dispatch(editArtworkErrorAction(error));
-        });
+            .then(() => {
+                const requestOptions = {
+                    headers: {
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
+                    }
+                };
+                axios.delete('/artworks/' + id, requestOptions)
+                    .then(response => {
+                        const action = deleteArtworkSuccessAction(response);
+                        dispatch(action);
+                    })
+                    .catch(error => {
+                        dispatch(deleteArtworkErrorAction(error.respone?.data));
+                    })
+            })
+            .catch(error => {
+                dispatch(editArtworkErrorAction(error));
+            });
     }
 }
 
@@ -335,29 +384,27 @@ export function addArtworkImage(id, formData) {
         dispatch(createArtworkIamgePendingAction());
 
         await refreshTokenService.checkTockens()
-        .then(() => {
-            const requestOptions = {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
-                }
-            };
-            axios.post("/artworks/add-photo/" + id, formData, requestOptions)
-            .then(response => {
-                const action = createArtworkIamgeSuccessAction(response);
-                window.reload();
-                dispatch(action);
+            .then(() => {
+                const requestOptions = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
+                    }
+                };
+                axios.post("/artworks/add-photo/" + id, formData, requestOptions)
+                    .then(response => {
+                        const action = createArtworkIamgeSuccessAction(response);
+                        dispatch(action);
+                    })
+                    .catch(error => {
+                        dispatch(createArtworkIamgeErrorAction(error.response?.data));
+                    });
             })
             .catch(error => {
                 dispatch(createArtworkIamgeErrorAction(error.response?.data));
             });
-        })
-        .catch(error => {
-            dispatch(createArtworkIamgeErrorAction(error.response?.data));
-        });
     }
 }
-
 
 export function addArtworkImages(id, files) {
     return async dispatch => {
@@ -410,6 +457,33 @@ export function addRemoveLike(id) {
             })
             .catch(error => {
                 dispatch(createArtworkErrorAction(error.response?.data));
+            });
+    }
+}
+
+export function deleteImageInArtworkById(artworkId, imageId) {
+
+    return async dispatch => {
+        dispatch(deleteImagePendingAction());
+
+        await refreshTokenService.checkTockens()
+            .then(() => {
+                const requestOptions = {
+                    headers: {
+                        'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
+                    }
+                };
+                axios.delete('/artworks/' + artworkId + '/images/' + imageId, requestOptions)
+                    .then(response => {
+                        const action = deleteImageSuccessAction(response);
+                        dispatch(action);
+                    })
+                    .catch(error => {
+                        dispatch(deleteImageErrorAction(error.respone?.data));
+                    })
+            })
+            .catch(error => {
+                dispatch(deleteImageErrorAction(error.response?.data));
             });
     }
 }

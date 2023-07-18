@@ -10,11 +10,14 @@ const initialState = {
 };
 
 export default function userReducer(state = initialState, action) {
+
+    console.log('Bin in User Reducer: ' + action.type);
+
     switch (action.type) {
         case userAction.REQUEST_READ_USERS:
             return {
                 ...state,
-                pending: action.pending,
+                pending: true,
                 error: null
             }
         case userAction.SUCCESS_READ_USERS:
@@ -22,6 +25,7 @@ export default function userReducer(state = initialState, action) {
                 ...state,
                 pending: false,
                 users: action.users,
+                status: action.status,
                 error: null
             }
         case userAction.FAIL_READ_USERS:

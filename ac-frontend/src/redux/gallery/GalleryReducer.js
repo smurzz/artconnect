@@ -9,11 +9,14 @@ const initialState = {
 };
 
 export default function galleryReducer(state = initialState, action) {
+
+    console.log('Bin in Gallery Reducer: ' + action.type);
+
     switch (action.type) {
         case galleryAction.REQUEST_READ_GALLERIES:
             return {
                 ...state,
-                pending: action.pending,
+                pending: true,
                 error: null
             }
         case galleryAction.SUCCESS_READ_GALLERIES:

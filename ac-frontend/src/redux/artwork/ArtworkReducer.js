@@ -3,18 +3,21 @@ import * as artworkActions from "./ArtworkAction";
 const initialState = {
     artworks: [],
     artwork: null,
-    status: null,
+    status: '',
     image: null,
     pending: false,
     error: null
 };
 
 export default function artworkReducer(state = initialState, action) {
+
+    console.log('Bin in Artwork Reducer: ' + action.type);
+
     switch (action.type) {
         case artworkActions.REQUEST_READ_ARTWORKS:
             return {
                 ...state,
-                pending: action.pending,
+                pending: true,
                 error: null
             }
         case artworkActions.SUCCESS_READ_ARTWORKS:
@@ -22,6 +25,7 @@ export default function artworkReducer(state = initialState, action) {
                 ...state,
                 pending: false,
                 artworks: action.artworks,
+                status: action.status,
                 error: null
             }
         case artworkActions.FAIL_READ_ARTWORKS:
@@ -101,6 +105,7 @@ export default function artworkReducer(state = initialState, action) {
                 ...state,
                 pending: false,
                 status: action.status,
+                artwork: null,
                 error: null
             }
         case artworkActions.FAIL_DELETE_ARTWORK:
@@ -162,6 +167,25 @@ export default function artworkReducer(state = initialState, action) {
                 error: null
             }
         case artworkActions.POST_COMMENT_ERROR:
+            return {
+                ...state,
+                pending: false,
+                error: action.error
+            }
+        case artworkActions.REQUEST_DELETE_IMAGE_ARTWORK:
+            return {
+                ...state,
+                pending: true,
+                error: null
+            }
+        case artworkActions.SUCCESS_DELETE_IMAGE_ARTWORK:
+            return {
+                ...state,
+                pending: false,
+                status: action.status,
+                error: null
+            }
+        case artworkActions.FAIL_DELETE_IMAGE_ARTWORK:
             return {
                 ...state,
                 pending: false,
