@@ -29,12 +29,44 @@ export default function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const userDataValidTest = userDataValid();
         if (!isTermsAccepted) {
             setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>You must accept the terms and conditions to be able to process your registration.</Alert>);
-        } else {
+        }
+        else if(userDataValidTest) {
             setIsLoading(true);
             await dispatch(authActions.signupUser(user));
             setIsLoading(false);
+        }
+    }
+
+    const userDataValid = () => {
+        const errArray=[];
+        const {firstname, lastname, email, password} = user;
+        const isValidFirstname = firstname.length >= 2;
+        const isValidLastname = lastname.length >= 2;
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const isValidPassword = password.length >= 3;
+
+        if (!firstname.trim() | !isValidFirstname) {
+            errArray.push("First name should contain at least 2 characters")
+        }
+        if (!lastname.trim() |!isValidLastname ) {
+            errArray.push("Last name should contain at least 2 characters")
+        }
+        if (!email.trim() | !isValidEmail) {
+            errArray.push("Invalid email address")
+        }
+        if (!password.trim() | !isValidPassword) {
+            console.log("Password cannot be empty");
+            errArray.push("Password should contain at least 3 characters")
+        }
+
+        if(errArray.length > 0){
+            setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>{errArray.map(str => <p>{str}</p>)}</Alert>);
+            return false;
+        }else{
+            return true;
         }
     }
 
@@ -59,7 +91,7 @@ export default function Register() {
         setIsLoading(false);
         setIsTermsAccepted(false);
         setErrorMessage(authData.error?.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
-            {authData.error?.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Signup </Alert>));
+            {authData.error?.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'>  {authData.error?.status == 400 ? "The Email you have provided, has already been registered" : "Error signUp"}</Alert>));
     }, [authData.error, error]);
 
     useEffect(()=>{
