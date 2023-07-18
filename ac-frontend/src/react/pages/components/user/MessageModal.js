@@ -88,7 +88,11 @@ function MessageModal(props) {
                             />
                         </Form.Group>
                     </Form>
-                    {messageData.pending && (<div class="spinner-border" role="status"></div>)}
+                    {messageData.pending && (<div class="d-flex justify-content-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>)}
                     {successMessage}
                     {errorMessage}
                 </Modal.Body>

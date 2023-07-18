@@ -31,7 +31,7 @@ function MessageArtworkModal(props) {
             setIsLoading(false);
             setErrorMessage(messageData.error.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
                 {messageData.error.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by sending a message </Alert>));
-            successMessage('');
+            setSuccessMessage('');
         }
     }, [messageData, successMessage]);
 
@@ -64,8 +64,13 @@ function MessageArtworkModal(props) {
                 <Modal.Body>
                     <Form>
                         <p>
-                            The contact request will be sent to the chosen user through the messaging system. If the user accepts your contact request, you will receive a response at your private email address.
+                            The contact request will be sent to the chosen user through the messaging system. If the user accepts your contact request, you will receive a response at your private email address. <br/>
+                            
                         </p>
+                        <p>
+                            Gallery: <span class="fw-bold">{artwork.galleryTitle}</span> <br/>
+                            Artwork: <span class="fw-bold">{artwork.title}</span> <br/>
+                        </p>                    
                         <Form.Group
                             className="mb-3"
                             controlId="exampleForm.ControlTextarea1"
@@ -80,7 +85,11 @@ function MessageArtworkModal(props) {
                             />
                         </Form.Group>
                     </Form>
-                    {messageData.pending && (<div class="spinner-border" role="status"></div>)}
+                    {messageData.pending && (<div class="d-flex justify-content-center">
+                                <div class="spinner-border" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>)}
                     {successMessage}
                     {errorMessage}
                 </Modal.Body>

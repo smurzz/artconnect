@@ -16,6 +16,8 @@ import * as userActions from '../../../redux/user/UserAction';
 import MessageModal from '../components/user/MessageModal';
 
 function Profile() {
+    const userSession = JSON.parse(localStorage.getItem('userSession'));
+
     const { id } = useParams();
     const dispatch = useDispatch();
 
@@ -78,7 +80,7 @@ function Profile() {
                                                     setShowModal(true);
                                                 }} />
                                             <div>
-                                                <MessageModal userData={user} />
+                                                {userSession && <MessageModal userData={user} />}
                                             </div>
                                         </div>
                                     </div>
