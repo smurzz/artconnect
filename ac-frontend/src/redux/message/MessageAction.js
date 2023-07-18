@@ -63,7 +63,7 @@ export function sentMessageByArtworkId(id, message) {
                         'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('userSession')).accessToken
                     }
                 };
-                axios.post('/artwoks/' + id + '/contact', message, requestOptions)
+                axios.post('/artworks/' + id + '/contact', message, requestOptions)
                     .then(response => {
                         dispatch(sentMessageSuccessAction(response))
                     })

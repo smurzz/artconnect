@@ -36,10 +36,11 @@ export function getUsersPendingAction() {
     }
 }
 
-export function getUsersSuccessAction(users) {
+export function getUsersSuccessAction(result) {
     return {
         type: SUCCESS_READ_USERS,
-        users: users
+        users: result.data,
+        status: result.status
     }
 }
 
@@ -180,8 +181,7 @@ export function getUsers() {
 
         axios.get('/users')
             .then(response => {
-                const users = response.data;
-                const action = getUsersSuccessAction(users);
+                const action = getUsersSuccessAction(response);
                 dispatch(action);
             })
             .catch(error => {
@@ -197,6 +197,24 @@ export function getUsersByName(fname, lname) {
         dispatch(getUsersPendingAction());
 
         axios.get('/users/search', { params: { firstname: fname, lastname: lname } })
+            .then(response => {
+                const users = response.data;
+                const action = getUsersSuccessAction(users);
+                dispatch(action);
+            })
+            .catch(error => {
+                const errorMessage = error.message;
+                dispatch(getUsersErrorAction(errorMessage));
+            });
+    }
+}
+
+export function getUsersByFirsnameOrLastname(name) {
+
+    return async dispatch => {
+        dispatch(getUsersPendingAction());
+
+        axios.get('/users/search', { params: { q: name} })
             .then(response => {
                 const users = response.data;
                 const action = getUsersSuccessAction(users);
