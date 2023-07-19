@@ -65,8 +65,13 @@ function Login(props) {
         if(props.error){
             const errResult = props.error;
             setError(errResult);
-            setErrorMessage(props.error ? (<Alert className="alarm text-center mt-3" variant='danger'>
-            {props.error?.status === 401 ? "Opps! Either your E-Mail or password is not correct" : "Error by Login"} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Login </Alert>));
+                if(props.error?.status === 401){
+                    setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>Opps! Either your E-Mail or password is not correct </Alert>)
+                }else if(props.error?.status === 403){
+                    setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>Opps! Please first accept the Link to login we send to you</Alert>)
+                }else{
+                    setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'> Error by Login </Alert>)
+                }
         }
         setIsLoading(false);
     }, [props.error, error]);
