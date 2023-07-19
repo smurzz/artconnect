@@ -16,8 +16,8 @@ const initialState = {};
 const middlewares = [thunk];
 
 const store = createStore(rootReducer, initialState, compose(applyMiddleware(...middlewares)));
-// axios.defaults.baseURL = 'http://localhost:8080/';
-axios.defaults.baseURL = 'http://18.185.79.47:8080/';
+axios.defaults.baseURL = 'http://localhost:8080/';
+// axios.defaults.baseURL = 'http://18.185.79.47:8080/';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

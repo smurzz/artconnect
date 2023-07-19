@@ -29,31 +29,33 @@ function Gallery() {
         };
 
         fetchData();
-    }, [dispatch, galleryData?.gallery?.ranking]);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            if(rating && userSession){
-                await dispatch(galleryActions.putRating(id, parseInt(rating)));
-                success ?? window.location.reload();
-            }
-        };
-
-        fetchData();
-    }, [dispatch, rating]);
+    }, [dispatch, id]);
 
     useEffect(() => {
         if (galleryData.gallery) {
             setGallery(galleryData.gallery);
         }
-    }, [galleryData.status, galleryData.gallery, error]);
+    }, [galleryData.gallery]);
 
     useEffect(() => {
-        if (galleryData.status === 200) {
+        console.log(galleryData.status);
+        if (galleryData.status === 201) {
+            
             setSuccess(true);
-            window.location.reload();
+
         }
-    }, [galleryData.status]);
+    }, [galleryData.status, rating]);
+
+    useEffect(() => {
+        if (success) {
+            console.log(galleryData.gallery);
+            const fetchData = async () => {
+                await dispatch(galleryActions.getGallery(id));
+            };
+
+            fetchData();
+        }
+    }, [galleryData.gallery?.ranking, rating, dispatch]);
 
     useEffect(() => {
         if (galleryData.error) {
@@ -63,6 +65,13 @@ function Gallery() {
 
     const onChangeRating = async (e) => {
         setRating(e.target.value);
+        try {
+            if (e.target.value && userSession) {
+                await dispatch(galleryActions.putRating(id, parseInt(e.target.value)));
+            }
+        } catch (error) {
+            setError(error);
+        }
     }
 
     if (galleryData.pending) {

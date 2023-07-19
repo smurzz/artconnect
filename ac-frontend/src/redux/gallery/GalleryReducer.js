@@ -111,6 +111,26 @@ export default function galleryReducer(state = initialState, action) {
                 pending: false,
                 error: action.error
             }
+        case galleryAction.REQUEST_PUT_RATING:
+            return {
+                ...state,
+                pending: true,
+                error: null
+            }
+        case galleryAction.SUCCESS_PUT_RATING:
+            return {
+                ...state,
+                pending: false,
+                status: action.status,
+                gallery: action.gallery,
+                error: null
+            }
+        case galleryAction.FAIL_PUT_RATING:
+            return {
+                ...state,
+                pending: false,
+                error: action.error
+            }
         default:
             return state;
     }

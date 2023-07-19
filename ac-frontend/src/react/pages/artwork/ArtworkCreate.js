@@ -54,10 +54,6 @@ function ArtworkCreate() {
             setErrorMessage(<Alert className="text-center m-4" key='f' variant='danger'>
                 <p> {artworkData.error?.message} </p>
             </Alert>)
-        } else if(selectedFile?.length > 5) {
-            setErrorMessage(<Alert className="text-center m-4" key='f' variant='danger'>
-                <p> You can not upload more than 5 images </p>
-            </Alert>)
         } else if (artworkData.error instanceof RefreshTokenExpiredError) {
             dispatch(authActions.logoutUser());
             navigate('/');
@@ -74,16 +70,93 @@ function ArtworkCreate() {
     /* check errors */
     useEffect(() => {
         if (artworkData.error) {
-            setError(true);            
+            setError(true);
         } else {
             setSuccessMessage(null);
         }
     }, [artworkData]);
 
+    /* validation */
+    const imagesValid = () => {
+        const errArray = [];
+
+        const isSelectedFilesValid = selectedFile?.length <= 5;
+
+        if (!isSelectedFilesValid) {
+            errArray.push("You can not upload more than 5 images.")
+        }
+
+        if (errArray.length > 0) {
+            setSuccessMessage('');
+            setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>{errArray.map(str => <p>{str}</p>)}</Alert>);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    const artworkDataValid = () => {
+        const errArray = [];
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+
+        const isValidTitle = artwork?.title?.length >= 0;
+        const isValidYearOfCreation = !artwork?.yearOfCreation || (artwork?.yearOfCreation <= currentYear && artwork?.yearOfCreation >= 0);
+        const isValidPrice = !artwork?.price || artwork?.price >= 0;
+        const isValidHeight = !artwork?.dimension?.height || artwork?.dimension?.height >= 0.0;
+        const isValidWidth = !artwork?.dimension?.width || artwork?.dimension?.width >= 0.0;
+        const isValidDepth = !artwork?.dimension?.depth || artwork?.dimension?.depth >= 0.0;
+        const isValidTags = !artwork?.tags || artwork?.tags?.length <= 10;
+        const isValidMaterials = !artwork?.materials || artwork?.materials?.length <= 10;
+
+        if (!artwork?.title?.trim() || !isValidTitle) {
+            errArray.push("Title cannot be empty.")
+        }
+
+        if (!isValidTags) {
+            errArray.push("Tags can have at most 10 values")
+        }
+
+        if (!isValidMaterials) {
+            errArray.push("Materials can have at most 10 values")
+        }
+
+        if (!isValidYearOfCreation) {
+            errArray.push("Year cannot be greater than the current year or negative");
+        }
+
+        if (!isValidHeight) {
+            errArray.push("Height can not be negative");
+        }
+
+        if (!isValidWidth) {
+            errArray.push("Width can not be negative");
+        }
+
+        if (!isValidDepth) {
+            errArray.push("Depth can not be negative");
+        }
+
+        if (!isValidPrice) {
+            errArray.push("Price can not be negative");
+        }
+
+        if (errArray.length > 0) {
+            setSuccessMessage('');
+            setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>{errArray.map(str => <p>{str}</p>)}</Alert>);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /* create an artwork */
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await dispatch(artworkAction.createArtwork(artwork));
+        const artworkDataValidTest = artworkDataValid();
+        if (artworkDataValidTest) {
+            await dispatch(artworkAction.createArtwork(artwork));
+        }
     }
 
     /* add / remove tag or materials */
@@ -115,15 +188,18 @@ function ArtworkCreate() {
     const handleUploadImages = async (e) => {
         if (selectedFile.length > 0 && artworkData.artwork) {
             const formData = new FormData();
+            const imagesValidTest = imagesValid();
 
-            for (let i = 0; i < selectedFile.length; i++) {
-                formData.append('files', selectedFile[i]);
+            if (imagesValidTest) {
+                for (let i = 0; i < selectedFile.length; i++) {
+                    formData.append('files', selectedFile[i]);
+                }
+                await dispatch(artworkAction.addArtworkImages(artworkData.artwork.id, formData));
+                success ? navigate('/home') : setErrorMessage(<Alert className="text-center m-4" key='success' variant='danger'>
+                    <p> {artworkData.error.message} </p>
+                </Alert>);
             }
-            await dispatch(artworkAction.addArtworkImages(artworkData.artwork.id, formData));
-            success ? navigate('/home') : setErrorMessage(<Alert className="text-center m-4" key='success' variant='danger'>
-            <p> {artworkData.error.message} </p>
-        </Alert>);
-        } 
+        }
     };
 
     if (artworkData.pending) {
@@ -158,6 +234,7 @@ function ArtworkCreate() {
                                                         id="title"
                                                         className="form-control"
                                                         name='title'
+                                                        autoFocus
                                                         value={artwork?.title}
                                                         onChange={(e) => setArtwork({
                                                             ...artwork,
@@ -283,6 +360,7 @@ function ArtworkCreate() {
                                         ...artwork,
                                         tags: value.values
                                     })}
+                                    autoFocus={false}
                                 />
                                 <button
                                     className="btn btn-outline-secondary"
@@ -306,6 +384,7 @@ function ArtworkCreate() {
                                         ...artwork,
                                         materials: value.values
                                     })}
+                                    autoFocus={false}
                                 />
                                 <button
                                     className="btn btn-outline-secondary"

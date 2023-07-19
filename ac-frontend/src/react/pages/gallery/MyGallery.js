@@ -79,6 +79,13 @@ function MyGallery() {
 
     /* update user profile */
     const handleSubmit = async (e) => {
+        if (!gallery.title) {
+            setErrorMessage(<Alert className="text-center m-4" key='f' variant='danger'>
+                <p> Title cannot be empty. </p>
+            </Alert>);
+            return;
+        }
+
         const galleryRequest = (galleryData && (({ id, artworks, ownerId, ownerName, ranking, ...rest }) => rest)(gallery)) || {};
         galleryData.gallery ? await dispatch(galleryActions.editGallery(gallery.id, galleryRequest)) : await dispatch(galleryActions.createGallery(gallery));
     }
@@ -130,6 +137,7 @@ function MyGallery() {
                                                     className="form-control"
                                                     value={gallery.title || ''}
                                                     onChange={async (e) => { setGallery({ ...gallery, title: e.target.value }); }}
+                                                    required
                                                 />
                                             </div>
                                             <div className="form-outline mb-2">

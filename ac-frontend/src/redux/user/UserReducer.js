@@ -51,7 +51,6 @@ export default function userReducer(state = initialState, action) {
             return {
                 ...state,
                 pending: false,
-                user: null,
                 error: action.error
             }
         case userAction.REQUEST_READ_PROFILE_PHOTO:
