@@ -6,7 +6,7 @@
     "allowedHosts": [
       "localhost:3001",
       "localhost:3000",
-      "18.185.79.47:3000"
+      "18.195.200.98:3000"
     ]
   },
   "dependencies": {
