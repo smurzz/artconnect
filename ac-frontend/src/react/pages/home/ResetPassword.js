@@ -27,15 +27,29 @@ export default function ResetPassword() {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
+    const passwordDataValid = () => {
+        const isValidPassword = resetPassword.password.length >= 3;
+        if (!resetPassword.password.trim() | !isValidPassword) {
+            setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>Your Password should contain at least 3 character</Alert>);
+            return false;
+        }else{
+            return true;
+        }
+    }
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (resetPassword.password) {
+        const passwordDataValidTest = passwordDataValid();
+        if (resetPassword.password && passwordDataValidTest) {
             setIsLoading(true);
             console.log(resetPassword);
             await dispatch(fPasswordActions.resetPassword(resetPassword));
-            setIsLoading(false);
         }
+        setIsLoading(false);
     }
+
+    useEffect(()=>{
+        setErrorMessage("");
+    }, [resetPassword.password])
 
     useEffect(() => {
         const resSuccess = fPasswordData.status === 200;

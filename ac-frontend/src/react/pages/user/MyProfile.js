@@ -68,7 +68,7 @@ function MyProfile() {
         if (userData.user) {
             setUser(userData.user);
             const contentType = userData.user.profilePhoto?.contentType ?? null;
-            const imageData =  userData.user.profilePhoto?.image.data ?? null;
+            const imageData = userData.user.profilePhoto?.image.data ?? null;
             const imageSrc = (contentType && imageData)
                 ? `data:${contentType};base64,${imageData}`
                 : ProfilePhotoDefault;
@@ -107,6 +107,39 @@ function MyProfile() {
         }
     }, [userData.error, dispatch, navigate]);
 
+    /* validation */
+    const userDataValid = () => {
+        const errArray = [];
+
+        const isValidFirstname = user?.firstname?.length >= 2;
+        const isValidLastname = user?.lastname?.length >= 2;
+        const isValidTelefonNumber = user?.contacts?.telefonNumber && user.contacts.telefonNumber >= 0;
+        const isValidPostalCode = user?.contacts?.address?.postalCode && user.contacts.address.postalCode >= 0;
+
+        if (!user?.firstname?.trim() || !isValidFirstname) {
+            errArray.push("First name should contain at least 2 characters")
+        }
+        if (!user?.lastname?.trim() || !isValidLastname) {
+            errArray.push("Last name should contain at least 2 characters")
+        }
+
+        if (isValidTelefonNumber !== undefined && !isValidTelefonNumber) {
+            errArray.push("Telephone number should not be negative");
+        }
+
+        if (isValidPostalCode !== undefined && !isValidPostalCode) {
+            errArray.push("Postal code should not be negative");
+        }
+
+        if (errArray.length > 0) {
+            setSuccessMessage('');
+            setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>{errArray.map(str => <p>{str}</p>)}</Alert>);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /* set a image-file for updating */
     const handleFileSelect = async (e) => {
         setSelectedFile(e.target.files[0]);
@@ -131,8 +164,11 @@ function MyProfile() {
     /* update user profile */
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { profilePhoto, ...updatedUser } = user;
-        await dispatch(userActions.editUser(updatedUser.id, updatedUser));
+        const userDataValidTest = userDataValid();
+        if (userDataValidTest) {
+            const { profilePhoto, ...updatedUser } = user;
+            await dispatch(userActions.editUser(updatedUser.id, updatedUser));
+        }
     }
 
     if (!user && userSession) {
@@ -164,10 +200,10 @@ function MyProfile() {
                                                     objectFit: 'cover',
                                                     objectPosition: '50% 50%',
                                                     zIndex: '1'
-                                                }} 
+                                                }}
                                                 onClick={() => {
                                                     setShowModal(true);
-                                                }}/>
+                                                }} />
                                         </div>
                                         <div className="btn btn-outline-dark w-100 btn-sm" disabled={isLoading} style={{ zIndex: '1' }}>
                                             <label className="form-label m-1" for="fileInput">Edit profile</label>
@@ -176,7 +212,7 @@ function MyProfile() {
                                                 className="form-control d-none"
                                                 id="fileInput"
                                                 accept="image/png, image/jpeg"
-                                                onChange={handleFileSelect}                                                
+                                                onChange={handleFileSelect}
                                             />
                                         </div>
                                     </div>
@@ -264,7 +300,7 @@ function MyProfile() {
                                                 </div>
                                                 <div className="col">
                                                     <div className="form-check">
-                                                    <label className="form-check-label" for="flexCheckChecked">Birthday visible</label>
+                                                        <label className="form-check-label" for="flexCheckChecked">Birthday visible</label>
                                                         <input
                                                             type="checkbox"
                                                             id="birthdayVisible"
@@ -275,9 +311,9 @@ function MyProfile() {
                                                                 const checked = e.target.checked;
                                                                 const updatedValue = checked ? 'PUBLIC' : 'PRIVATE';
                                                                 setUser({ ...user, isDateOfBirthVisible: updatedValue });
-                                                              }}
+                                                            }}
                                                         />
-                                                        
+
                                                     </div>
                                                 </div>
                                             </div>

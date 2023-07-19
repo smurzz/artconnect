@@ -24,16 +24,50 @@ export default function Register() {
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [error, setError] = useState(false);
     const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const userDataValidTest = userDataValid();
         if (!isTermsAccepted) {
             setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>You must accept the terms and conditions to be able to process your registration.</Alert>);
-        } else {
+        }
+        else if(userDataValidTest) {
             setIsLoading(true);
             await dispatch(authActions.signupUser(user));
+        }else{
             setIsLoading(false);
+        }
+    }
+
+    const userDataValid = () => {
+        const errArray=[];
+        const {firstname, lastname, email, password} = user;
+        const isValidFirstname = firstname.length >= 2;
+        const isValidLastname = lastname.length >= 2;
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const isValidPassword = password.length >= 3;
+
+        if (!firstname.trim() | !isValidFirstname) {
+            errArray.push("First name should contain at least 2 characters")
+        }
+        if (!lastname.trim() |!isValidLastname ) {
+            errArray.push("Last name should contain at least 2 characters")
+        }
+        if (!email.trim() | !isValidEmail) {
+            errArray.push("Invalid email address")
+        }
+        if (!password.trim() | !isValidPassword) {
+            console.log("Password cannot be empty");
+            errArray.push("Password should contain at least 3 characters")
+        }
+
+        if(errArray.length > 0){
+            setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>{errArray.map(str => <p>{str}</p>)}</Alert>);
+            return false;
+        }else{
+            return true;
         }
     }
 
@@ -49,13 +83,21 @@ export default function Register() {
             password: ""
         });
         setErrorMessage("");
-        
+
     }, [authData.status]);
 
-    if (authData.error) {
-        setErrorMessage(authData.error.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
-            {authData.error.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by Signup </Alert>));
-    }
+    useEffect(() => {
+        const errResult = authData.error;
+        setError(errResult);
+        setIsLoading(false);
+        setIsTermsAccepted(false);
+        setErrorMessage(authData.error?.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
+            {authData.error?.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'>  {authData.error?.status == 400 ? "The Email you have provided, has already been registered" : "Error signUp"}</Alert>));
+    }, [authData.error, error]);
+
+    useEffect(()=>{
+        setErrorMessage("");
+    }, [user])
 
     const handleModalClose = () => {
         setSuccess(false);
@@ -68,7 +110,6 @@ export default function Register() {
                 <div className='form-container w-100 m-auto'>
                     <form>
                         <h1 className="h3 mb-3 fw-normal">Please sign up</h1>
-
                         <div className="form-floating mb-1">
                             <input
                                 type="text"
@@ -78,8 +119,7 @@ export default function Register() {
                                 placeholder="John"
                                 value={user.firstname}
                                 onChange={async (e) => { setUser({ ...user, firstname: e.target.value }); }}
-                                required
-                            />
+                                required />
                             <label for="floatingFname">First name</label>
                         </div>
                         <div className="form-floating mb-1">
@@ -149,7 +189,7 @@ export default function Register() {
                         <p className="mt-5 mb-3 text-body-secondary">&copy; 2023</p>
                     </form>
                 </div>
-                {success && <RegisterModel handleClose={handleModalClose}/>}
+                {success && <RegisterModel handleClose={handleModalClose} />}
             </main>
             <Footer />
         </div>

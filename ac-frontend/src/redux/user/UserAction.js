@@ -53,8 +53,7 @@ export function getUsersErrorAction(error) {
 
 export function getUserPendingAction() {
     return {
-        type: REQUEST_READ_USER,
-        pending: true
+        type: REQUEST_READ_USER
     }
 }
 
@@ -198,8 +197,7 @@ export function getUsersByName(fname, lname) {
 
         axios.get('/users/search', { params: { firstname: fname, lastname: lname } })
             .then(response => {
-                const users = response.data;
-                const action = getUsersSuccessAction(users);
+                const action = getUsersSuccessAction(response);
                 dispatch(action);
             })
             .catch(error => {
@@ -216,8 +214,7 @@ export function getUsersByFirsnameOrLastname(name) {
 
         axios.get('/users/search', { params: { q: name} })
             .then(response => {
-                const users = response.data;
-                const action = getUsersSuccessAction(users);
+                const action = getUsersSuccessAction(response);
                 dispatch(action);
             })
             .catch(error => {
@@ -263,7 +260,7 @@ export function getUserById(id) {
 
 export function getUserProfilePhoto(userId) {
     return async dispatch => {
-        dispatch(getUserPendingAction());
+        dispatch(getUserProfilePhotoPendingAction());
 
         axios.get('/users/' + userId + "/profile-photo", { responseType: 'arraybuffer' })
             .then(response => {

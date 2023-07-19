@@ -1,12 +1,14 @@
 package com.artconnect.backend.controller;
 
 import org.hibernate.validator.constraints.Range;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.artconnect.backend.controller.response.GalleryResponse;
@@ -28,6 +30,7 @@ public class RatingController {
 	private final RatingService ratingService;
 	
 	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
 	public Mono<GalleryResponse> addRatingToGallery(
 			@PathVariable("id") String id, 
 			@RequestParam @Range(min = 1, max = 5) Integer value,

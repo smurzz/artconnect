@@ -19,14 +19,29 @@ export default function ForgotPassword() {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
+    const emailDataValid = () => {
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+        if (!email.trim() | !isValidEmail) {
+            setErrorMessage(<Alert className="alarm text-center mt-3" variant='danger'>Opps! You entered an unvalied Emailadress.</Alert>);
+            return false
+        }
+        return true;
+    }
+
+    useEffect(()=>{
+        setErrorMessage("");
+    }, [email])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (email) {
+        const emailValid = emailDataValid();
+        if (email && emailValid) {
             setIsLoading(true);
             console.log(email);
             await dispatch(fPasswordActions.forgotPassword(email));
-            setIsLoading(false);
         }
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -40,8 +55,8 @@ export default function ForgotPassword() {
                 <Alert className="alarm text-center mt-3" variant='success'> We have sent a reset password link to your email. Please check. </Alert>);
         }
         if (resError) {
-            setErrorMessage(resError.message ? (<Alert className="alarm text-center mt-3" variant='danger'>
-                {resError.message} </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by sending email </Alert>));
+            setErrorMessage(resError.status === 404 ? (<Alert className="alarm text-center mt-3" variant='danger'>
+                Opps! We could not find any User with the Email you put. </Alert>) : (<Alert className="alarm text-center mt-3" variant='danger'> Error by sending email </Alert>));
         }
     }, [fPasswordData]);
 
