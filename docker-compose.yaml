@@ -5,7 +5,7 @@ services:
    artconnect-backend:
 # Configuration for building the docker image for the backend service
       build: ./ac-backend
-      image: ghcr.io/smurzz/artconnect-backend:1.0.0 # Use an image built from github packages
+      image: ghcr.io/smurzz/artconnect-backend:${LATEST_TAG} # Use an image built from github packages
       container_name: artconnect-backend
       ports:
       - 8080:8080 # Forward the exposed port 8080 on the container to port 8080 on the host machine
@@ -17,7 +17,7 @@ services:
    artconnect-frontend:
 # Frontend Service
       build: ./ac-frontend
-      image: ghcr.io/smurzz/artconnect-frontend:1.0.0 # Use an image built from github packages
+      image: ghcr.io/smurzz/artconnect-frontend:${LATEST_TAG} # Use an image built from github packages
       container_name: artconnect-frontend
       ports:
       - 3000:3000
