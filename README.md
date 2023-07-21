@@ -8,14 +8,12 @@ ArtConnect is a web-platform for artists that allows them to showcase their artw
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=smurzz_artconnect&metric=coverage)](https://sonarcloud.io/summary/new_code?id=smurzz_artconnect)
 
 ### Team:
-- Ronny Schmitz (_Project Management, design_);
-- Mona Becher (_Frontend: web development, design_)
-- Aaron Engelmann (_Frontend, design_)
-- Sofya Murzakova (_Backend: software development, deployment_)
-- Komola Benzinger (_Backend: software development, testing_)
-- Özkan Kizilkan (_Backend: software development, testing_)
-
-Nach dem Playtest und der Umfrage ergibt sich folgendes Fazit:
+- Ronny Schmitz (_Project Management, Frontend: Design_);
+- Mona Becher (_Frontend: Web-Development, Design_);
+- Aaron Engelmann (_Frontend: Design_);
+- Sofya Murzakova (_Backend: Software-Development, Deployment_);
+- Komola Benzinger (_Backend: Software-Development, Testing_);
+- Özkan Kizilkan (_Backend: Testing_).
 
 ### Installation:
 
@@ -26,6 +24,7 @@ To run the application locally, follow these steps:
 1. Clone the repository to your local machine.
 2. In a terminal, navigate to the ``cd artconnect/ac-backend`` folder and run ```mvn spring-boot:run```. This will start the server and connect it to your local MongoDB instance.
 3. In another terminal, navigate to the ``cd artconnect/ac-frontend`` folder and run ``npm install`` and ``npm start``. This will start the frontend on http://localhost:3000.
+4. (Make sure to comment out line 20 ``axios.defaults.baseUrl = 'http://18.195.200.98:8080/';`` and uncomment line 19 ``axios.defaults.baseUrl = 'http://localhost:8080/';`` in the file ``artconnect/ac-frontend/src/index.js``)
 4. Open your web browser and go to http://localhost:3000 to access the application.
 
 ###### Method 2: Docker Installation
@@ -59,4 +58,3 @@ Alternatively, you can run the application using Docker. Follow these steps:
 ##### Links:
 - [Link to the Webspace](http://18.195.200.98:3000/)
 - [Download zip-Datei last version of the app)](https://github.com/smurzz/artconnect/releases/tag/v1.0.5)
-
