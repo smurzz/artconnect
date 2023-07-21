@@ -8,7 +8,7 @@ application:
          confirm-token: 
             validityInMs: 900000   # 15 minutes
 frontend:
-  base-url: http://localhost:3001
+  base-url: http://localhost:3000
 backend:
   base-url: http://localhost:8080
 server:
@@ -43,9 +43,9 @@ application:
          confirm-token: 
             validityInMs: 900000   # 15 minutes
 frontend:
-  base-url: http://18.185.79.47:3000
+  base-url: http://18.195.200.98:3000
 backend:
-  base-url: http://18.185.79.47:8080
+  base-url: http://18.195.200.98:8080
 spring:
    config:
       activate:
